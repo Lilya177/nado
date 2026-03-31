@@ -1,13 +1,16 @@
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Float, Text
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Float, Text, DateTime
 from sqlalchemy.orm import declarative_base, relationship
+from datetime import datetime
 import enum
 
 Base = declarative_base()
+
 
 class UserRole(str, enum.Enum):
     user = "user"
     doctor = "doctor"
     admin = "admin"
+
 
 class ProductCategory(str, enum.Enum):
     frame = "frame"
@@ -15,15 +18,18 @@ class ProductCategory(str, enum.Enum):
     case = "case"
     liquid = "liquid"
 
+
 class OrderStatus(str, enum.Enum):
     pending = "pending"
     approved = "approved"
     rejected = "rejected"
 
+
 class AppointmentStatus(str, enum.Enum):
     pending = "pending"
     approved = "approved"
     rejected = "rejected"
+
 
 class User(Base):
     __tablename__ = "users"
@@ -35,6 +41,8 @@ class User(Base):
     role = Column(String, default=UserRole.user)
     orders = relationship("Order", back_populates="user", foreign_keys="Order.user_id")
     appointments = relationship("Appointment", back_populates="user", foreign_keys="Appointment.user_id")
+    journal_entries = relationship("JournalEntry", back_populates="user")
+
 
 class Product(Base):
     __tablename__ = "products"
@@ -48,14 +56,17 @@ class Product(Base):
     in_stock = Column(Boolean, default=True)
     image_url = Column(String, nullable=True)
 
+
 class Order(Base):
     __tablename__ = "orders"
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id"))
     total_price = Column(Float, default=0)
     status = Column(String, default=OrderStatus.pending)
+    created_at = Column(DateTime, default=datetime.utcnow)
     user = relationship("User", back_populates="orders", foreign_keys=[user_id])
     items = relationship("OrderItem", back_populates="order", cascade="all,delete")
+
 
 class OrderItem(Base):
     __tablename__ = "order_items"
@@ -67,6 +78,7 @@ class OrderItem(Base):
     order = relationship("Order", back_populates="items")
     product = relationship("Product")
 
+
 class Appointment(Base):
     __tablename__ = "appointments"
     id = Column(Integer, primary_key=True)
@@ -75,4 +87,19 @@ class Appointment(Base):
     date = Column(String)
     time = Column(String)
     status = Column(String, default=AppointmentStatus.pending)
+    created_at = Column(DateTime, default=datetime.utcnow)
     user = relationship("User", back_populates="appointments", foreign_keys=[user_id])
+
+
+class JournalEntry(Base):
+    """Журнал действий пользователей."""
+    __tablename__ = "journal"
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=True)  # nullable — для анонимных
+    action = Column(String, nullable=False)       # напр. "create_order", "login", "face_analyze"
+    entity = Column(String, nullable=True)        # напр. "order", "appointment"
+    entity_id = Column(Integer, nullable=True)    # id объекта если есть
+    detail = Column(Text, nullable=True)          # доп. инфо в свободной форме
+    ip_address = Column(String, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    user = relationship("User", back_populates="journal_entries")
