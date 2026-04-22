@@ -4,14 +4,15 @@ from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session
 from typing import List, Optional
 import bcrypt
-
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 import models
 import schemas
 from database import SessionLocal, init_db
 from auth import create_access_token
 from deps import get_db, get_current_user, require_user, require_doctor, require_admin
 from journal import log_action
-from face_analyzer import analyze_face_image, FACE_SHAPE_MAP
+from face_analyzer import analyze_face_image, FACE_SHAPE_MAP, analyze_multi_frames
 
 app = FastAPI(title="NOIR VISION API", version="2.0.0")
 
@@ -202,15 +203,40 @@ def get_journal(limit: int = Query(100, le=500), action: Optional[str] = Query(N
 @app.post("/ai/face-analyze", response_model=schemas.FaceAnalysisResult, tags=["AI"])
 async def analyze_face(request: Request, file: UploadFile = File(...),
                        db: Session = Depends(get_db)):
+    """Анализ по ОДНОМУ фото (старый метод)"""
     image_bytes = await file.read()
     result = analyze_face_image(image_bytes)
 
     if result.get("error"):
         raise HTTPException(422, detail=result["error"])
 
+    return _format_ai_response(result, db, request)
+
+from face_analyzer import analyze_multi_frames
+
+@app.post("/ai/analyze-video")
+async def analyze_video(
+    frame_front: UploadFile = File(...),
+    frame_left:  UploadFile = File(None),
+    frame_right: UploadFile = File(None),
+):
+    frames = []
+    for upload in [frame_front, frame_left, frame_right]:
+        if upload is not None:
+            frames.append(await upload.read())
+
+    result = analyze_multi_frames(frames)
+
+    if result.get("error"):
+        raise HTTPException(status_code=400, detail=result["error"])
+
+    return result
+
+def _format_ai_response(result, db, request):
+    """Вспомогательная функция для сборки финального ответа с товарами"""
     face_shape = result["face_shape"]
     confidence = result["confidence"]
-    measurements = result["measurements"]
+    measurements = result.get("measurements", {"face_ratio": 0, "jaw_ratio": 0, "forehead_ratio": 0})
 
     meta = FACE_SHAPE_MAP.get(face_shape, FACE_SHAPE_MAP["oval"])
     products = (db.query(models.Product)
@@ -218,15 +244,15 @@ async def analyze_face(request: Request, file: UploadFile = File(...),
                         models.Product.shape.in_(meta["shape_codes"]))
                 .limit(6).all())
 
-    log_action(db, action="face_analyze", detail=f"shape={face_shape} confidence={confidence:.1%}", request=request)
+    log_action(db, action="face_analyze_video", 
+               detail=f"shape={face_shape} confidence={confidence:.1%}", request=request)
 
     return schemas.FaceAnalysisResult(
-        face_shape=face_shape, confidence=confidence,
-        measurements=schemas.FaceMeasurements(**measurements),
-        recommended_shapes=meta["recommended_shapes"],
-        recommended_products=products,
-    )
-
+    face_shape=face_shape, 
+    confidence=confidence,
+    yaw=result.get("yaw", 0),  # Добавь это поле
+    # ... остальное
+)
 # ───── ADMIN PANEL ───────────────────────────────────────────────────────────
 
 @app.get("/admin", response_class=HTMLResponse, tags=["Admin"])
@@ -237,3 +263,7 @@ def admin_panel():
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
+
+@app.get("/scan")
+async def get_scan_page():
+    return FileResponse("scan.html")
