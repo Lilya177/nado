@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>NOIR VISION – макет салона оптики</title>
+  <title>NOIR VISION – Салон оптики</title>
   <style>
-    *, *::before, *::after { box-sizing: border-box; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
       --bg: #050505;
       --bg-elevated: #111111;
@@ -15,1930 +15,577 @@
       --accent: #ffffff;
       --border: #2a2a2a;
       --radius: 16px;
-      --radius-soft: 999px;
-      --gap: 24px;
+      --gap: 28px;
       --container: 1200px;
+      font-size: 112%; /* +12% масштаб */
     }
+    html { scroll-behavior: smooth; }
     body {
-      margin: 0;
-      padding-top: 80px;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
-      background: radial-gradient(circle at top, #222 0, #050505 55%);
+      background: radial-gradient(circle at top, #1e1e1e 0, #050505 55%);
       color: var(--text);
       -webkit-font-smoothing: antialiased;
-    }
-    .page {
-      min-height: 100vh;
-      padding: 32px 24px 80px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 40px;
-    }
-    .frame-label {
-      font-size: 12px;
-      letter-spacing: .2em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-    }
-    .frame-title {
-      font-size: 20px;
-      letter-spacing: .2em;
-      text-transform: uppercase;
-      margin-top: 4px;
-    }
-    .frame-wrap {
-      width: 100%;
-      max-width: var(--container);
-      border-radius: 32px;
-      background: linear-gradient(135deg, rgba(255,255,255,0.04), rgba(0,0,0,0.6));
-      padding: 32px 32px 40px;
-      border: 1px solid rgba(255,255,255,0.05);
-      box-shadow: 0 40px 120px rgba(0,0,0,0.7);
+      padding-top: 72px;
     }
 
-    /******** HEADER ********/
-    .desktop-shell {
-      display: flex;
-      flex-direction: column;
-      gap: 32px;
-    }
-    header.desktop-header {
+    /* ── HEADER ── */
+    header {
       position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 10;
-      background: var(--bg);
-      transition: transform 0.3s ease;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      background: rgba(5,5,5,0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 24px;
-      padding-bottom: 16px;
-      border-bottom: 1px solid var(--border);
+      padding: 0 40px;
+      height: 72px;
+      transition: transform .3s ease;
     }
+    header.hidden { transform: translateY(-100%); }
     .logo {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 18px;
-      letter-spacing: .25em;
-      text-transform: uppercase;
+      display: flex; align-items: center; gap: 9px;
+      font-size: 15px; letter-spacing: .28em; text-transform: uppercase;
+      cursor: pointer;
     }
     .logo-mark {
-      width: 18px;
-      height: 18px;
-      border-radius: 4px;
-      border: 1px solid var(--accent);
-      border-bottom-left-radius: 12px;
+      width: 16px; height: 16px;
+      border-radius: 4px 4px 4px 14px;
+      border: 1.5px solid var(--accent);
     }
-    .logo-text-button {
-      border: none;
-      background: none;
-      color: var(--accent);
-      font: inherit;
-      letter-spacing: .25em;
-      text-transform: uppercase;
-      padding: 4px 0;
+    nav { display: flex; gap: 28px; }
+    nav a {
+      font-size: 11px; letter-spacing: .2em; text-transform: uppercase;
+      color: var(--text-muted); text-decoration: none;
+      padding-bottom: 3px; border-bottom: 1px solid transparent;
+      transition: color .2s, border-color .2s;
       cursor: pointer;
     }
-    nav.main-nav {
-      display: flex;
-      gap: 24px;
-      font-size: 13px;
-      text-transform: uppercase;
-      letter-spacing: .18em;
-    }
-    nav.main-nav a {
-      color: var(--text-muted);
-      text-decoration: none;
-      padding-bottom: 4px;
-      border-bottom: 1px solid transparent;
-    }
-    nav.main-nav a.primary {
-      color: var(--accent);
-      border-color: var(--accent);
-    }
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      font-size: 13px;
-    }
-    .icon-btn {
-      width: 32px;
-      height: 32px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
-      color: var(--text-muted);
-      cursor: pointer;
-    }
+    nav a.active, nav a:hover { color: var(--accent); border-color: var(--accent); }
+    .header-actions { display: flex; align-items: center; gap: 14px; }
     .pill {
-      border-radius: 999px;
+      border-radius: 999px; border: 1px solid var(--border);
+      padding: 7px 16px; font-size: 11px; text-transform: uppercase;
+      letter-spacing: .18em; color: var(--text-muted); cursor: pointer;
+      transition: border-color .2s, color .2s;
+    }
+    .pill:hover { border-color: var(--accent); color: var(--accent); }
+    .icon-btn {
+      position: relative;
+      width: 36px; height: 36px; border-radius: 999px;
       border: 1px solid var(--border);
-      padding: 6px 14px;
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: .2em;
-      color: var(--text-muted);
-      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px; color: var(--text-muted); cursor: pointer;
+      transition: border-color .2s, color .2s;
+    }
+    .icon-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .cart-badge {
+      position: absolute; top: -4px; right: -4px;
+      background: #fff; color: #000;
+      border-radius: 999px; width: 15px; height: 15px;
+      font-size: 9px; display: none; align-items: center; justify-content: center;
+      font-weight: 700;
     }
 
-    /******** HERO ********/
-    .hero {
-      display: grid;
-      grid-template-columns: 3fr 2fr;
-      gap: 32px;
-      margin-top: 8px;
-    }
-    .hero-copy {
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
-      justify-content: center;
-    }
-    .eyebrow {
-      font-size: 12px;
-      letter-spacing: .25em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-    }
-    .hero-title {
-      font-size: 44px;
-      line-height: 1.05;
-      text-transform: uppercase;
-      letter-spacing: .16em;
-    }
-    .hero-sub {
-      font-size: 14px;
-      max-width: 420px;
-      color: var(--text-muted);
-    }
-    .hero-cta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      align-items: center;
-    }
+    /* ── PAGES ── */
+    .page { display: none; min-height: calc(100vh - 72px); animation: fadeIn .35s ease; }
+    .page.active { display: block; }
+    #page-home { min-height: auto; display: block !important; }
+    #page-catalog { min-height: auto; display: block !important; }
+    #page-home-catalog-wrapper { display: block; }
+    #page-home-catalog-wrapper.hidden-wrapper { display: none; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    .container { max-width: var(--container); margin: 0 auto; padding: 48px 40px 80px; }
+
+    /* ── BUTTONS ── */
     .btn {
-      border-radius: 999px;
-      border: 1px solid var(--accent);
-      padding: 10px 20px;
-      font-size: 12px;
-      letter-spacing: .18em;
-      text-transform: uppercase;
-      background: transparent;
-      color: var(--accent);
-      cursor: pointer;
+      border-radius: 999px; border: 1px solid var(--accent);
+      padding: 11px 22px; font-size: 11px; letter-spacing: .2em;
+      text-transform: uppercase; background: transparent;
+      color: var(--accent); cursor: pointer;
+      transition: background .2s, color .2s, transform .1s;
     }
-    .btn-primary {
-      background: var(--accent);
-      color: #000;
-    }
+    .btn:hover { background: rgba(255,255,255,.08); }
+    .btn:active { transform: scale(0.97); }
+    .btn-primary { background: var(--accent); color: #000; }
+    .btn-primary:hover { background: #ddd; }
 
-    .hero-product-card {
-      border-radius: 32px;
-      background: radial-gradient(circle at top left, #ffffff 0, #f4f4f4 55%, #e0e0e0 100%);
-      padding: 26px 24px 24px;
-      color: #111;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-    .hero-product-label {
-      font-size: 10px;
-      letter-spacing: .18em;
-      text-transform: uppercase;
-      color: #777;
-    }
-    .hero-product-image {
-  background: #ffffff;
-  border-radius: 20px;
-  height: 180px;              /* фиксируем высоту блока под продукт */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;           /* обрезаем лишнее, если кадр больше */
-}
-
-.hero-product-image .product-img {
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;        /* вписываем оправу внутрь без обрезки */
-  display: block;
-}
-
-    
-    .hero-product-meta {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 12px;
-    }
-
-    /******** COMMON SECTIONS ********/
-    .section {
-      margin-top: 40px;
-    }
+    /* ── SECTION HEADS ── */
     .section-head {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      margin-bottom: 16px;
+      display: flex; align-items: baseline; justify-content: space-between;
+      margin-bottom: 24px;
     }
     .section-title {
-      font-size: 14px;
-      letter-spacing: .22em;
-      text-transform: uppercase;
+      font-size: 13px; letter-spacing: .24em; text-transform: uppercase;
     }
-    .section-sub {
-      font-size: 12px;
-      color: var(--text-muted);
+    .section-sub { font-size: 11px; color: var(--text-muted); }
+    .eyebrow { font-size: 11px; letter-spacing: .28em; text-transform: uppercase; color: var(--text-muted); }
+
+    /* ════════════════════════════════════
+       PAGE: HOME
+    ════════════════════════════════════ */
+    .hero {
+      display: grid; grid-template-columns: 3fr 2fr; gap: 36px;
+      align-items: center; margin-bottom: 64px;
     }
+    .hero-copy { display: flex; flex-direction: column; gap: 22px; }
+    .hero-title {
+      font-size: 48px; line-height: 1.02;
+      text-transform: uppercase; letter-spacing: .14em;
+    }
+    .hero-sub { font-size: 14px; color: var(--text-muted); max-width: 420px; line-height: 1.7; }
+    .hero-cta { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+    .hero-card {
+      background: radial-gradient(135deg, #fff 0, #e8e8e8 100%);
+      border-radius: 28px; padding: 24px; color: #111;
+      display: flex; flex-direction: column; gap: 14px;
+    }
+    .hero-card-label { font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: #777; }
+    .hero-card-img {
+      background: #fff; border-radius: 18px; height: 190px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 52px; overflow: hidden;
+      transition: transform .35s ease;
+    }
+    .hero-card:hover .hero-card-img { transform: scale(1.04); }
+    .hero-card-meta { display: flex; justify-content: space-between; font-size: 12px; }
 
     .category-grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0,1fr));
-      gap: 24px;
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--gap);
+      margin-top: 12px;
     }
     .category-card {
-      background: var(--bg-elevated);
-      border-radius: 24px;
-      padding: 20px 20px 22px;
-      border: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-    .category-image {
-      background: #f4f4f4;
-      border-radius: 20px;
-      height: 150px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #777;
-      font-size: 11px;
-      text-align: center;
-      padding: 8px;
-    }
-    .category-meta {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 12px;
-    }
-
-    .panel {
-      background: var(--bg-elevated);
-      border-radius: 24px;
-      padding: 20px 22px 22px;
-      border: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      font-size: 13px;
-    }
-    .panel-title {
-      text-transform: uppercase;
-      letter-spacing: .18em;
-      font-size: 12px;
-    }
-    .panel-body {
-      color: var(--text-muted);
-      font-size: 13px;
-    }
-    .booking-preview {
-      border-radius: 18px;
-      padding: 14px;
-      background: var(--bg-soft);
-      border: 1px dashed var(--border);
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-
-    footer.page-footer {
-      margin-top: 40px;
-      padding-top: 16px;
-      border-top: 1px solid var(--border);
-      display: flex;
-      justify-content: flex-end;
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-
-    .screen-separator {
-      margin: 72px auto 56px;
-      max-width: var(--container);
-      border-top: 1px solid rgba(255,255,255,0.08);
-      padding-top: 12px;
-      display: flex;
-      justify-content: space-between;
-      font-size: 11px;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: .18em;
-    }
-
-    /******** CATALOG + FILTER ********/
-    .catalog-header-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
-      margin-bottom: 12px;
-    }
-    .catalog-actions {
-      display: flex;
-      gap: 8px;
-    }
-    .chip-btn {
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      padding: 6px 14px;
-      font-size: 11px;
-      letter-spacing: .12em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      background: transparent;
+      background: var(--bg-elevated); border-radius: 22px; padding: 20px 20px 22px;
+      border: 1px solid var(--border); display: flex; flex-direction: column; gap: 16px;
       cursor: pointer;
+      transition: transform .28s ease, box-shadow .28s ease, border-color .28s ease;
     }
-    .chip-btn.primary {
-      border-color: var(--accent);
-      color: var(--accent);
+    .category-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 50px rgba(0,0,0,.55);
+      border-color: rgba(255,255,255,.15);
     }
+    .category-img {
+      background: #f4f4f4; border-radius: 18px; height: 155px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 44px; overflow: hidden;
+      transition: transform .35s ease;
+    }
+    .category-card:hover .category-img { transform: scale(1.05); }
+    .category-meta { display: flex; align-items: center; justify-content: space-between; font-size: 12px; }
 
-    .filter-row-label {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: .16em;
-      color: var(--text-muted);
-      margin-top: 8px;
-      margin-bottom: 4px;
+    /* ════════════════════════════════════
+       PAGE: CATALOG
+    ════════════════════════════════════ */
+    .catalog-tabs {
+      display: flex; gap: 8px; margin-bottom: 28px; flex-wrap: wrap;
     }
-    .shape-filter-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-bottom: 8px;
+    .tab-btn {
+      border-radius: 999px; border: 1px solid var(--border);
+      padding: 7px 16px; font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
+      color: var(--text-muted); background: transparent; cursor: pointer;
+      transition: all .2s;
     }
+    .tab-btn.active, .tab-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    .filter-label { font-size: 10px; text-transform: uppercase; letter-spacing: .18em; color: var(--text-muted); margin-bottom: 10px; }
+    .shape-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 28px; }
     .shape-chip {
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      padding: 4px 10px;
-      font-size: 11px;
-      color: var(--text-muted);
-      cursor: pointer;
+      border-radius: 999px; border: 1px solid var(--border);
+      padding: 5px 12px; font-size: 10px; letter-spacing: .12em; text-transform: uppercase;
+      color: var(--text-muted); cursor: pointer;
+      transition: all .2s;
     }
-    .shape-chip.active {
-      border-color: var(--accent);
-      color: var(--accent);
-    }
+    .shape-chip.active, .shape-chip:hover { border-color: var(--accent); color: var(--accent); }
 
     .catalog-grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0,1fr));
-      gap: 24px;
-      margin-top: 20px;
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--gap);
     }
     .product-card {
-      background: var(--bg-elevated);
-      border-radius: 22px;
-      border: 1px solid var(--border);
-      padding: 16px 16px 18px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      font-size: 12px;
+      background: var(--bg-elevated); border-radius: 20px; border: 1px solid var(--border);
+      padding: 16px 16px 18px; display: flex; flex-direction: column; gap: 10px;
+      font-size: 12px; cursor: pointer;
+      transition: transform .28s ease, box-shadow .28s ease, border-color .28s ease;
     }
-    
-    .product-image {
-      background: #ffffff;
-      border-radius: 18px;
-      height: 140px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #777;
-      font-size: 11px;
-      text-align: center;
-      padding: 6px;
+    .product-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 18px 44px rgba(0,0,0,.6);
+      border-color: rgba(255,255,255,.14);
     }
-    .product-brand {
-      font-size: 10px;
-      letter-spacing: .16em;
-      text-transform: uppercase;
-      color: var(--text-muted);
+    .product-img-wrap {
+      background: #fff; border-radius: 16px; height: 148px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 38px; overflow: hidden;
+      transition: transform .35s ease;
     }
-    .product-name {
-      margin-top: 4px;
+    .product-card:hover .product-img-wrap { transform: scale(1.05); }
+    .product-brand { font-size: 9px; letter-spacing: .18em; text-transform: uppercase; color: var(--text-muted); }
+    .product-name { font-size: 12px; margin-top: 2px; }
+    .product-desc { font-size: 11px; color: var(--text-muted); line-height: 1.55; flex: 1; }
+    .product-footer { display: flex; align-items: center; justify-content: space-between; margin-top: auto; padding-top: 10px; }
+    .product-footer .price { font-size: 13px; font-weight: 500; }
+    .add-btn {
+      font-size: 10px; letter-spacing: .12em; text-transform: uppercase;
+      color: var(--accent); cursor: pointer; opacity: .75;
+      transition: opacity .2s;
     }
-    .product-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-top: auto;
-      padding-top: 12px;
-    }
+    .add-btn:hover { opacity: 1; }
 
-    /******** PRODUCT DETAIL / MODALS ********/
-    .product-layout {
-      display: grid;
-      grid-template-columns: 3fr 2fr;
-      gap: 28px;
-      margin-top: 24px;
+    /* ════════════════════════════════════
+       PAGE: BOOKING
+    ════════════════════════════════════ */
+    .booking-layout { display: grid; grid-template-columns: 3fr 2fr; gap: 28px; align-items: start; }
+    .booking-panel {
+      background: var(--bg-elevated); border-radius: 22px; border: 1px solid var(--border);
+      padding: 24px 26px 28px; display: flex; flex-direction: column; gap: 20px;
     }
-    .product-gallery-main {
-      background: #ffffff;
-      border-radius: 22px;
-      height: 260px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 11px;
-      color: #777;
-      text-align: center;
-      padding: 8px;
+    .step-label { font-size: 10px; text-transform: uppercase; letter-spacing: .2em; color: var(--text-muted); margin-bottom: 8px; }
+    .month-grid { display: flex; gap: 6px; flex-wrap: wrap; }
+    .chip {
+      border-radius: 999px; border: 1px solid var(--border);
+      padding: 5px 12px; font-size: 11px; color: var(--text-muted); cursor: pointer;
+      transition: all .2s;
     }
-    .product-info-title {
-      font-size: 18px;
-      text-transform: uppercase;
-      letter-spacing: .18em;
+    .chip.active, .chip:hover { border-color: var(--accent); color: var(--accent); }
+    .calendar-grid {
+      display: grid; grid-template-columns: repeat(7, 1fr);
+      gap: 4px; margin-top: 4px;
     }
-    .info-meta {
-      font-size: 12px;
-      color: var(--text-muted);
-      margin-top: 4px;
+    .cal-cell {
+      border-radius: 8px; padding: 6px 0; text-align: center;
+      font-size: 11px; color: var(--text-muted); cursor: pointer;
+      transition: all .2s;
     }
-    .info-price {
-      margin-top: 16px;
-      font-size: 16px;
+    .cal-cell:hover { background: var(--bg-soft); color: var(--text); }
+    .cal-cell.active { background: #fff; color: #000; border-radius: 8px; }
+    .time-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+    .time-slot {
+      border-radius: 999px; border: 1px solid var(--border);
+      padding: 7px 0; text-align: center; font-size: 11px;
+      color: var(--text-muted); cursor: pointer;
+      transition: all .2s;
     }
-    .info-desc {
-      margin-top: 10px;
-      font-size: 13px;
-      color: var(--text-muted);
-      flex: 1;
+    .time-slot:hover { border-color: var(--accent); color: var(--accent); }
+    .time-slot.active { border-color: var(--accent); color: var(--accent); background: rgba(255,255,255,.05); }
+    .booking-summary {
+      background: var(--bg-elevated); border-radius: 22px; border: 1px solid var(--border);
+      padding: 28px 30px 34px; position: sticky; top: 90px;
     }
+    .booking-summary .section-title { font-size: 15px; margin-bottom: 22px; }
+    .booking-row { display: flex; justify-content: space-between; font-size: 13px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+    .booking-row .booking-row-label { color: var(--text-muted); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; }
+    .booking-row .booking-row-val { font-size: 13px; font-weight: 500; }
+    .booking-row:last-of-type { border-bottom: none; }
+    .btn-ai-scan {
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      width: 100%; padding: 16px 24px;
+      background: linear-gradient(135deg, #ffffff 0%, #d0d0d0 100%);
+      color: #000; border: none; border-radius: 14px;
+      font-size: 12px; letter-spacing: .22em; text-transform: uppercase;
+      font-family: inherit; cursor: pointer; font-weight: 600;
+      box-shadow: 0 8px 32px rgba(255,255,255,.12);
+      transition: transform .2s, box-shadow .2s, filter .2s;
+      margin: 20px 0 8px;
+    }
+    .btn-ai-scan:hover { transform: translateY(-2px); box-shadow: 0 14px 40px rgba(255,255,255,.18); filter: brightness(1.05); }
+    .btn-ai-scan:active { transform: scale(0.98); }
+    .btn-ai-scan-icon { font-size: 18px; }
 
-    .modal-shell {
-      margin-top: 24px;
-      border-radius: 22px;
-      border: 1px solid var(--border);
-      background: rgba(0,0,0,0.9);
-      padding: 18px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      font-size: 12px;
-    }
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-
-    .assist-layout {
-      display: grid;
-      grid-template-columns: 3fr 2fr;
-      gap: 20px;
-      margin-top: 8px;
-    }
-    .assist-photo {
-      border-radius: 18px;
-      background: #111;
-      padding: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #777;
-      font-size: 11px;
-      text-align: center;
-    }
-    .assist-side {
-      font-size: 12px;
-      color: var(--text-muted);
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .zrenie-dialog {
-      margin-top: 16px;
-      border-radius: 22px;
-      background: rgba(0,0,0,0.85);
-      border: 1px solid var(--border);
-      padding: 16px 18px 18px;
-      font-size: 12px;
-      color: var(--text);
-    }
-    .zrenie-actions {
-      margin-top: 10px;
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    /******** CART & CHECKOUT ********/
-    .cart-layout {
-      display: grid;
-      grid-template-columns: 3fr 2fr;
-      gap: 24px;
-      margin-top: 22px;
-    }
-    .cart-list {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
+    /* ════════════════════════════════════
+       PAGE: CART
+    ════════════════════════════════════ */
+    .cart-layout { display: grid; grid-template-columns: 3fr 2fr; gap: 28px; align-items: start; }
+    .cart-list { display: flex; flex-direction: column; gap: 14px; }
     .cart-item {
-      display: grid;
-      grid-template-columns: auto 1fr auto;
-      gap: 12px;
-      align-items: center;
-      padding: 10px 12px;
-      border-radius: 18px;
-      background: var(--bg-elevated);
-      border: 1px solid var(--border);
-      font-size: 12px;
+      background: var(--bg-elevated); border-radius: 18px; border: 1px solid var(--border);
+      padding: 16px; display: grid; grid-template-columns: 80px 1fr auto;
+      gap: 14px; align-items: center; font-size: 12px;
     }
     .cart-thumb {
-      width: 72px;
-      height: 56px;
-      border-radius: 14px;
-      background: #ffffff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 10px;
-      color: #777;
-      text-align: center;
-      padding: 4px;
+      background: #fff; border-radius: 12px; height: 62px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px;
     }
-    .cart-info-title {
-      font-size: 12px;
+    .cart-info-brand { font-size: 9px; letter-spacing: .18em; text-transform: uppercase; color: var(--text-muted); }
+    .cart-qty { display: flex; align-items: center; gap: 8px; margin-top: 6px; font-size: 11px; color: var(--text-muted); }
+    .qty-btn {
+      width: 22px; height: 22px; border-radius: 999px;
+      border: 1px solid var(--border); display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 12px; color: var(--text-muted);
+      transition: all .2s;
     }
-    .cart-qty {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 11px;
-      color: var(--text-muted);
-      margin-top: 4px;
-    }
-    .qty-pill {
-      width: 20px;
-      height: 20px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 11px;
-    }
+    .qty-btn:hover { border-color: var(--accent); color: var(--accent); }
     .cart-summary {
-      border-radius: 22px;
-      background: var(--bg-elevated);
-      border: 1px solid var(--border);
-      padding: 16px 18px 18px;
-      font-size: 12px;
+      background: var(--bg-elevated); border-radius: 22px; border: 1px solid var(--border);
+      padding: 22px 24px 26px;
     }
-    .cart-summary-row {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 6px;
-    }
-    .cart-summary-row.total {
-      margin-top: 10px;
-      padding-top: 8px;
+    .summary-row { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 8px; }
+    .summary-row.total {
+      font-size: 14px; font-weight: 600;
+      margin-top: 12px; padding-top: 12px;
       border-top: 1px solid var(--border);
-      font-size: 13px;
     }
+    .cart-empty { text-align: center; padding: 60px 0; color: var(--text-muted); font-size: 13px; }
 
-    .checkout-form {
-      margin-top: 20px;
-      display: grid;
-      grid-template-columns: 2fr 3fr;
-      gap: 24px;
-      font-size: 12px;
-    }
-    .field-group {
-      margin-bottom: 10px;
-    }
-    .field-label {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: .16em;
-      color: var(--text-muted);
-      margin-bottom: 6px;
-    }
-    .field-input {
-      width: 100%;
-      padding: 8px 10px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: var(--bg-elevated);
-      color: var(--text);
-      font-size: 13px;
-    }
-    .field-hint {
-      font-size: 10px;
-      color: var(--text-muted);
-      margin-top: 4px;
-    }
-
-    /******** AUTH & BOOKING ********/
-    .auth-layout {
-      margin-top: 20px;
-      display: grid;
-      grid-template-columns: 1.3fr 1fr;
-      gap: 32px;
-      font-size: 12px;
-    }
+    /* ════════════════════════════════════
+       PAGE: ACCOUNT (AUTH)
+    ════════════════════════════════════ */
+    .auth-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 800px; }
     .auth-panel {
-      border-radius: 22px;
-      background: var(--bg-elevated);
-      border: 1px solid var(--border);
-      padding: 18px 20px 20px;
+      background: var(--bg-elevated); border-radius: 22px; border: 1px solid var(--border);
+      padding: 24px 26px 28px;
     }
-    .auth-title {
-      font-size: 14px;
-      text-transform: uppercase;
-      letter-spacing: .18em;
-      margin-bottom: 10px;
+    .auth-title { font-size: 13px; text-transform: uppercase; letter-spacing: .2em; margin-bottom: 18px; }
+    .field-group { margin-bottom: 14px; }
+    .field-label { font-size: 10px; text-transform: uppercase; letter-spacing: .18em; color: var(--text-muted); margin-bottom: 7px; }
+    .field-input {
+      width: 100%; padding: 9px 14px;
+      border-radius: 999px; border: 1px solid var(--border);
+      background: var(--bg-soft); color: var(--text); font-size: 13px;
+      outline: none; transition: border-color .2s;
     }
-    .auth-alt {
-      margin-top: 12px;
-      font-size: 11px;
-      color: var(--text-muted);
-    }
+    .field-input:focus { border-color: rgba(255,255,255,.3); }
+    .field-hint { font-size: 10px; color: var(--text-muted); margin-top: 5px; padding-left: 14px; }
+    .auth-alt { font-size: 11px; color: var(--text-muted); margin-top: 14px; }
+    .auth-alt span { text-decoration: underline; cursor: pointer; }
 
-    .booking-layout {
-      margin-top: 22px;
-      display: grid;
-      grid-template-columns: 3fr 2fr;
-      gap: 24px;
-      font-size: 12px;
+    /* ════════════════════════════════════
+       PRODUCT MODAL
+    ════════════════════════════════════ */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,.88); z-index: 999;
+      align-items: center; justify-content: center; padding: 20px;
+      animation: fadeIn .2s ease;
     }
-    .booking-steps {
-      border-radius: 22px;
-      background: var(--bg-elevated);
-      border: 1px solid var(--border);
-      padding: 16px 18px 18px;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      background: #111; border-radius: 24px; border: 1px solid #2a2a2a;
+      padding: 30px; max-width: 580px; width: 100%; position: relative;
     }
-    .step-label {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: .16em;
-      color: var(--text-muted);
+    .modal-close {
+      position: absolute; top: 18px; right: 18px;
+      background: none; border: none; color: #fff; font-size: 18px; cursor: pointer; line-height: 1;
     }
-    .month-row {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-top: 6px;
+    .modal-img {
+      background: #fff; border-radius: 18px; height: 200px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 64px; margin-bottom: 20px; overflow: hidden;
     }
-    .chip {
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      padding: 4px 10px;
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-    .chip.active {
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-    .calendar-grid {
-      margin-top: 8px;
-      display: grid;
-      grid-template-columns: repeat(7, minmax(0,1fr));
-      gap: 4px;
-      font-size: 10px;
-    }
-    .calendar-cell {
-      border-radius: 8px;
-      padding: 4px 0;
-      text-align: center;
-      color: var(--text-muted);
-    }
-    .calendar-cell.active {
-      background: #ffffff;
-      color: #000;
-    }
-    .time-grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0,1fr));
-      gap: 6px;
-      margin-top: 6px;
-    }
-    .time-slot {
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      padding: 4px 0;
-      text-align: center;
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-    .time-slot.active {
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-    .booking-summary {
-      border-radius: 22px;
-      background: var(--bg-elevated);
-      border: 1px solid var(--border);
-      padding: 16px 18px 18px;
-      font-size: 12px;
-    }
+    .modal-title { font-size: 18px; text-transform: uppercase; letter-spacing: .18em; }
+    .modal-brand { font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; }
+    .modal-price { font-size: 16px; margin: 10px 0; }
+    .modal-desc { font-size: 13px; color: var(--text-muted); line-height: 1.65; }
+    .modal-specs { font-size: 11px; color: var(--text-muted); margin-top: 8px; line-height: 1.7; }
+    .modal-actions { display: flex; gap: 10px; margin-top: 22px; }
 
-    /******** MOBILE ********/
-    .mobile-row {
-      margin-top: 24px;
-      display: flex;
-      gap: 20px;
-      flex-wrap: wrap;
+    /* ── TOAST ── */
+    #toast {
+      position: fixed; bottom: 28px; right: 28px;
+      background: #fff; color: #000;
+      padding: 11px 22px; border-radius: 999px;
+      font-size: 12px; z-index: 9999;
+      box-shadow: 0 4px 24px rgba(0,0,0,.3);
+      opacity: 0; transform: translateY(8px);
+      transition: opacity .3s, transform .3s;
+      pointer-events: none;
     }
-    .phone-shell {
-      width: 220px;
-      border-radius: 40px;
-      padding: 10px;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: radial-gradient(circle at top, #202020 0, #050505 60%);
-    }
-    .phone-screen {
-      border-radius: 32px;
-      background: #050505;
-      padding: 10px;
-      height: 420px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      font-size: 10px;
-    }
-    .phone-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding-bottom: 6px;
-      border-bottom: 1px solid var(--border);
-      font-size: 9px;
-      text-transform: uppercase;
-      letter-spacing: .16em;
-    }
-    .phone-hero {
-      margin-top: 10px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-    .phone-hero-title {
-      font-size: 13px;
-      text-transform: uppercase;
-      letter-spacing: .16em;
-    }
-    .phone-product {
-      margin-top: 8px;
-      border-radius: 18px;
-      background: #f5f5f5;
-      height: 120px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #777;
-      text-align: center;
-      padding: 6px;
-      font-size: 9px;
-    }
-    .phone-btn-row {
-      margin-top: 8px;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-    .phone-btn {
-      border-radius: 999px;
-      border: 1px solid var(--accent);
-      padding: 6px 8px;
-      text-align: center;
-      font-size: 9px;
-      text-transform: uppercase;
-      letter-spacing: .16em;
-    }
-    .phone-btn.primary {
-      background: var(--accent);
-      color: #000;
-    }
+    #toast.show { opacity: 1; transform: translateY(0); }
 
-    header.desktop-header.hidden {
-      transform: translateY(-100%);
-    }
+    /* ── RESPONSIVE ── */
     @media (max-width: 900px) {
-      .hero,
-      .product-layout,
-      .cart-layout,
-      .checkout-form,
-      .auth-layout,
-      .booking-layout {
-        grid-template-columns: minmax(0,1fr);
+      .hero, .category-grid, .catalog-grid,
+      .booking-layout, .cart-layout, .auth-grid {
+        grid-template-columns: 1fr;
       }
-      header.desktop-header {
-        flex-wrap: wrap;
-      }
-      .category-grid,
-      .catalog-grid {
-        grid-template-columns: repeat(2, minmax(0,1fr));
-      }
+      .container { padding: 32px 20px 60px; }
+      header { padding: 0 20px; }
+      nav { gap: 16px; }
     }
   </style>
 </head>
 <body>
-  <main class="page">
-   
 
-    <!-- HOME -->
-    <section class="frame-wrap">
-      <div class="desktop-shell">
-        <header class="desktop-header">
-          <div class="logo">
-            <div class="logo-mark"></div>
-            <button class="logo-text-button">NOIR VISION</button>
-          </div>
-          <nav class="main-nav">
-            <a href="#home" class="primary">Главная</a>
-            <a href="#catalog-frames">Каталог</a>
-            <a href="#booking">Запись к врачу</a>
-          </nav>
-          <div class="header-actions">
-            <div class="pill">Вход</div>
-            <div class="icon-btn">🛒</div>
-          </div>
-        </header>
-
-        <section id="home" class="hero">
-          <div class="hero-copy">
-            <div class="eyebrow">Салон оптики</div>
-            <h1 class="hero-title">Всё для очков в одном месте</h1>
-            <p class="hero-sub">
-              Оправы, жидкости для линз и футляры в удобном онлайн‑каталоге.
-            </p>
-            <div class="hero-cta">
-              <button class="btn btn-primary">Смотреть оправы</button>
-              <button class="btn">Онлайн запись к врачу</button>
-            </div>
-          </div>
-          <aside class="hero-product-card">
-            <div class="hero-product-label">Пример карточки оправы</div>
-            <div class="hero-product-image">
-              <img src="frame.png" alt="Оправа" class="product-img">
-            </div>
-            <div class="hero-product-meta">
-              <div>
-                <div class="product-brand" style="color:#999;">NOIR VISION ATELIER</div>
-                <div style="font-size:13px;">Noir Round 01</div>
-              </div>
-              <div style="font-size:13px;">29 000 ₽</div>
-            </div>
-          </aside>
-        </section>
-
-        <section class="section">
-          <div class="section-head">
-            <div class="section-title">Категории</div>
-            <div class="section-sub">Оправы · Жидкости для линз · Футляры</div>
-          </div>
-          <div class="category-grid">
-            <article class="category-card">
-              <div class="category-image">Оправы · белый фон, оправа по центру, немного вбок</div>
-              <div class="category-meta">
-                <div>
-                  <div class="product-brand">NOIR VISION</div>
-                  <div>Оправы</div>
-                </div>
-                <button class="btn" style="padding:6px 12px;">В каталог</button>
-              </div>
-            </article>
-            <article class="category-card">
-              <div class="category-image">Жидкости · белый фон, флакон по центру</div>
-              <div class="category-meta">
-                <div>
-                  <div class="product-brand">NOIR CARE</div>
-                  <div>Жидкости для линз</div>
-                </div>
-                <button class="btn" style="padding:6px 12px;">В каталог</button>
-              </div>
-            </article>
-            <article class="category-card">
-              <div class="category-image">Футляры · белый фон, футляр по центру</div>
-              <div class="category-meta">
-                <div>
-                  <div class="product-brand">OBSIDIAN / NOIR</div>
-                  <div>Футляры</div>
-                </div>
-                <button class="btn" style="padding:6px 12px;">В каталог</button>
-              </div>
-            </article>
-            <article class="category-card">
-              <div class="category-image" style="font-size:11px; color:#888;">Линзы · белый фон, линза по центру</div>
-              <div class="category-meta">
-                <div>
-                  <div class="product-brand">NOIR OPTICS</div>
-                  <div>Линзы</div>
-                </div>
-                <button class="btn" style="padding:6px 12px;">В каталог</button>
-              </div>
-            </article>
-          </div>
-        </section>
-
-        <section class="section" id="booking">
-          <article class="panel">
-            <div class="panel-title">Онлайн запись к врачу</div>
-            <div class="panel-body">
-              Выберите месяц, дату и время приёма.
-            </div>
-            <div class="booking-preview">
-              <div class="step-label" style="margin-bottom:4px;">Месяц</div>
-              <div class="month-row">
-                <div class="chip active">Январь</div>
-                <div class="chip">Февраль</div>
-                <div class="chip">Март</div>
-                <div class="chip">Апрель</div>
-                <div class="chip">Май</div>
-                <div class="chip">Июнь</div>
-                <div class="chip">Июль</div>
-                <div class="chip">Август</div>
-                <div class="chip">Сентябрь</div>
-                <div class="chip">Октябрь</div>
-                <div class="chip">Ноябрь</div>
-                <div class="chip">Декабрь</div>
-              </div>
-              <div class="step-label" style="margin-top:8px;margin-bottom:4px;">Дата</div>
-              <div class="calendar-grid" style="gap:3px;">
-                <div class="calendar-cell">1</div>
-                <div class="calendar-cell">2</div>
-                <div class="calendar-cell">3</div>
-                <div class="calendar-cell">4</div>
-                <div class="calendar-cell">5</div>
-                <div class="calendar-cell">6</div>
-                <div class="calendar-cell">7</div>
-                <div class="calendar-cell">8</div>
-                <div class="calendar-cell active">9</div>
-                <div class="calendar-cell">10</div>
-                <div class="calendar-cell">11</div>
-                <div class="calendar-cell">12</div>
-                <div class="calendar-cell">13</div>
-                <div class="calendar-cell">14</div>
-                <div class="calendar-cell">15</div>
-                <div class="calendar-cell">16</div>
-                <div class="calendar-cell">17</div>
-                <div class="calendar-cell">18</div>
-                <div class="calendar-cell">19</div>
-                <div class="calendar-cell">20</div>
-                <div class="calendar-cell">21</div>
-                <div class="calendar-cell">22</div>
-                <div class="calendar-cell">23</div>
-                <div class="calendar-cell">24</div>
-                <div class="calendar-cell">25</div>
-                <div class="calendar-cell">26</div>
-                <div class="calendar-cell">27</div>
-                <div class="calendar-cell">28</div>
-                <div class="calendar-cell">29</div>
-                <div class="calendar-cell">30</div>
-              </div>
-              <div class="step-label" style="margin-top:8px;margin-bottom:4px;">Время</div>
-              <div class="time-grid" style="gap:4px;grid-template-columns:repeat(3,minmax(0,1fr));">
-                <div class="time-slot">10:00</div>
-                <div class="time-slot active">11:30</div>
-                <div class="time-slot">13:00</div>
-                <div class="time-slot">15:00</div>
-                <div class="time-slot">16:30</div>
-                <div class="time-slot">18:00</div>
-              </div>
-            </div>
-            <button class="btn" style="margin-top:8px; align-self:flex-start;">Записаться онлайн</button>
-          </article>
-        </section>
-
-        <footer class="page-footer"></footer>
-      </div>
-    </section>
-
-    <!-- CATALOGS -->
-    <div class="screen-separator">
-      <span>Desktop · Каталоги</span>
-      <span>Оправы по формам · Жидкости · Футляры</span>
+<!-- ── HEADER ── -->
+<header id="site-header">
+  <div class="logo" onclick="showPage('home')">
+    <div class="logo-mark"></div>
+    NOIR VISION
+  </div>
+  <nav>
+    <a data-page="home"    class="active">Главная</a>
+    <a data-page="catalog">Каталог</a>
+    <a data-page="booking">Запись к врачу</a>
+    <a data-page="cart">Корзина</a>
+  </nav>
+  <div class="header-actions">
+    <div class="pill" onclick="showPage('account')">Вход</div>
+    <div class="icon-btn" onclick="showPage('cart')">
+      🛒
+      <span class="cart-badge" id="cart-badge"></span>
     </div>
+  </div>
+</header>
 
-    <section id="catalog-frames" class="frame-wrap">
-      <header class="catalog-header-row">
-        <div>
-          <div class="section-title">Каталог – оправы</div>
-        </div>
-        <div class="catalog-actions">
-          <button class="chip-btn primary">Фильтры</button>
-          <button class="chip-btn" onclick="document.getElementById('ai-selection').scrollIntoView({behavior:'smooth'})">Помощь с подбором</button>
-        </div>
-      </header>
-      <div class="filter-row-label">Форма оправы</div>
-      <div class="shape-filter-row">
-        <div class="shape-chip active">Круглые</div>
-        <div class="shape-chip">Овальные</div>
-        <div class="shape-chip">Квадратные</div>
-        <div class="shape-chip">Прямоугольные</div>
-        <div class="shape-chip">Авиаторы (капля)</div>
-        <div class="shape-chip">Кошачий глаз</div>
-        <div class="shape-chip">Вайфареры (трапеция)</div>
-      </div>
-
-      <div class="catalog-grid">
-        <!-- Круглые -->
-        <article class="product-card">
-          <div class="product-image">Noir Round 01 · круглая оправа на белом фоне</div>
-          <div class="product-brand">NOIR VISION ATELIER</div>
-          <div class="product-name">Noir Round 01</div>
-          <div class="info-desc">Круглая оправа для мягких черт лица.</div>
-          <div class="product-footer">
-            <span>29 000 ₽</span>
-            <span style="font-size:11px; color:var(--text-muted);">Подробнее</span>
-          </div>
-        </article>
-        <article class="product-card">
-          <div class="product-image">Noir Round 02</div>
-          <div class="product-brand">NOIR VISION ATELIER</div>
-          <div class="product-name">Noir Round 02</div>
-          <div class="info-desc">Более тонкая круглая оправа.</div>
-          <div class="product-footer">
-            <span>30 000 ₽</span>
-            <span style="font-size:11px; color:var(--text-muted);">Подробнее</span>
-          </div>
-        </article>
-        <article class="product-card">
-          <div class="product-image">Noir Round 03</div>
-          <div class="product-brand">NOIR VISION ATELIER</div>
-          <div class="product-name">Noir Round 03</div>
-          <div class="info-desc">Круглая оправа с акцентом на дужках.</div>
-          <div class="product-footer">
-            <span>31 000 ₽</span>
-            <span style="font-size:11px; color:var(--text-muted);">Подробнее</span>
-          </div>
-        </article>
-
-        <!-- Овальные -->
-        <article class="product-card">
-          <div class="product-image">Noir Oval 01</div>
-          <div class="product-brand">NOIR VISION ATELIER</div>
-          <div class="product-name">Noir Oval 01</div>
-          <div class="info-desc">Овальная оправа для универсальной посадки.</div>
-          <div class="product-footer">
-            <span>30 000 ₽</span>
-            <span style="font-size:11px; color:var(--text-muted);">Подробнее</span>
-          </div>
-        </article>
-        <article class="product-card">
-          <div class="product-image">Noir Oval 02</div>
-          <div class="product-brand">NOIR VISION ATELIER</div>
-          <div class="product-name">Noir Oval 02</div>
-          <div class="info-desc">Тонкий овальный силуэт.</div>
-          <div class="product-footer">
-            <span>31 000 ₽</span>
-            <span style="font-size:11px; color:var(--text-muted);">Подробнее</span>
-          </div>
-        </article>
-        <article class="product-card">
-          <div class="product-image">Noir Oval 03</div>
-          <div class="product-brand">NOIR VISION ATELIER</div>
-          <div class="product-name">Noir Oval 03</div>
-          <div class="info-desc">Овальная оправа с мягкой линией верха.</div>
-          <div class="product-footer">
-            <span>32 000 ₽</span>
-            <span style="font-size:11px; color:var(--text-muted);">Подробнее</span>
-          </div>
-        </article>
-
-        <!-- Квадратные -->
-        <article class="product-card">
-          <div class="product-image">Noir Square 01</div>
-          <div class="product-brand">OBSIDIAN FRAMES</div>
-          <div class="product-name">Noir Square 01</div>
-          <div class="info-desc">Квадратная оправа с выраженной геометрией.</div>
-          <div class="product-footer">
-            <span>32 000 ₽</span>
-            <span style="font-size:11px; color:var(--text-muted);">Подробнее</span>
-          </div>
-        </article>
-        <article class="product-card">
-          <div class="product-image">Noir Square 02</div>
-          <div class="product-brand">OBSIDIAN FRAMES</div>
-          <div class="product-name">Noir Square 02</div>
-          <div class="info-desc">Более широкая квадратная форма.</div>
-          <div class="product-footer">
-            <span>33 000 ₽</span>
-            <span style="font-size:11px; color:var(--text-muted);">Подробнее</span>
-          </div>
-        </article>
-        <article class="product-card">
-          <div class="product-image">Noir Square 03</div>
-          <div class="product-brand">OBSIDIAN FRAMES</div>
-          <div class="product-name">Noir Square 03</div>
-          <div class="info-desc">Квадратная оправа с тонкой рамкой.</div>
-          <div class="product-footer">
-            <span>34 000 ₽</span>
-            <span style="font-size:11px; color:var(--text-muted);">Подробнее</span>
-          </div>
-        </article>
-
-        <!-- Прямоугольные -->
-        <article class="product-card">
-          <div class="product-image">Noir Rect 01</div>
-          <div class="product-brand">STUDIO ECLIPSE</div>
-          <div class="product-name">Noir Rect 01</div>
-          <div class="info-desc">Прямоугольная оправа с чёткой линией верха.</div>
-          <div class="product-footer">
-            <span>33 000 ₽</span>
-            <span style="font-size:11px; color:var(--text-muted);">Подробнее</span>
-          </div>
-        </article>
-        <article class="product-card">
-          <div class="product-image">Noir Rect 02</div>
-          <div class="product-brand">STUDIO ECLIPSE</div>
-          <div class="product-name">Noir Rect 02</div>
-          <div class="info-desc">Более узкий прямоугольный силуэт.</div>
-          <div class="product-footer">
-            <span>34 000 ₽</span>
-            <span style="font-size:11px; color:var(--text-muted);">Подробнее</span>
-          </div>
-        </article>
-        <article class="product-card">
-          <div class="product-image">Noir Rect 03</div>
-          <div class="product-brand">STUDIO ECLIPSE</div>
-          <div class="product-name">Noir Rect 03</div>
-          <div class="info-desc">Прямоугольная оправа с минимальными деталями.</div>
-          <div class="product-footer">
-            <span>35 000 ₽</span>
-            <span style="font-size:11px; color:var(--text-muted);">Подробнее</span>
-          </div>
-        </article>
-
-        <!-- Авиаторы -->
-        <article class="product-card">
-          <div class="product-image">Noir Aviator 01</div>
-          <div class="product-brand">NOIR VISION ATELIER</div>
-          <div class="product-name">Noir Aviator 01</div>
-          <div class="info-desc">Классические авиаторы с каплевидной формой.</div>
-          <div class="product-footer">
-            <span>36 000 ₽</span>
-            <span style="font-size:11px; color:var(--text-muted);">Подробнее</span>
-          </div>
-        </article>
-        <article class="product-card">
-          <div class="product-image">Noir Aviator 02</div>
-          <div class="product-brand">NOIR VISION ATELIER</div>
-          <div class="product-name">Noir Aviator 02</div>
-          <div class="info-desc">Более тонкая оправа‑авиатор.</div>
-          <div class="product-footer">
-            <span>37 000 ₽</span>
-            <span style="font-size:11px; color:var(--text-muted);">Подробнее</span>
-          </div>
-        </article>
-        <article class="product-card">
-          <div class="product-image">Noir Aviator 03</div>
-          <div class="product-brand">NOIR VISION ATELIER</div>
-          <div class="product-name">Noir Aviator 03</div>
-          <div class="info-desc">Авиаторы с более широкой дужкой.</div>
-          <div class="product-footer">
-            <span>38 000 ₽</span>
-            <span style="font-size:11px; color:var(--text-muted);">Подробнее</span>
-          </div>
-        </article>
-
-        <!-- Кошачий глаз -->
-        <article class="product-card">
-          <div class="product-image">Noir Cat 01</div>
-          <div class="product-brand">STUDIO ECLIPSE</div>
-          <div class="product-name">Noir Cat 01</div>
-          <div class="info-desc">Оправа «кошачий глаз» с акцентом на уголке.</div>
-          <div class="product-footer">
-            <span>35 000 ₽</span>
-            <span style="font-size:11px; color:var(--text-muted);">Подробнее</span>
-          </div>
-        </article>
-        <article class="product-card">
-          <div class="product-image">Noir Cat 02</div>
-          <div class="product-brand">STUDIO ECLIPSE</div>
-          <div class="product-name">Noir Cat 02</div>
-          <div class="info-desc">Более мягкая форма «кошачий глаз».</div>
-          <div class="product-footer">
-            <span>36 000 ₽</span>
-            <span style="font-size:11px; color:var(--text-muted);">Подробнее</span>
-          </div>
-        </article>
-        <article class="product-card">
-          <div class="product-image">Noir Cat 03</div>
-          <div class="product-brand">STUDIO ECLIPSE</div>
-          <div class="product-name">Noir Cat 03</div>
-          <div class="info-desc">Выраженный «кошачий глаз» с тонкой рамкой.</div>
-          <div class="product-footer">
-            <span>37 000 ₽</span>
-            <span style="font-size:11px; color:var(--text-muted);">Подробнее</span>
-          </div>
-        </article>
-
-        <!-- Вайфареры -->
-        <article class="product-card">
-          <div class="product-image">Noir Wayfarer 01</div>
-          <div class="product-brand">OBSIDIAN FRAMES</div>
-          <div class="product-name">Noir Wayfarer 01</div>
-          <div class="info-desc">Трапециевидная оправа в стиле вайфарер.</div>
-          <div class="product-footer">
-            <span>34 000 ₽</span>
-            <span style="font-size:11px; color:var(--text-muted);">Подробнее</span>
-          </div>
-        </article>
-        <article class="product-card">
-          <div class="product-image">Noir Wayfarer 02</div>
-          <div class="product-brand">OBSIDIAN FRAMES</div>
-          <div class="product-name">Noir Wayfarer 02</div>
-          <div class="info-desc">Более широкие вайфареры с плотной рамкой.</div>
-          <div class="product-footer">
-            <span>35 000 ₽</span>
-            <span style="font-size:11px; color:var(--text-muted);">Подробнее</span>
-          </div>
-        </article>
-        <article class="product-card">
-          <div class="product-image">Noir Wayfarer 03</div>
-          <div class="product-brand">OBSIDIAN FRAMES</div>
-          <div class="product-name">Noir Wayfarer 03</div>
-          <div class="info-desc">Компактные вайфареры с мягкими углами.</div>
-          <div class="product-footer">
-            <span>36 000 ₽</span>
-            <span style="font-size:11px; color:var(--text-muted);">Подробнее</span>
-          </div>
-        </article>
-      </div>
-
-      <!-- LIQUIDS -->
-      <div style="margin-top:40px;">
-        <div class="section-title">Каталог – жидкости для линз</div>
-        <div class="catalog-grid">
-          <article class="product-card">
-            <div class="product-image">Pure Clarity+</div>
-            <div class="product-brand">NOIR CARE</div>
-            <div class="product-name">Pure Clarity+</div>
-            <div class="info-desc">Раствор для ежедневной очистки и хранения линз.</div>
-            <div class="product-footer">
-              <span>2 900 ₽</span>
-              <span style="font-size:11px; color:var(--text-muted);">Подробнее</span>
-            </div>
-          </article>
-          <article class="product-card">
-            <div class="product-image">Night Shield Pro</div>
-            <div class="product-brand">NOIR CARE</div>
-            <div class="product-name">Night Shield Pro</div>
-            <div class="info-desc">Уход за линзами на ночь, мягкая формула.</div>
-            <div class="product-footer">
-              <span>3 200 ₽</span>
-              <span style="font-size:11px; color:var(--text-muted);">Подробнее</span>
-            </div>
-          </article>
-          <article class="product-card">
-            <div class="product-image">Ultra Clean Mist</div>
-            <div class="product-brand">NOIR CARE</div>
-            <div class="product-name">Ultra Clean Mist</div>
-            <div class="info-desc">Спрей для быстрой очистки и увлажнения.</div>
-            <div class="product-footer">
-              <span>3 500 ₽</span>
-              <span style="font-size:11px; color:var(--text-muted);">Подробнее</span>
-            </div>
-          </article>
-        </div>
-
-        <div class="zrenie-dialog">
-          <div style="font-size:13px; margin-bottom:6px;">Вы знаете своё зрение (диоптрии и оси)?</div>
-          <div class="zrenie-actions">
-            <button class="btn-primary btn" style="padding:6px 16px;">Да, знаю</button>
-            <button class="btn" style="padding:6px 16px;">Нет, нужна помощь</button>
-          </div>
+<!-- ══════════════════════════════
+     PAGE: HOME + CATALOG (one scroll)
+══════════════════════════════ -->
+<div id="page-home-catalog-wrapper">
+<div class="page active" id="page-home">
+  <div class="container">
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-copy">
+        <div class="eyebrow">Салон оптики</div>
+        <h1 class="hero-title">Всё для очков<br>в одном месте</h1>
+        <p class="hero-sub">Оправы, жидкости для линз и футляры в удобном онлайн‑каталоге.</p>
+        <div class="hero-cta">
+          <button class="btn btn-primary" onclick="showPage('catalog')">Смотреть оправы</button>
+          <button class="btn" onclick="showPage('booking')">Онлайн запись к врачу</button>
         </div>
       </div>
-
-      <!-- CASES -->
-      <div style="margin-top:40px;">
-        <div class="section-title">Каталог – футляры</div>
-        <div class="catalog-grid">
-          <article class="product-card">
-            <div class="product-image">Stone Case 01</div>
-            <div class="product-brand">OBSIDIAN CASES</div>
-            <div class="product-name">Stone Case 01</div>
-            <div class="info-desc">Жёсткий чехол тёмно‑серого цвета.</div>
-            <div class="product-footer">
-              <span>4 500 ₽</span>
-              <span style="font-size:11px; color:var(--text-muted);">Подробнее</span>
-            </div>
-          </article>
-          <article class="product-card">
-            <div class="product-image">Stone Case 02</div>
-            <div class="product-brand">OBSIDIAN CASES</div>
-            <div class="product-name">Stone Case 02</div>
-            <div class="info-desc">Матовый чёрный футляр с магнитной застёжкой.</div>
-            <div class="product-footer">
-              <span>4 900 ₽</span>
-              <span style="font-size:11px; color:var(--text-muted);">Подробнее</span>
-            </div>
-          </article>
-          <article class="product-card">
-            <div class="product-image">Leather Fold 01</div>
-            <div class="product-brand">NOIR LEATHER</div>
-            <div class="product-name">Leather Fold 01</div>
-            <div class="info-desc">Плоский кожаный чехол‑конверт.</div>
-            <div class="product-footer">
-              <span>5 200 ₽</span>
-              <span style="font-size:11px; color:var(--text-muted);">Подробнее</span>
-            </div>
-          </article>
-          <article class="product-card">
-            <div class="product-image">Leather Box 02</div>
-            <div class="product-brand">NOIR LEATHER</div>
-            <div class="product-name">Leather Box 02</div>
-            <div class="info-desc">Объёмный кожаный футляр с тиснением.</div>
-            <div class="product-footer">
-              <span>5 500 ₽</span>
-              <span style="font-size:11px; color:var(--text-muted);">Подробнее</span>
-            </div>
-          </article>
-          <article class="product-card">
-            <div class="product-image">Concrete Box 01</div>
-            <div class="product-brand">STUDIO ECLIPSE</div>
-            <div class="product-name">Concrete Box 01</div>
-            <div class="info-desc">Футляр строгой прямоугольной формы.</div>
-            <div class="product-footer">
-              <span>5 800 ₽</span>
-              <span style="font-size:11px; color:var(--text-muted);">Подробнее</span>
-            </div>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <!-- LENSES CATALOG -->
-    <div class="screen-separator">
-      <span>Desktop · Каталог линз</span>
-      <span>По назначению · По коррекции · По материалу · По покрытию</span>
-    </div>
-
-    <section id="catalog-lenses" class="frame-wrap">
-      <header class="catalog-header-row">
-        <div>
-          <div class="section-title">Линзы для очков</div>
-        </div>
-        <div class="catalog-actions">
-          <button class="chip-btn primary">Фильтры</button>
-          <button class="chip-btn" onclick="document.getElementById('booking')?.scrollIntoView({behavior:'smooth'}) || document.querySelector('[id*=booking]')?.scrollIntoView({behavior:'smooth'})">Помощь с подбором</button>
-        </div>
-      </header>
-
-      <div class="shape-filter-row" id="lens-filters" style="margin-top:20px; flex-wrap:wrap; gap:8px;">
-        <div class="shape-chip active" data-filter="all" onclick="filterLenses(this)">Все</div>
-        <div class="shape-chip" data-filter="dal" onclick="filterLenses(this)">Для дали</div>
-        <div class="shape-chip" data-filter="bliz" onclick="filterLenses(this)">Для близи</div>
-        <div class="shape-chip" data-filter="comp" onclick="filterLenses(this)">Компьютерные</div>
-        <div class="shape-chip" data-filter="prog" onclick="filterLenses(this)">Прогрессивные</div>
-        <div class="shape-chip" data-filter="drive" onclick="filterLenses(this)">Для вождения</div>
-        <div class="shape-chip" data-filter="photo" onclick="filterLenses(this)">Фотохромные</div>
-        <div class="shape-chip" data-filter="sun" onclick="filterLenses(this)">Солнцезащитные</div>
-        <div class="shape-chip" data-filter="polar" onclick="filterLenses(this)">Поляризационные</div>
-        <div class="shape-chip" data-filter="blue" onclick="filterLenses(this)">Синий свет</div>
-      </div>
-
-      <div class="catalog-grid" id="lens-grid" style="margin-top:28px;">
-        <article class="product-card" data-lens="dal">
-          <div class="product-image" style="font-size:10px;color:#888;padding:8px;">Для дали Standard · белый фон, линза по центру</div>
-          <div class="product-brand">NOIR OPTICS</div>
-          <div class="product-name">Distance Standard</div>
-          <div class="info-desc">Базовые монофокальные линзы для дали. Чёткое зрение при вождении и на улице.</div>
-          <div class="product-footer"><span>2 799 ₽</span><span style="font-size:11px;color:var(--text-muted);">Подробнее</span></div>
-        </article>
-
-        <article class="product-card" data-lens="dal">
-          <div class="product-image" style="font-size:10px;color:#888;padding:8px;">Для дали Slim · белый фон, линза по центру</div>
-          <div class="product-brand">NOIR OPTICS</div>
-          <div class="product-name">Distance Slim 1.60</div>
-          <div class="info-desc">Тонкие линзы индекса 1.60 для умеренных диоптрий. Лёгкие и комфортные.</div>
-          <div class="product-footer"><span>3 999 ₽</span><span style="font-size:11px;color:var(--text-muted);">Подробнее</span></div>
-        </article>
-
-        <article class="product-card" data-lens="dal">
-          <div class="product-image" style="font-size:10px;color:#888;padding:8px;">Для дали Ultra Thin · белый фон, линза по центру</div>
-          <div class="product-brand">NOIR OPTICS</div>
-          <div class="product-name">Distance Ultra Thin 1.67</div>
-          <div class="info-desc">Ультратонкие линзы 1.67 — минимальная толщина при высоких диоптриях.</div>
-          <div class="product-footer"><span>5 499 ₽</span><span style="font-size:11px;color:var(--text-muted);">Подробнее</span></div>
-        </article>
-
-        <article class="product-card" data-lens="dal">
-          <div class="product-image" style="font-size:10px;color:#888;padding:8px;">Для дали Hi-Index · белый фон, линза по центру</div>
-          <div class="product-brand">OBSIDIAN OPTICS</div>
-          <div class="product-name">Distance Hi-Index 1.74</div>
-          <div class="info-desc">Премиальные линзы индекса 1.74 для самых высоких рецептов. Практически незаметны в оправе.</div>
-          <div class="product-footer"><span>7 999 ₽</span><span style="font-size:11px;color:var(--text-muted);">Подробнее</span></div>
-        </article>
-
-        <article class="product-card" data-lens="bliz">
-          <div class="product-image" style="font-size:10px;color:#888;padding:8px;">Для близи Classic · белый фон, линза по центру</div>
-          <div class="product-brand">NOIR OPTICS</div>
-          <div class="product-name">Reading Classic</div>
-          <div class="info-desc">Классические линзы для близи — чтение книг, работа с документами и мелкими деталями.</div>
-          <div class="product-footer"><span>2 499 ₽</span><span style="font-size:11px;color:var(--text-muted);">Подробнее</span></div>
-        </article>
-
-        <article class="product-card" data-lens="bliz">
-          <div class="product-image" style="font-size:10px;color:#888;padding:8px;">Для близи Slim · белый фон, линза по центру</div>
-          <div class="product-brand">NOIR OPTICS</div>
-          <div class="product-name">Reading Slim 1.60</div>
-          <div class="info-desc">Тонкие линзы для близи индекса 1.60. Комфортны при длительном чтении.</div>
-          <div class="product-footer"><span>3 499 ₽</span><span style="font-size:11px;color:var(--text-muted);">Подробнее</span></div>
-        </article>
-
-        <article class="product-card" data-lens="bliz">
-          <div class="product-image" style="font-size:10px;color:#888;padding:8px;">Для близи Comfort · белый фон, линза по центру</div>
-          <div class="product-brand">OBSIDIAN OPTICS</div>
-          <div class="product-name">Reading Comfort Plus</div>
-          <div class="info-desc">С антибликовым и олеофобным покрытием — меньше бликов при чтении при искусственном освещении.</div>
-          <div class="product-footer"><span>4 199 ₽</span><span style="font-size:11px;color:var(--text-muted);">Подробнее</span></div>
-        </article>
-
-        <article class="product-card" data-lens="bliz">
-          <div class="product-image" style="font-size:10px;color:#888;padding:8px;">Для близи Ultra · белый фон, линза по центру</div>
-          <div class="product-brand">STUDIO ECLIPSE</div>
-          <div class="product-name">Reading Ultra 1.67</div>
-          <div class="info-desc">Ультратонкие линзы для близи — элегантны в тонкой оправе, высокий индекс 1.67.</div>
-          <div class="product-footer"><span>5 999 ₽</span><span style="font-size:11px;color:var(--text-muted);">Подробнее</span></div>
-        </article>
-
-        <article class="product-card" data-lens="comp">
-          <div class="product-image" style="font-size:10px;color:#888;padding:8px;">Компьютерные Base · белый фон, линза по центру</div>
-          <div class="product-brand">NOIR OPTICS</div>
-          <div class="product-name">Office Base</div>
-          <div class="info-desc">Базовые офисные линзы для работы за ПК. Оптимизированы для дистанции 40–70 см.</div>
-          <div class="product-footer"><span>3 799 ₽</span><span style="font-size:11px;color:var(--text-muted);">Подробнее</span></div>
-        </article>
-
-        <article class="product-card" data-lens="comp">
-          <div class="product-image" style="font-size:10px;color:#888;padding:8px;">Компьютерные Blue Block · белый фон, линза по центру</div>
-          <div class="product-brand">NOIR OPTICS</div>
-          <div class="product-name">Office Blue Block</div>
-          <div class="info-desc">Офисные линзы с фильтром синего света. Снижают усталость при долгой работе с экраном.</div>
-          <div class="product-footer"><span>4 799 ₽</span><span style="font-size:11px;color:var(--text-muted);">Подробнее</span></div>
-        </article>
-
-        <article class="product-card" data-lens="comp">
-          <div class="product-image" style="font-size:10px;color:#888;padding:8px;">Компьютерные Wide Zone · белый фон, линза по центру</div>
-          <div class="product-brand">OBSIDIAN OPTICS</div>
-          <div class="product-name">Office Wide Zone</div>
-          <div class="info-desc">Расширенная зона чёткого зрения для комфортной работы с несколькими мониторами.</div>
-          <div class="product-footer"><span>5 499 ₽</span><span style="font-size:11px;color:var(--text-muted);">Подробнее</span></div>
-        </article>
-
-        <article class="product-card" data-lens="comp">
-          <div class="product-image" style="font-size:10px;color:#888;padding:8px;">Компьютерные Premium · белый фон, линза по центру</div>
-          <div class="product-brand">STUDIO ECLIPSE</div>
-          <div class="product-name">Office Premium FreeForm</div>
-          <div class="info-desc">Цифровая FreeForm-обработка для максимальной точности на рабочих дистанциях.</div>
-          <div class="product-footer"><span>7 499 ₽</span><span style="font-size:11px;color:var(--text-muted);">Подробнее</span></div>
-        </article>
-
-        <article class="product-card" data-lens="prog">
-          <div class="product-image" style="font-size:10px;color:#888;padding:8px;">Прогрессивные Entry · белый фон, линза по центру</div>
-          <div class="product-brand">NOIR OPTICS</div>
-          <div class="product-name">Progressive Entry</div>
-          <div class="info-desc">Прогрессивные линзы начального уровня. Широкие зоны зрения, удобная адаптация.</div>
-          <div class="product-footer"><span>6 999 ₽</span><span style="font-size:11px;color:var(--text-muted);">Подробнее</span></div>
-        </article>
-
-        <article class="product-card" data-lens="prog">
-          <div class="product-image" style="font-size:10px;color:#888;padding:8px;">Прогрессивные Comfort · белый фон, линза по центру</div>
-          <div class="product-brand">NOIR OPTICS</div>
-          <div class="product-name">Progressive Comfort</div>
-          <div class="info-desc">Улучшенный дизайн с расширенными боковыми зонами — меньше периферийных искажений.</div>
-          <div class="product-footer"><span>8 999 ₽</span><span style="font-size:11px;color:var(--text-muted);">Подробнее</span></div>
-        </article>
-
-        <article class="product-card" data-lens="prog">
-          <div class="product-image" style="font-size:10px;color:#888;padding:8px;">Прогрессивные Premium · белый фон, линза по центру</div>
-          <div class="product-brand">OBSIDIAN OPTICS</div>
-          <div class="product-name">Progressive Premium</div>
-          <div class="info-desc">Премиальный прогрессивный дизайн. Плавный переход, минимум аберраций по всему полю.</div>
-          <div class="product-footer"><span>12 999 ₽</span><span style="font-size:11px;color:var(--text-muted);">Подробнее</span></div>
-        </article>
-
-        <article class="product-card" data-lens="prog">
-          <div class="product-image" style="font-size:10px;color:#888;padding:8px;">Прогрессивные Elite · белый фон, линза по центру</div>
-          <div class="product-brand">STUDIO ECLIPSE</div>
-          <div class="product-name">Progressive Elite FreeForm</div>
-          <div class="info-desc">Индивидуальный FreeForm-дизайн с учётом параметров оправы и посадки. Максимальная точность.</div>
-          <div class="product-footer"><span>17 999 ₽</span><span style="font-size:11px;color:var(--text-muted);">Подробнее</span></div>
-        </article>
-
-        <article class="product-card" data-lens="drive">
-          <div class="product-image" style="font-size:10px;color:#888;padding:8px;">Вождение Day · белый фон, линза по центру</div>
-          <div class="product-brand">NOIR OPTICS</div>
-          <div class="product-name">Drive Day</div>
-          <div class="info-desc">Дневные линзы для вождения с антибликовым покрытием. Высокая контрастность на дороге.</div>
-          <div class="product-footer"><span>4 299 ₽</span><span style="font-size:11px;color:var(--text-muted);">Подробнее</span></div>
-        </article>
-
-        <article class="product-card" data-lens="drive">
-          <div class="product-image" style="font-size:10px;color:#888;padding:8px;">Вождение Night · белый фон, линза по центру</div>
-          <div class="product-brand">NOIR OPTICS</div>
-          <div class="product-name">Drive Night</div>
-          <div class="info-desc">Специальное покрытие для ночного вождения — подавляет ореолы от фар встречных машин.</div>
-          <div class="product-footer"><span>5 499 ₽</span><span style="font-size:11px;color:var(--text-muted);">Подробнее</span></div>
-        </article>
-
-        <article class="product-card" data-lens="drive">
-          <div class="product-image" style="font-size:10px;color:#888;padding:8px;">Вождение Polarized · белый фон, линза по центру</div>
-          <div class="product-brand">OBSIDIAN OPTICS</div>
-          <div class="product-name">Drive Polarized</div>
-          <div class="info-desc">Поляризационные линзы для вождения. Устраняют блики от мокрого асфальта и капота.</div>
-          <div class="product-footer"><span>6 999 ₽</span><span style="font-size:11px;color:var(--text-muted);">Подробнее</span></div>
-        </article>
-
-        <article class="product-card" data-lens="drive">
-          <div class="product-image" style="font-size:10px;color:#888;padding:8px;">Вождение All-Day · белый фон, линза по центру</div>
-          <div class="product-brand">STUDIO ECLIPSE</div>
-          <div class="product-name">Drive All-Day</div>
-          <div class="info-desc">Фотохромные + поляризационные. Адаптируются к свету днём и обеспечивают комфорт ночью.</div>
-          <div class="product-footer"><span>8 499 ₽</span><span style="font-size:11px;color:var(--text-muted);">Подробнее</span></div>
-        </article>
-
-        <article class="product-card" data-lens="photo">
-          <div class="product-image" style="font-size:10px;color:#888;padding:8px;">Фотохромные Classic · белый фон, линза по центру</div>
-          <div class="product-brand">NOIR CARE</div>
-          <div class="product-name">Photochromic Classic</div>
-          <div class="info-desc">Базовые фотохромные линзы — затемнение до 85% на солнце, прозрачные в помещении.</div>
-          <div class="product-footer"><span>3 999 ₽</span><span style="font-size:11px;color:var(--text-muted);">Подробнее</span></div>
-        </article>
-
-        <article class="product-card" data-lens="photo">
-          <div class="product-image" style="font-size:10px;color:#888;padding:8px;">Фотохромные Fast · белый фон, линза по центру</div>
-          <div class="product-brand">NOIR CARE</div>
-          <div class="product-name">Photochromic Fast Adapt</div>
-          <div class="info-desc">Ускоренная адаптация: затемнение за 20 сек, просветление за 3 мин.</div>
-          <div class="product-footer"><span>5 299 ₽</span><span style="font-size:11px;color:var(--text-muted);">Подробнее</span></div>
-        </article>
-
-        <article class="product-card" data-lens="photo">
-          <div class="product-image" style="font-size:10px;color:#888;padding:8px;">Фотохромные Brown · белый фон, линза по центру</div>
-          <div class="product-brand">OBSIDIAN OPTICS</div>
-          <div class="product-name">Photochromic Brown</div>
-          <div class="info-desc">Коричневый оттенок при затемнении — повышает контрастность в яркий день.</div>
-          <div class="product-footer"><span>5 499 ₽</span><span style="font-size:11px;color:var(--text-muted);">Подробнее</span></div>
-        </article>
-
-        <article class="product-card" data-lens="photo">
-          <div class="product-image" style="font-size:10px;color:#888;padding:8px;">Фотохромные Drive · белый фон, линза по центру</div>
-          <div class="product-brand">STUDIO ECLIPSE</div>
-          <div class="product-name">Photochromic Drive Edition</div>
-          <div class="info-desc">Фотохромные линзы, адаптированные для вождения. Реагируют даже за стеклом автомобиля.</div>
-          <div class="product-footer"><span>7 999 ₽</span><span style="font-size:11px;color:var(--text-muted);">Подробнее</span></div>
-        </article>
-
-        <article class="product-card" data-lens="sun">
-          <div class="product-image" style="font-size:10px;color:#888;padding:8px;">Солнце Classic · белый фон, линза по центру</div>
-          <div class="product-brand">NOIR CARE</div>
-          <div class="product-name">Sun Classic</div>
-          <div class="info-desc">Базовые солнцезащитные линзы с UV400-защитой. Нейтральный серый оттенок.</div>
-          <div class="product-footer"><span>2 999 ₽</span><span style="font-size:11px;color:var(--text-muted);">Подробнее</span></div>
-        </article>
-
-        <article class="product-card" data-lens="sun">
-          <div class="product-image" style="font-size:10px;color:#888;padding:8px;">Солнце Brown · белый фон, линза по центру</div>
-          <div class="product-brand">NOIR CARE</div>
-          <div class="product-name">Sun Brown Contrast</div>
-          <div class="info-desc">Коричневые линзы для повышенной контрастности. Идеальны для активного отдыха.</div>
-          <div class="product-footer"><span>3 499 ₽</span><span style="font-size:11px;color:var(--text-muted);">Подробнее</span></div>
-        </article>
-
-        <article class="product-card" data-lens="sun">
-          <div class="product-image" style="font-size:10px;color:#888;padding:8px;">Солнце Mirror · белый фон, линза по центру</div>
-          <div class="product-brand">OBSIDIAN OPTICS</div>
-          <div class="product-name">Sun Mirror Silver</div>
-          <div class="info-desc">Зеркальное напыление серебристого оттенка — эстетика и защита от яркого света.</div>
-          <div class="product-footer"><span>4 299 ₽</span><span style="font-size:11px;color:var(--text-muted);">Подробнее</span></div>
-        </article>
-
-        <article class="product-card" data-lens="sun">
-          <div class="product-image" style="font-size:10px;color:#888;padding:8px;">Солнце Gradient · белый фон, линза по центру</div>
-          <div class="product-brand">STUDIO ECLIPSE</div>
-          <div class="product-name">Sun Gradient Noir</div>
-          <div class="info-desc">Градиентные линзы: тёмные сверху, светлые снизу — для стиля и функциональности.</div>
-          <div class="product-footer"><span>4 999 ₽</span><span style="font-size:11px;color:var(--text-muted);">Подробнее</span></div>
-        </article>
-
-        <article class="product-card" data-lens="polar">
-          <div class="product-image" style="font-size:10px;color:#888;padding:8px;">Поляр Gray · белый фон, линза по центру</div>
-          <div class="product-brand">NOIR CARE</div>
-          <div class="product-name">Polarized Gray</div>
-          <div class="info-desc">Серые поляризационные линзы — нейтральная цветопередача, устраняют блики от воды и дороги.</div>
-          <div class="product-footer"><span>4 499 ₽</span><span style="font-size:11px;color:var(--text-muted);">Подробнее</span></div>
-        </article>
-
-        <article class="product-card" data-lens="polar">
-          <div class="product-image" style="font-size:10px;color:#888;padding:8px;">Поляр Brown · белый фон, линза по центру</div>
-          <div class="product-brand">NOIR CARE</div>
-          <div class="product-name">Polarized Brown</div>
-          <div class="info-desc">Коричневые поляризационные линзы для повышенной контрастности в переменную погоду.</div>
-          <div class="product-footer"><span>4 799 ₽</span><span style="font-size:11px;color:var(--text-muted);">Подробнее</span></div>
-        </article>
-
-        <article class="product-card" data-lens="polar">
-          <div class="product-image" style="font-size:10px;color:#888;padding:8px;">Поляр Drive · белый фон, линза по центру</div>
-          <div class="product-brand">OBSIDIAN OPTICS</div>
-          <div class="product-name">Polarized Drive Pro</div>
-          <div class="info-desc">Оптимизированы для вождения: горизонтальная поляризация убирает блики от капота и дороги.</div>
-          <div class="product-footer"><span>5 999 ₽</span><span style="font-size:11px;color:var(--text-muted);">Подробнее</span></div>
-        </article>
-
-        <article class="product-card" data-lens="polar">
-          <div class="product-image" style="font-size:10px;color:#888;padding:8px;">Поляр Sport · белый фон, линза по центру</div>
-          <div class="product-brand">STUDIO ECLIPSE</div>
-          <div class="product-name">Polarized Sport Mirror</div>
-          <div class="info-desc">Поляризация + зеркальное покрытие. Для активного отдыха на воде и в горах.</div>
-          <div class="product-footer"><span>6 999 ₽</span><span style="font-size:11px;color:var(--text-muted);">Подробнее</span></div>
-        </article>
-
-        <article class="product-card" data-lens="blue">
-          <div class="product-image" style="font-size:10px;color:#888;padding:8px;">Blue Light Basic · белый фон, линза по центру</div>
-          <div class="product-brand">NOIR CARE</div>
-          <div class="product-name">Blue Light Basic</div>
-          <div class="info-desc">Базовый фильтр синего света — снижает нагрузку при работе за ПК и смартфоном.</div>
-          <div class="product-footer"><span>1 799 ₽</span><span style="font-size:11px;color:var(--text-muted);">Подробнее</span></div>
-        </article>
-
-        <article class="product-card" data-lens="blue">
-          <div class="product-image" style="font-size:10px;color:#888;padding:8px;">Blue Light Pro · белый фон, линза по центру</div>
-          <div class="product-brand">NOIR CARE</div>
-          <div class="product-name">Blue Light Pro</div>
-          <div class="info-desc">Усиленный фильтр + антибликовое покрытие. Для интенсивной работы с экранами.</div>
-          <div class="product-footer"><span>2 799 ₽</span><span style="font-size:11px;color:var(--text-muted);">Подробнее</span></div>
-        </article>
-
-        <article class="product-card" data-lens="blue">
-          <div class="product-image" style="font-size:10px;color:#888;padding:8px;">Blue Light Night · белый фон, линза по центру</div>
-          <div class="product-brand">OBSIDIAN OPTICS</div>
-          <div class="product-name">Blue Light Night Mode</div>
-          <div class="info-desc">Максимальная блокировка синего спектра — для вечерней работы и сна без нарушений ритма.</div>
-          <div class="product-footer"><span>3 499 ₽</span><span style="font-size:11px;color:var(--text-muted);">Подробнее</span></div>
-        </article>
-
-        <article class="product-card" data-lens="blue">
-          <div class="product-image" style="font-size:10px;color:#888;padding:8px;">Blue Light Premium · белый фон, линза по центру</div>
-          <div class="product-brand">STUDIO ECLIPSE</div>
-          <div class="product-name">Blue Light Premium Slim</div>
-          <div class="info-desc">Тонкие линзы 1.67 с фильтром синего света и FreeForm-обработкой. Комфорт весь день.</div>
-          <div class="product-footer"><span>5 499 ₽</span><span style="font-size:11px;color:var(--text-muted);">Подробнее</span></div>
-        </article>
-      </div>
-
-      <script>
-        function filterLenses(el) {
-          document.querySelectorAll('#lens-filters .shape-chip').forEach(c => c.classList.remove('active'));
-          el.classList.add('active');
-          const f = el.dataset.filter;
-          document.querySelectorAll('#lens-grid .product-card').forEach(card => {
-            card.style.display = (f === 'all' || card.dataset.lens === f) ? '' : 'none';
-          });
-        }
-      </script>
-    </section>
-
-    <!-- PRODUCT DETAIL (ПОДРОБНЕЕ) -->
-    <div class="screen-separator">
-      <span>Desktop · Окно «Подробнее»</span>
-      <span>Расширенная информация о товаре</span>
-    </div>
-
-    <section class="frame-wrap">
-      <div class="modal-shell">
-        <div class="modal-header">
-          <span>Подробнее · Noir Round 01</span>
-          <span>✕</span>
-        </div>
-        <div class="product-layout" style="margin-top:8px;">
+      <div class="hero-card">
+        <div class="hero-card-label">Пример карточки оправы</div>
+        <div class="hero-card-img">🕶️</div>
+        <div class="hero-card-meta">
           <div>
-            <div class="product-gallery-main">Изображение оправы Noir Round 01 на белом фоне</div>
+            <div class="product-brand" style="color:#999">NOIR VISION ATELIER</div>
+            <div style="font-size:13px">Noir Round 01</div>
           </div>
+          <div style="font-size:13px;color:#111">29 000 ₽</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Категории -->
+    <div class="section-head">
+      <div class="section-title">Категории</div>
+      <div class="section-sub">Оправы · Жидкости · Футляры · Линзы</div>
+    </div>
+    <div class="category-grid">
+      <article class="category-card" onclick="showPage('catalog');setCatalogTab('frames')">
+        <div class="category-img">🕶️</div>
+        <div class="category-meta">
           <div>
-            <div class="product-info-title">Noir Round 01</div>
-            <div class="info-meta">NOIR VISION ATELIER · Оправа · Круглая форма</div>
-            <div class="info-price">29 000 ₽</div>
-            <div class="info-desc">
-              Полная информация о товаре: посадка, ощущения при носке и назначение оправы.
-            </div>
-            <div class="info-desc" style="margin-top:10px;">
-              <strong>Характеристики:</strong><br />
-              Материал: титан · Цвет: чёрный матовый · Форма: круглая · Тип: только оправа (без линз).
-            </div>
+            <div class="product-brand">NOIR VISION</div>
+            <div>Оправы</div>
           </div>
+          <button class="btn" style="padding:6px 14px;" onclick="event.stopPropagation();showPage('catalog');setCatalogTab('frames')">В каталог</button>
         </div>
-      </div>
-    </section>
+      </article>
+      <article class="category-card" onclick="showPage('catalog');setCatalogTab('liquids')">
+        <div class="category-img">🧴</div>
+        <div class="category-meta">
+          <div>
+            <div class="product-brand">NOIR CARE</div>
+            <div>Жидкости для линз</div>
+          </div>
+          <button class="btn" style="padding:6px 14px;" onclick="event.stopPropagation();showPage('catalog');setCatalogTab('liquids')">В каталог</button>
+        </div>
+      </article>
+      <article class="category-card" onclick="showPage('catalog');setCatalogTab('cases')">
+        <div class="category-img">🗃️</div>
+        <div class="category-meta">
+          <div>
+            <div class="product-brand">OBSIDIAN / NOIR</div>
+            <div>Футляры</div>
+          </div>
+          <button class="btn" style="padding:6px 14px;" onclick="event.stopPropagation();showPage('catalog');setCatalogTab('cases')">В каталог</button>
+        </div>
+      </article>
+      <article class="category-card" onclick="showPage('catalog');setCatalogTab('lenses')">
+        <div class="category-img">🔬</div>
+        <div class="category-meta">
+          <div>
+            <div class="product-brand">NOIR OPTICS</div>
+            <div>Линзы</div>
+          </div>
+          <button class="btn" style="padding:6px 14px;" onclick="event.stopPropagation();showPage('catalog');setCatalogTab('lenses')">В каталог</button>
+        </div>
+      </article>
+    </div>
+  </div>
+</div>
 
-    <!-- HELP WITH SELECTION -->
-    <div class="screen-separator">
-      <span>Desktop · Помощь с подбором</span>
-      <span>Форма лица → фильтр оправ</span>
+<div class="page" id="page-catalog">
+  <div class="container">
+    <div class="section-head" style="margin-bottom:20px;">
+      <div class="section-title" id="catalog-heading">Каталог – оправы</div>
     </div>
 
-    <section class="frame-wrap" id="ai-selection">
-      <div class="modal-shell">
-        <div class="modal-header">
-          <span>Помощь с подбором оправ</span>
-          <span>✕</span>
-        </div>
-        <div class="assist-layout">
-          <div class="assist-photo" id="ai-photo-preview" style="flex-direction:column;gap:10px;min-height:160px;">
-            <div style="font-size:10px;color:#777;margin-bottom:6px;">Загрузите фото лица</div>
-            <input type="file" id="ai-file-input" accept="image/*" style="font-size:11px;color:#aaa;width:100%;" />
-            <button id="ai-analyze-btn" class="btn btn-primary" style="margin-top:8px;width:100%;">Автоматически отфильтровать</button>
-            <button id="ai-skip-btn" class="btn" style="width:100%;">Отказаться — перейти в каталог</button>
-          </div>
-          <div class="assist-side">
-            <div>Сервис анализирует черты лица по загруженному фото и предлагает подходящую форму оправ.</div>
-            <div><strong>Определённая форма лица:</strong> Овальное.</div>
-            <div class="zrenie-actions">
-              <button class="btn btn-primary" style="padding:6px 18px;">Автоматически отфильтровать</button>
-              <button class="btn" style="padding:6px 18px;">Отказаться</button>
-            </div>
-            <div class="section-sub" style="margin-top:4px;max-width:260px;">
-              При автоматической фильтрации в каталоге останутся только подходящие формы оправ.
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- CART & CHECKOUT (2 шага) -->
-    <div class="screen-separator">
-      <span>Desktop · Корзина → Оформление</span>
-      <span>Два последовательных шага</span>
+    <!-- Вкладки категорий -->
+    <div class="catalog-tabs">
+      <button class="tab-btn active" data-tab="frames"  onclick="setCatalogTab('frames')">Оправы</button>
+      <button class="tab-btn"        data-tab="lenses"  onclick="setCatalogTab('lenses')">Линзы</button>
+      <button class="tab-btn"        data-tab="liquids" onclick="setCatalogTab('liquids')">Жидкости</button>
+      <button class="tab-btn"        data-tab="cases"   onclick="setCatalogTab('cases')">Футляры</button>
     </div>
 
-    <section class="frame-wrap">
-      <header style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px;">
-        <div>
-          <div class="section-title">Шаг 1 · Корзина</div>
-          <div class="section-sub">Проверьте товары перед оформлением</div>
-        </div>
-        <div class="section-sub">2 товара</div>
-      </header>
-
-      <div class="cart-layout">
-        <div class="cart-list">
-          <article class="cart-item">
-            <div class="cart-thumb">Noir Round 01</div>
-            <div>
-              <div class="product-brand">NOIR VISION ATELIER</div>
-              <div class="cart-info-title">Noir Round 01</div>
-              <div class="cart-qty">
-                <span class="qty-pill">-</span>
-                <span>1</span>
-                <span class="qty-pill">+</span>
-              </div>
-            </div>
-            <div style="text-align:right; font-size:12px;">
-              <div>29 000 ₽</div>
-              <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">✕</div>
-            </div>
-          </article>
-          <article class="cart-item">
-            <div class="cart-thumb">Ultra Clean Mist</div>
-            <div>
-              <div class="product-brand">NOIR CARE</div>
-              <div class="cart-info-title">Ultra Clean Mist</div>
-              <div class="cart-qty">
-                <span class="qty-pill">-</span>
-                <span>1</span>
-                <span class="qty-pill">+</span>
-              </div>
-            </div>
-            <div style="text-align:right; font-size:12px;">
-              <div>3 500 ₽</div>
-              <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">✕</div>
-            </div>
-          </article>
-        </div>
-        <aside class="cart-summary">
-          <div class="cart-summary-row total">
-            <span>Итого</span>
-            <span>32 500 ₽</span>
-          </div>
-          <button class="btn btn-primary" style="margin-top:12px;width:100%;">Перейти к оформлению</button>
-        </aside>
+    <!-- Фильтры оправ -->
+    <div id="frame-filters" style="margin-bottom:20px;">
+      <div class="filter-label">Форма оправы</div>
+      <div class="shape-row" id="shape-filter">
+        <div class="shape-chip active" data-shape="all">Все</div>
+        <div class="shape-chip" data-shape="round">Круглые</div>
+        <div class="shape-chip" data-shape="oval">Овальные</div>
+        <div class="shape-chip" data-shape="square">Квадратные</div>
+        <div class="shape-chip" data-shape="rect">Прямоугольные</div>
+        <div class="shape-chip" data-shape="aviator">Авиаторы</div>
+        <div class="shape-chip" data-shape="cat">Кошачий глаз</div>
+        <div class="shape-chip" data-shape="wayfarer">Вайфареры</div>
       </div>
-    </section>
-
-    <section class="frame-wrap">
-      <header style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px;">
-        <div>
-          <div class="section-title">Шаг 2 · Оформление заказа</div>
-          <div class="section-sub">Укажите свои данные</div>
-        </div>
-        <div class="section-sub">Корзина → Оформление</div>
-      </header>
-
-      <div class="checkout-form">
-        <div>
-          <div class="field-group">
-            <div class="field-label">Фамилия</div>
-            <div class="field-input">Введите фамилию</div>
-          </div>
-          <div class="field-group">
-            <div class="field-label">Имя</div>
-            <div class="field-input">Введите имя</div>
-          </div>
-          <div class="field-group">
-            <div class="field-label">Отчество</div>
-            <div class="field-input">Введите отчество</div>
-          </div>
-        </div>
-        <div>
-          <div class="cart-summary" style="height:100%;display:flex;flex-direction:column;justify-content:space-between;">
-            <div>
-              <div class="cart-summary-row">
-                <span>Товары</span>
-                <span>2</span>
-              </div>
-              <div class="cart-summary-row total">
-                <span>Итого к оплате</span>
-                <span>32 500 ₽</span>
-              </div>
-            </div>
-            <button class="btn btn-primary" style="margin-top:16px;width:100%;">Заказать</button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- AUTH & FULL BOOKING -->
-    <div class="screen-separator">
-      <span>Desktop · Авторизация и запись</span>
-      <span>Вход / Регистрация по телефону</span>
     </div>
 
-    <section class="frame-wrap" id="auth-section">
-      <div class="auth-layout">
-        <div class="auth-panel">
-          <div class="auth-title">Вход</div>
-          <div class="field-group">
-            <div class="field-label">Телефон</div>
-            <div class="field-input">+7 (900) 000‑00‑00</div>
-            <div class="field-hint">Формат: +7 (XXX) XXX‑XX‑XX</div>
-          </div>
-          <div class="field-group">
-            <div class="field-label">Пароль</div>
-            <div class="field-input">••••••••</div>
-          </div>
-          <button class="btn btn-primary" style="margin-top:10px;width:100%;">Войти</button>
-          <div class="auth-alt">Нет аккаунта? <span style="text-decoration:underline;">Зарегистрироваться</span></div>
-        </div>
-        <div class="auth-panel">
-          <div class="auth-title">Регистрация</div>
-          <div class="field-group">
-            <div class="field-label">Имя</div>
-            <div class="field-input">Имя</div>
-          </div>
-          <div class="field-group">
-            <div class="field-label">Фамилия</div>
-            <div class="field-input">Фамилия</div>
-          </div>
-          <div class="field-group">
-            <div class="field-label">Телефон</div>
-            <div class="field-input">+7 (900) 000‑00‑00</div>
-            <div class="field-hint">Формат: +7 (XXX) XXX‑XX‑XX</div>
-          </div>
-          <div class="field-group">
-            <div class="field-label">Пароль</div>
-            <div class="field-input">••••••••</div>
-          </div>
-          <button class="btn" style="margin-top:10px;width:100%;">Создать аккаунт</button>
-        </div>
+    <!-- Фильтры линз -->
+    <div id="lens-filters" style="display:none;margin-bottom:20px;">
+      <div class="filter-label">Тип линз</div>
+      <div class="shape-row" id="lens-filter">
+        <div class="shape-chip active" data-lens="all">Все</div>
+        <div class="shape-chip" data-lens="dal">Для дали</div>
+        <div class="shape-chip" data-lens="bliz">Для близи</div>
+        <div class="shape-chip" data-lens="comp">Компьютерные</div>
+        <div class="shape-chip" data-lens="prog">Прогрессивные</div>
+        <div class="shape-chip" data-lens="drive">Для вождения</div>
+        <div class="shape-chip" data-lens="photo">Фотохромные</div>
+        <div class="shape-chip" data-lens="sun">Солнцезащитные</div>
+        <div class="shape-chip" data-lens="polar">Поляризационные</div>
+        <div class="shape-chip" data-lens="blue">Синий свет</div>
       </div>
+    </div>
 
-      <div class="booking-layout" style="margin-top:32px;">
-        <div class="booking-steps">
+    <!-- ИИ-подбор оправы -->
+    <div style="margin-bottom:28px;">
+      <button class="btn-ai-scan" onclick="showPage('scan')">
+        <span class="btn-ai-scan-icon">🤖</span>
+        ИИ-подбор оправы по форме лица
+        <span style="font-size:10px;opacity:.6;margin-left:4px;">↗</span>
+      </button>
+      <div style="text-align:center;font-size:10px;color:var(--text-muted);letter-spacing:.14em;">Сканирование займёт менее 30 секунд</div>
+    </div>
+
+    <div class="catalog-grid" id="catalog-grid"></div>
+  </div>
+</div>
+</div><!-- /page-home-catalog-wrapper -->
+
+<!-- ══════════════════════════════
+     PAGE: BOOKING
+══════════════════════════════ -->
+<div class="page" id="page-booking">
+  <div class="container">
+    <div class="section-head" style="margin-bottom:32px;">
+      <div>
+        <div class="section-title">Запись к врачу</div>
+        <div class="section-sub" style="margin-top:6px;">Выберите удобное время приёма</div>
+      </div>
+    </div>
+    <div class="booking-layout">
+      <div class="booking-panel">
+        <!-- Месяц -->
+        <div>
           <div class="step-label">Шаг 1 · Месяц</div>
-          <div class="month-row">
+          <div class="month-grid" id="month-grid">
             <div class="chip active">Январь</div>
             <div class="chip">Февраль</div>
             <div class="chip">Март</div>
@@ -1952,330 +599,586 @@
             <div class="chip">Ноябрь</div>
             <div class="chip">Декабрь</div>
           </div>
-          <div class="step-label" style="margin-top:10px;">Шаг 2 · Дата</div>
-          <div class="calendar-grid">
-            <div class="calendar-cell">1</div>
-            <div class="calendar-cell">2</div>
-            <div class="calendar-cell">3</div>
-            <div class="calendar-cell">4</div>
-            <div class="calendar-cell">5</div>
-            <div class="calendar-cell">6</div>
-            <div class="calendar-cell">7</div>
-            <div class="calendar-cell">8</div>
-            <div class="calendar-cell active">9</div>
-            <div class="calendar-cell">10</div>
-            <div class="calendar-cell">11</div>
-            <div class="calendar-cell">12</div>
-            <div class="calendar-cell">13</div>
-            <div class="calendar-cell">14</div>
-            <div class="calendar-cell">15</div>
-            <div class="calendar-cell">16</div>
-            <div class="calendar-cell">17</div>
-            <div class="calendar-cell">18</div>
-            <div class="calendar-cell">19</div>
-            <div class="calendar-cell">20</div>
-            <div class="calendar-cell">21</div>
-            <div class="calendar-cell">22</div>
-            <div class="calendar-cell">23</div>
-            <div class="calendar-cell">24</div>
-            <div class="calendar-cell">25</div>
-            <div class="calendar-cell">26</div>
-            <div class="calendar-cell">27</div>
-            <div class="calendar-cell">28</div>
-            <div class="calendar-cell">29</div>
-            <div class="calendar-cell">30</div>
+        </div>
+        <!-- Дата -->
+        <div>
+          <div class="step-label">Шаг 2 · Дата</div>
+          <div class="calendar-grid" id="cal-grid">
+            <!-- генерируется JS -->
           </div>
-          <div class="step-label" style="margin-top:10px;">Шаг 3 · Время</div>
-          <div class="time-grid">
+        </div>
+        <!-- Время -->
+        <div>
+          <div class="step-label">Шаг 3 · Время</div>
+          <div class="time-grid" id="time-grid">
             <div class="time-slot">10:00</div>
-            <div class="time-slot active">11:30</div>
+            <div class="time-slot">11:30</div>
             <div class="time-slot">13:00</div>
             <div class="time-slot">14:30</div>
             <div class="time-slot">16:00</div>
             <div class="time-slot">17:30</div>
           </div>
         </div>
-        <aside class="booking-summary">
-          <div class="section-title" style="margin-bottom:10px;">Ваша запись</div>
-          <div class="cart-summary-row">
-            <span>Дата</span>
-            <span>9 января</span>
-          </div>
-          <div class="cart-summary-row">
-            <span>Время</span>
-            <span>11:30</span>
-          </div>
-          <div class="cart-summary-row">
-            <span>Врач</span>
-            <span>Любой доступный</span>
-          </div>
-          <button class="btn btn-primary" style="margin-top:14px;width:100%;">Подтвердить запись</button>
-        </aside>
+        <button class="btn btn-primary" id="book-btn" style="align-self:flex-start;">Подтвердить запись</button>
       </div>
-    </section>
 
-    <!-- MOBILE MOCKS -->
-    <div class="screen-separator">
-      <span>Mobile · Главная, товар, корзина, запись</span>
-      <span>Состояния без онлайн примерки</span>
+      <aside class="booking-summary">
+        <div class="section-title">Ваша запись</div>
+        <div class="booking-row">
+          <span class="booking-row-label">Месяц</span>
+          <span class="booking-row-val" id="b-month">Май</span>
+        </div>
+        <div class="booking-row">
+          <span class="booking-row-label">Дата</span>
+          <span class="booking-row-val" id="b-day">—</span>
+        </div>
+        <div class="booking-row">
+          <span class="booking-row-label">Время</span>
+          <span class="booking-row-val" id="b-time">—</span>
+        </div>
+        <div class="booking-row">
+          <span class="booking-row-label">Врач</span>
+          <span class="booking-row-val">Любой доступный</span>
+        </div>
+        <div class="booking-row">
+          <span class="booking-row-label">Адрес</span>
+          <span class="booking-row-val" style="font-size:11px;text-align:right;max-width:160px;">ул. Оптическая, 12</span>
+        </div>
+        <button class="btn btn-primary" style="width:100%;margin-top:28px;padding:14px 22px;font-size:12px;letter-spacing:.2em;" onclick="confirmBooking()">Записаться →</button>
+        <div style="text-align:center;margin-top:10px;font-size:10px;color:var(--text-muted);">Бесплатная отмена за 2 часа</div>
+      </aside>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     PAGE: CART
+══════════════════════════════ -->
+<div class="page" id="page-cart">
+  <div class="container">
+    <div class="section-head" style="margin-bottom:32px;">
+      <div>
+        <div class="section-title">Корзина</div>
+        <div class="section-sub" id="cart-count-label" style="margin-top:6px;">Проверьте товары перед оформлением</div>
+      </div>
+    </div>
+    <div class="cart-layout">
+      <div class="cart-list" id="cart-list">
+        <div class="cart-empty">Корзина пуста</div>
+      </div>
+      <aside class="cart-summary">
+        <div class="summary-row"><span>Товары</span><span id="cart-count">0</span></div>
+        <div class="summary-row total"><span>Итого</span><span id="cart-total">0 ₽</span></div>
+        <!-- Форма оформления -->
+        <div style="margin-top:20px;border-top:1px solid var(--border);padding-top:18px;">
+          <div class="section-title" style="margin-bottom:14px;">Оформление</div>
+          <div class="field-group">
+            <div class="field-label">Имя</div>
+            <input type="text" class="field-input" id="order-name" placeholder="Введите имя" />
+          </div>
+          <div class="field-group">
+            <div class="field-label">Телефон</div>
+            <input type="tel" class="field-input" id="order-phone" placeholder="+7 (900) 000-00-00" />
+          </div>
+        </div>
+        <button class="btn btn-primary" style="width:100%;margin-top:16px;" id="order-btn">Оформить заказ</button>
+      </aside>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     PAGE: ACCOUNT
+══════════════════════════════ -->
+<div class="page" id="page-account">
+  <div class="container" style="display:flex;align-items:flex-start;justify-content:center;min-height:calc(100vh - 72px);padding-top:60px;">
+    <div style="width:100%;max-width:460px;">
+
+      <!-- Notice -->
+      <div id="auth-notice" style="display:none;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:14px;padding:14px 20px;margin-bottom:28px;font-size:13px;color:var(--text);letter-spacing:.02em;">
+        ⚠️ <span id="auth-notice-text">Для записи к врачу необходимо войти в аккаунт</span>
+      </div>
+
+      <!-- Logo mark -->
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:36px;">
+        <div style="width:20px;height:20px;border-radius:5px 5px 5px 18px;border:1.5px solid #fff;"></div>
+        <span style="font-size:12px;letter-spacing:.3em;text-transform:uppercase;">NOIR VISION</span>
+      </div>
+
+      <!-- Auth card -->
+      <div style="background:var(--bg-elevated);border:1px solid var(--border);border-radius:28px;overflow:hidden;">
+
+        <!-- Tab switcher -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--border);">
+          <button id="auth-tab-login" onclick="switchAuthTab('login')"
+            style="padding:18px 0;font-size:11px;letter-spacing:.22em;text-transform:uppercase;background:transparent;border:none;color:var(--text);cursor:pointer;border-bottom:2px solid var(--accent);transition:all .2s;font-family:inherit;">
+            Вход
+          </button>
+          <button id="auth-tab-reg" onclick="switchAuthTab('reg')"
+            style="padding:18px 0;font-size:11px;letter-spacing:.22em;text-transform:uppercase;background:transparent;border:none;color:var(--text-muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;font-family:inherit;">
+            Регистрация
+          </button>
+        </div>
+
+        <!-- LOGIN panel -->
+        <div id="auth-panel-login" style="padding:36px 36px 40px;">
+          <div style="margin-bottom:28px;">
+            <div style="font-size:22px;font-weight:300;letter-spacing:.06em;margin-bottom:6px;">Добро пожаловать</div>
+            <div style="font-size:12px;color:var(--text-muted);">Введите данные для входа в аккаунт</div>
+          </div>
+
+          <div class="field-group">
+            <div class="field-label">Телефон</div>
+            <input type="tel" class="field-input" id="login-phone" placeholder="+7 (900) 000-00-00" style="border-radius:14px;padding:12px 18px;" />
+            <div class="field-hint">Формат: +7 (XXX) XXX-XX-XX</div>
+          </div>
+          <div class="field-group">
+            <div class="field-label">Пароль</div>
+            <div style="position:relative;">
+              <input type="password" class="field-input" id="login-pass" placeholder="••••••••" style="border-radius:14px;padding:12px 18px;padding-right:44px;" />
+              <span onclick="togglePwd('login-pass',this)" style="position:absolute;right:16px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:14px;color:var(--text-muted);user-select:none;">👁</span>
+            </div>
+          </div>
+          <div style="text-align:right;margin-top:-6px;margin-bottom:20px;">
+            <span style="font-size:11px;color:var(--text-muted);letter-spacing:.1em;cursor:pointer;text-decoration:underline;">Забыли пароль?</span>
+          </div>
+
+          <button class="btn btn-primary" style="width:100%;padding:13px;border-radius:14px;font-size:11px;letter-spacing:.22em;" id="login-btn">Войти</button>
+
+          <div style="margin-top:24px;text-align:center;font-size:11px;color:var(--text-muted);">
+            Нет аккаунта? <span onclick="switchAuthTab('reg')" style="color:var(--text);text-decoration:underline;cursor:pointer;">Зарегистрироваться</span>
+          </div>
+        </div>
+
+        <!-- REGISTER panel -->
+        <div id="auth-panel-reg" style="padding:36px 36px 40px;display:none;">
+          <div style="margin-bottom:28px;">
+            <div style="font-size:22px;font-weight:300;letter-spacing:.06em;margin-bottom:6px;">Создать аккаунт</div>
+            <div style="font-size:12px;color:var(--text-muted);">Займёт меньше минуты</div>
+          </div>
+
+          <div class="field-group">
+            <div class="field-label">Имя</div>
+            <input type="text" class="field-input" id="reg-name" placeholder="Ваше имя" style="border-radius:14px;padding:12px 18px;" />
+          </div>
+          <div class="field-group">
+            <div class="field-label">Телефон</div>
+            <input type="tel" class="field-input" id="reg-phone" placeholder="+7 (900) 000-00-00" style="border-radius:14px;padding:12px 18px;" />
+          </div>
+          <div class="field-group">
+            <div class="field-label">Пароль</div>
+            <div style="position:relative;">
+              <input type="password" class="field-input" id="reg-pass" placeholder="Минимум 8 символов" style="border-radius:14px;padding:12px 18px;padding-right:44px;" />
+              <span onclick="togglePwd('reg-pass',this)" style="position:absolute;right:16px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:14px;color:var(--text-muted);user-select:none;">👁</span>
+            </div>
+          </div>
+          <div class="field-group">
+            <div class="field-label">Повторите пароль</div>
+            <input type="password" class="field-input" id="reg-pass2" placeholder="••••••••" style="border-radius:14px;padding:12px 18px;" />
+          </div>
+
+          <button class="btn btn-primary" style="width:100%;padding:13px;border-radius:14px;font-size:11px;letter-spacing:.22em;" id="reg-btn">Создать аккаунт</button>
+
+          <div style="margin-top:24px;text-align:center;font-size:11px;color:var(--text-muted);">
+            Уже есть аккаунт? <span onclick="switchAuthTab('login')" style="color:var(--text);text-decoration:underline;cursor:pointer;">Войти</span>
+          </div>
+        </div>
+
+      </div><!-- /auth card -->
+
+      <!-- divider -->
+      <div style="display:flex;align-items:center;gap:16px;margin:24px 0;">
+        <div style="flex:1;height:1px;background:var(--border);"></div>
+        <span style="font-size:10px;color:var(--text-muted);letter-spacing:.18em;">ИЛИ</span>
+        <div style="flex:1;height:1px;background:var(--border);"></div>
+      </div>
+
+      <!-- social stub -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <button onclick="toast('Скоро')" style="padding:13px;border-radius:14px;border:1px solid var(--border);background:transparent;color:var(--text-muted);font-size:11px;letter-spacing:.16em;text-transform:uppercase;cursor:pointer;font-family:inherit;transition:all .2s;" onmouseover="this.style.borderColor='rgba(255,255,255,.3)';this.style.color='var(--text)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-muted)'">📱 Войти через VK</button>
+        <button onclick="toast('Скоро')" style="padding:13px;border-radius:14px;border:1px solid var(--border);background:transparent;color:var(--text-muted);font-size:11px;letter-spacing:.16em;text-transform:uppercase;cursor:pointer;font-family:inherit;transition:all .2s;" onmouseover="this.style.borderColor='rgba(255,255,255,.3)';this.style.color='var(--text)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-muted)'">✉️ Войти через Email</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     PAGE: SCAN (AI Face Scan)
+══════════════════════════════ -->
+<div class="page" id="page-scan">
+  <div class="container" style="max-width:820px;">
+
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;">
+      <div>
+        <div class="eyebrow">Искусственный интеллект</div>
+        <div class="section-title" style="font-size:20px;letter-spacing:.14em;margin-top:6px;font-weight:300;">AI Face Scan</div>
+      </div>
+      <button class="btn" onclick="showPage('catalog')">← Назад в каталог</button>
     </div>
 
-    <section class="frame-wrap">
-      <div class="mobile-row">
-        <div class="phone-shell">
-          <div class="phone-screen">
-            <div class="phone-header">
-              <span>NOIR</span>
-              <span>🔍 👤 🛒</span>
-            </div>
-            <div class="phone-hero">
-              <div class="eyebrow">Салон оптики</div>
-              <div class="phone-hero-title">Всё для очков</div>
-              <div style="color:var(--text-muted);font-size:9px;">
-                Оправы, жидкости для линз и футляры в одном каталоге.
-              </div>
-              <div class="phone-product">Оправa на белом фоне, по центру, немного вбок</div>
-              <div class="phone-btn-row">
-                <div class="phone-btn primary">Смотреть оправы</div>
-                <div class="phone-btn">Онлайн запись</div>
-              </div>
-            </div>
-          </div>
-        </div>
+    <div style="background:var(--bg-elevated);border:1px solid var(--border);border-radius:24px;padding:32px;">
+      <!-- Видео -->
+      <div id="scan-video-wrap" style="position:relative;width:100%;aspect-ratio:4/3;background:#000;border-radius:16px;overflow:hidden;border:1px solid var(--border);margin-bottom:20px;">
+        <video id="scan-webcam" autoplay playsinline muted style="width:100%;height:100%;object-fit:cover;transform:scaleX(-1);display:block;"></video>
+        <div style="position:absolute;inset:0;pointer-events:none;">
+          <!-- Овал -->
+          <div id="scan-oval" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-58%);width:210px;height:270px;border:2px solid rgba(255,255,255,.2);border-radius:50%;transition:border-color .4s,box-shadow .4s;"></div>
 
-        <div class="phone-shell">
-          <div class="phone-screen">
-            <div class="phone-header">
-              <span>← Noir Round 01</span>
-              <span>🛒</span>
-            </div>
-            <div class="phone-product">Изображение оправы на белом фоне</div>
-            <div style="margin-top:8px;">
-              <div class="product-brand" style="font-size:9px;">NOIR VISION ATELIER</div>
-              <div style="font-size:11px;">Noir Round 01</div>
-              <div style="margin-top:4px;font-size:11px;">29 000 ₽</div>
-              <div style="margin-top:6px;font-size:9px;color:var(--text-muted);">
-                Классическая круглая оправа для повседневной носки.
-              </div>
-              <div style="margin-top:6px;font-size:9px;color:var(--text-muted);">
-                <strong>Характеристики:</strong> Материал: титан · Цвет: чёрный матовый · Форма: круглая.
-              </div>
-            </div>
-            <div class="phone-btn-row">
-              <div class="phone-btn primary">Добавить в корзину</div>
-            </div>
-          </div>
-        </div>
+          <!-- ПРЯМО -->
+          <svg id="scan-arrow-front" viewBox="0 0 640 480" xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity .4s;">
+            <circle cx="320" cy="100" r="4" fill="#fff" opacity="0.6"/>
+            <circle cx="320" cy="380" r="4" fill="#fff" opacity="0.6"/>
+            <circle cx="150" cy="240" r="4" fill="#fff" opacity="0.6"/>
+            <circle cx="490" cy="240" r="4" fill="#fff" opacity="0.6"/>
+            <text x="320" y="66" text-anchor="middle" fill="rgba(255,255,255,0.6)" font-size="11" font-family="SF Pro Text,system-ui" letter-spacing="3">ПРЯМО</text>
+          </svg>
 
-        <div class="phone-shell">
-          <div class="phone-screen">
-            <div class="phone-header">
-              <span>← Корзина</span>
-              <span>2</span>
-            </div>
-            <div style="margin-top:8px;display:flex;flex-direction:column;gap:6px;">
-              <div style="display:grid;grid-template-columns:auto 1fr auto;gap:6px;align-items:center;">
-                <div style="width:54px;height:40px;border-radius:10px;background:#fff;font-size:8px;color:#777;display:flex;align-items:center;justify-content:center;text-align:center;">Round
-                  01</div>
-                <div style="font-size:9px;">
-                  <div>Noir Round 01</div>
-                  <div style="font-size:8px;color:var(--text-muted);">1 шт.</div>
-                </div>
-                <div style="font-size:9px;">29 000 ₽</div>
-              </div>
-              <div style="display:grid;grid-template-columns:auto 1fr auto;gap:6px;align-items:center;">
-                <div style="width:54px;height:40px;border-radius:10px;background:#fff;font-size:8px;color:#777;display:flex;align-items:center;justify-content:center;text-align:center;">Mist</div>
-                <div style="font-size:9px;">
-                  <div>Ultra Clean Mist</div>
-                  <div style="font-size:8px;color:var(--text-muted);">1 шт.</div>
-                </div>
-                <div style="font-size:9px;">3 500 ₽</div>
-              </div>
-            </div>
-            <div style="margin-top:auto;border-top:1px solid var(--border);padding-top:6px;">
-              <div style="display:flex;justify-content:space-between;font-size:9px;margin-bottom:4px;">
-                <span>Итого</span>
-                <span>32 500 ₽</span>
-              </div>
-              <div class="phone-btn primary">Перейти к оформлению</div>
-            </div>
-          </div>
-        </div>
+          <!-- ВЛЕВО -->
+          <svg id="scan-arrow-left" viewBox="0 0 640 480" xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity .4s;">
+            <defs><marker id="sahl" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></marker></defs>
+            <line x1="490" y1="240" x2="168" y2="240" stroke="rgba(255,255,255,0.75)" stroke-width="2" stroke-linecap="round" marker-end="url(#sahl)"/>
+            <path d="M380 160 Q240 200 240 240" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1" stroke-dasharray="5 4"/>
+            <text x="320" y="66" text-anchor="middle" fill="rgba(255,255,255,0.6)" font-size="11" font-family="SF Pro Text,system-ui" letter-spacing="3">МЕДЛЕННО ВЛЕВО</text>
+          </svg>
 
-        <div class="phone-shell">
-          <div class="phone-screen">
-            <div class="phone-header">
-              <span>← Запись</span>
-              <span>NOIR</span>
-            </div>
-            <div style="margin-top:8px;font-size:9px;">
-              <div class="step-label" style="margin-bottom:4px;">Месяц</div>
-              <div style="display:flex;gap:4px;flex-wrap:wrap;">
-                <div class="chip active" style="padding:2px 6px;">Янв</div>
-                <div class="chip" style="padding:2px 6px;">Фев</div>
-                <div class="chip" style="padding:2px 6px;">Мар</div>
-                <div class="chip" style="padding:2px 6px;">Апр</div>
-                <div class="chip" style="padding:2px 6px;">Май</div>
-                <div class="chip" style="padding:2px 6px;">Июн</div>
-                <div class="chip" style="padding:2px 6px;">Июл</div>
-                <div class="chip" style="padding:2px 6px;">Авг</div>
-                <div class="chip" style="padding:2px 6px;">Сен</div>
-                <div class="chip" style="padding:2px 6px;">Окт</div>
-                <div class="chip" style="padding:2px 6px;">Ноя</div>
-                <div class="chip" style="padding:2px 6px;">Дек</div>
-              </div>
-              <div class="step-label" style="margin-top:6px;margin-bottom:4px;">Дата</div>
-              <div class="calendar-grid" style="gap:3px;">
-                <div class="calendar-cell">1</div>
-                <div class="calendar-cell">2</div>
-                <div class="calendar-cell">3</div>
-                <div class="calendar-cell">4</div>
-                <div class="calendar-cell">5</div>
-                <div class="calendar-cell">6</div>
-                <div class="calendar-cell">7</div>
-                <div class="calendar-cell">8</div>
-                <div class="calendar-cell active">9</div>
-                <div class="calendar-cell">10</div>
-                <div class="calendar-cell">11</div>
-                <div class="calendar-cell">12</div>
-                <div class="calendar-cell">13</div>
-                <div class="calendar-cell">14</div>
-                <div class="calendar-cell">15</div>
-                <div class="calendar-cell">16</div>
-                <div class="calendar-cell">17</div>
-                <div class="calendar-cell">18</div>
-                <div class="calendar-cell">19</div>
-                <div class="calendar-cell">20</div>
-                <div class="calendar-cell">21</div>
-                <div class="calendar-cell">22</div>
-                <div class="calendar-cell">23</div>
-                <div class="calendar-cell">24</div>
-                <div class="calendar-cell">25</div>
-                <div class="calendar-cell">26</div>
-                <div class="calendar-cell">27</div>
-                <div class="calendar-cell">28</div>
-                <div class="calendar-cell">29</div>
-                <div class="calendar-cell">30</div>
-              </div>
-              <div class="step-label" style="margin-top:6px;margin-bottom:4px;">Время</div>
-              <div class="time-grid" style="gap:4px;grid-template-columns:repeat(2,minmax(0,1fr));">
-                <div class="time-slot">10:00</div>
-                <div class="time-slot active">11:30</div>
-                <div class="time-slot">13:00</div>
-                <div class="time-slot">16:00</div>
-              </div>
-            </div>
-            <div style="margin-top:auto;border-top:1px solid var(--border);padding-top:6px;">
-              <div style="font-size:8px;color:var(--text-muted);margin-bottom:4px;">
-                9 января · 11:30 · Любой врач
-              </div>
-              <div class="phone-btn primary">Записаться</div>
-            </div>
+          <!-- ВПРАВО -->
+          <svg id="scan-arrow-right" viewBox="0 0 640 480" xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity .4s;">
+            <defs><marker id="sahr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></marker></defs>
+            <line x1="150" y1="240" x2="472" y2="240" stroke="rgba(255,255,255,0.75)" stroke-width="2" stroke-linecap="round" marker-end="url(#sahr)"/>
+            <path d="M260 160 Q400 200 400 240" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1" stroke-dasharray="5 4"/>
+            <text x="320" y="66" text-anchor="middle" fill="rgba(255,255,255,0.6)" font-size="11" font-family="SF Pro Text,system-ui" letter-spacing="3">МЕДЛЕННО ВПРАВО</text>
+          </svg>
+
+          <!-- Вспышка -->
+          <div id="scan-flash" style="position:absolute;inset:0;background:#fff;opacity:0;border-radius:16px;pointer-events:none;transition:opacity .08s;"></div>
+
+          <!-- Инструкция -->
+          <div style="position:absolute;bottom:16px;left:50%;transform:translateX(-50%);background:rgba(5,5,5,.88);border:1px solid var(--border);border-radius:999px;padding:8px 28px;white-space:nowrap;backdrop-filter:blur(10px);">
+            <div id="scan-step" style="font-size:9px;color:var(--text-muted);letter-spacing:.22em;text-transform:uppercase;margin-bottom:2px;text-align:center;">AI FACE SCAN</div>
+            <div id="scan-text" style="font-size:12px;color:var(--text);text-align:center;">Нажмите «Включить камеру»</div>
           </div>
         </div>
       </div>
-    </section>
-  </main>
-  <script>
-    (function() {
-      let lastScroll = 0;
-      const header = document.querySelector('header.desktop-header');
 
-      window.addEventListener('scroll', () => {
-        const currentScroll = window.pageYOffset;
+      <!-- Прогресс-точки -->
+      <div style="display:flex;justify-content:center;gap:10px;margin-bottom:16px;">
+        <div id="scan-dot0" style="width:7px;height:7px;border-radius:50%;background:var(--border);transition:background .4s,transform .3s;"></div>
+        <div id="scan-dot1" style="width:7px;height:7px;border-radius:50%;background:var(--border);transition:background .4s,transform .3s;"></div>
+        <div id="scan-dot2" style="width:7px;height:7px;border-radius:50%;background:var(--border);transition:background .4s,transform .3s;"></div>
+      </div>
 
-        if (currentScroll <= 0) {
-          header.classList.remove('hidden');
-          return;
-        }
+      <!-- Прогресс-бар -->
+      <div style="height:2px;background:var(--border);border-radius:2px;overflow:hidden;margin-bottom:24px;">
+        <div id="scan-bar" style="height:100%;width:0%;background:var(--accent);transition:width .6s ease;"></div>
+      </div>
 
-        if (currentScroll > lastScroll && currentScroll > 80) {
-          // Скролл вниз
-          header.classList.add('hidden');
-        } else if (currentScroll < lastScroll) {
-          // Скролл вверх
-          header.classList.remove('hidden');
-        }
+      <!-- Кнопки -->
+      <div style="display:flex;gap:10px;justify-content:center;">
+        <button class="btn" id="scan-start-btn" onclick="scanStartCamera()">Включить камеру</button>
+        <button class="btn btn-primary" id="scan-scan-btn" onclick="scanStart()" disabled>Начать сканирование</button>
+      </div>
 
-        lastScroll = currentScroll;
-      });
-    })();
-  </script>
+      <!-- Результат -->
+      <div id="scan-result" style="display:none;margin-top:28px;background:var(--bg-soft);border:1px solid var(--border);border-radius:20px;padding:26px;">
+        <div style="font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px;">Результат анализа</div>
+        <div id="scan-res-shape" style="font-size:28px;font-weight:200;text-transform:uppercase;letter-spacing:.16em;margin-bottom:4px;">—</div>
+        <div id="scan-res-conf"  style="font-size:11px;color:var(--text-muted);margin-bottom:16px;">—</div>
+        <div style="height:2px;background:var(--border);border-radius:2px;margin-bottom:24px;"><div id="scan-conf-fill" style="height:100%;background:var(--accent);border-radius:2px;transition:width 1s ease;width:0%;"></div></div>
+        <div style="font-size:9px;color:var(--text-muted);letter-spacing:.2em;text-transform:uppercase;margin-bottom:10px;">Голоса по ракурсам</div>
+        <div id="scan-votes" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px;"></div>
+        <div style="font-size:9px;color:var(--text-muted);letter-spacing:.2em;text-transform:uppercase;margin-bottom:10px;">Захваченные кадры</div>
+        <div id="scan-frames" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:24px;"></div>
+        <div style="font-size:9px;color:var(--text-muted);letter-spacing:.2em;text-transform:uppercase;margin-bottom:10px;margin-top:20px;">Рекомендуемые оправы</div>
+        <div id="scan-glasses" style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     PRODUCT MODAL
+══════════════════════════════ -->
+<div class="modal-overlay" id="product-modal" onclick="closeModal(event)">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal(null,true)">✕</button>
+    <div class="modal-img" id="modal-img">🕶️</div>
+    <div class="modal-brand" id="modal-brand"></div>
+    <div class="modal-title" id="modal-title"></div>
+    <div class="modal-price" id="modal-price"></div>
+    <div class="modal-desc" id="modal-desc"></div>
+    <div class="modal-specs" id="modal-specs"></div>
+    <div class="modal-actions">
+      <button class="btn btn-primary" id="modal-add-btn" style="flex:1;">В корзину</button>
+      <button class="btn" onclick="closeModal(null,true)" style="flex:1;">Закрыть</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
 
 <script>
-// ============================================================
-// NOIR VISION — FRONTEND LOGIC
-// ============================================================
-const API = "http://localhost:8000";
+// ═══════════════════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════════════════
 
-// ── Состояние ──────────────────────────────────────────────
-const state = {
-  cart: [],        // [{id, name, brand, price, qty}]
-  products: [],    // все товары с бэкенда
-  currentUser: JSON.parse(localStorage.getItem("nv_user") || "null"),
+const PRODUCTS = {
+  frames: [
+    { id:'r01', name:'Noir Round 01',    brand:'NOIR VISION ATELIER', price:29000, shape:'round',    icon:'🕶️', desc:'Классическая круглая оправа из ацетата. Диаметр 47 мм, дужки 145 мм.', specs:'Материал: ацетат · Цвет: чёрный · УФ-защита: UV400' },
+    { id:'r02', name:'Noir Round 02',    brand:'NOIR VISION ATELIER', price:30000, shape:'round',    icon:'🕶️', desc:'Круглая оправа с тонким металлическим ободом. Диаметр 48 мм.', specs:'Материал: металл + ацетат · Цвет: золото/чёрный · Вес: 18 г' },
+    { id:'r03', name:'Noir Round 03',    brand:'NOIR VISION ATELIER', price:31000, shape:'round',    icon:'🕶️', desc:'Увеличенная круглая оправа для акцентного образа. Диаметр 50 мм.', specs:'Материал: ацетат · Цвет: тёмно-коричневый · Гибкие дужки' },
+    { id:'o01', name:'Noir Oval 01',     brand:'NOIR VISION ATELIER', price:30000, shape:'oval',     icon:'🕶️', desc:'Овальная оправа с мягкими линиями. Ширина 52 мм, высота 38 мм.', specs:'Материал: ацетат · Цвет: матовый чёрный · Вес: 20 г' },
+    { id:'o02', name:'Noir Oval 02',     brand:'NOIR VISION ATELIER', price:31000, shape:'oval',     icon:'🕶️', desc:'Вытянутая овальная форма с металлическими дужками. Ширина 54 мм.', specs:'Материал: комбинированный · Цвет: чёрный/серебро' },
+    { id:'o03', name:'Noir Oval 03',     brand:'NOIR VISION ATELIER', price:32000, shape:'oval',     icon:'🕶️', desc:'Классический овал в итальянском стиле. Ширина 52 мм.', specs:'Материал: ацетат · Цвет: черепаховый · Дужки 140 мм' },
+    { id:'s01', name:'Noir Square 01',   brand:'OBSIDIAN FRAMES',     price:32000, shape:'square',   icon:'🕶️', desc:'Квадратная оправа с чётко выраженными углами. Ширина 52 мм.', specs:'Материал: ацетат · Цвет: чёрный матовый · Вес: 22 г' },
+    { id:'s02', name:'Noir Square 02',   brand:'OBSIDIAN FRAMES',     price:33000, shape:'square',   icon:'🕶️', desc:'Массивная квадратная оправа из толстого ацетата. Ширина 54 мм.', specs:'Материал: ацетат · Цвет: тёмно-серый · Гибкие петли' },
+    { id:'s03', name:'Noir Square 03',   brand:'OBSIDIAN FRAMES',     price:34000, shape:'square',   icon:'🕶️', desc:'Квадратная оправа с металлическими вставками на дужках.', specs:'Материал: ацетат + металл · Цвет: чёрный/золото' },
+    { id:'rc1', name:'Noir Rect 01',     brand:'STUDIO ECLIPSE',      price:33000, shape:'rect',     icon:'🕶️', desc:'Прямоугольная оправа в минималистичном стиле. Ширина 54 мм.', specs:'Материал: ацетат · Цвет: чёрный · Тонкий обод' },
+    { id:'rc2', name:'Noir Rect 02',     brand:'STUDIO ECLIPSE',      price:34000, shape:'rect',     icon:'🕶️', desc:'Широкая прямоугольная оправа. Ширина 56 мм.', specs:'Материал: ацетат · Цвет: матовый чёрный · Вес: 24 г' },
+    { id:'rc3', name:'Noir Rect 03',     brand:'STUDIO ECLIPSE',      price:35000, shape:'rect',     icon:'🕶️', desc:'Прямоугольная металлическая оправа. Элегантный деловой стиль.', specs:'Материал: металл (титан) · Цвет: серебро · Вес: 14 г' },
+    { id:'av1', name:'Noir Aviator 01',  brand:'NOIR VISION ATELIER', price:36000, shape:'aviator',  icon:'✈️', desc:'Классический силуэт авиатора с тонким металлическим ободом.', specs:'Материал: металл · Цвет: золото · Линзы: с градиентом' },
+    { id:'av2', name:'Noir Aviator 02',  brand:'NOIR VISION ATELIER', price:37000, shape:'aviator',  icon:'✈️', desc:'Авиатор с двойным ободом. Матовый чёрный.', specs:'Материал: нержавеющая сталь · Цвет: матовый чёрный' },
+    { id:'av3', name:'Noir Aviator 03',  brand:'NOIR VISION ATELIER', price:38000, shape:'aviator',  icon:'✈️', desc:'Увеличенный силуэт авиатора для яркого образа.', specs:'Материал: металл · Цвет: серебро/чёрный' },
+    { id:'ct1', name:'Noir Cat 01',      brand:'STUDIO ECLIPSE',      price:35000, shape:'cat',      icon:'🐱', desc:'Кошачий глаз с выраженным углом. Женственная форма.', specs:'Материал: ацетат · Цвет: матовый чёрный' },
+    { id:'ct2', name:'Noir Cat 02',      brand:'STUDIO ECLIPSE',      price:36000, shape:'cat',      icon:'🐱', desc:'Изящный кошачий глаз с металлическим декором на углах.', specs:'Материал: ацетат + металл · Цвет: чёрный/золото' },
+    { id:'wf1', name:'Noir Wayfarer 01', brand:'OBSIDIAN FRAMES',     price:34000, shape:'wayfarer', icon:'🕶️', desc:'Классический Вайфарер с массивным ацетатным ободом.', specs:'Материал: ацетат · Цвет: чёрный · Трапециевидная форма' },
+    { id:'wf2', name:'Noir Wayfarer 02', brand:'OBSIDIAN FRAMES',     price:35000, shape:'wayfarer', icon:'🕶️', desc:'Вайфарер с тонкой рамкой. Современная интерпретация классики.', specs:'Материал: ацетат · Цвет: тёмно-коричневый' },
+  ],
+  lenses: [
+    { id:'ln01', name:'Distance Standard',      brand:'NOIR OPTICS',     price:2799,  lens:'dal',   icon:'🔬', desc:'Базовые монофокальные линзы для дали.', specs:'Индекс: 1.50 · УФ-фильтр · Антибликовое покрытие' },
+    { id:'ln02', name:'Distance Slim 1.60',     brand:'NOIR OPTICS',     price:3999,  lens:'dal',   icon:'🔬', desc:'Тонкие линзы индекса 1.60 для умеренных диоптрий.', specs:'Индекс: 1.60 · Лёгкие · Антибликовое покрытие' },
+    { id:'ln03', name:'Distance Ultra Thin 1.67',brand:'NOIR OPTICS',    price:5499,  lens:'dal',   icon:'🔬', desc:'Ультратонкие линзы 1.67 — минимальная толщина при высоких диоптриях.', specs:'Индекс: 1.67 · Олеофобное покрытие · Лёгкие' },
+    { id:'ln04', name:'Distance Hi-Index 1.74', brand:'OBSIDIAN OPTICS', price:7999,  lens:'dal',   icon:'🔬', desc:'Премиальные линзы 1.74 для самых высоких рецептов.', specs:'Индекс: 1.74 · Почти незаметны в оправе' },
+    { id:'ln05', name:'Reading Classic',        brand:'NOIR OPTICS',     price:2499,  lens:'bliz',  icon:'🔬', desc:'Классические линзы для близи — чтение, работа с документами.', specs:'Монофокальные · Для близи · Антибликовое покрытие' },
+    { id:'ln06', name:'Reading Slim 1.60',      brand:'NOIR OPTICS',     price:3499,  lens:'bliz',  icon:'🔬', desc:'Тонкие линзы для близи индекса 1.60.', specs:'Индекс: 1.60 · Комфорт при длительном чтении' },
+    { id:'ln07', name:'Office Base',            brand:'NOIR OPTICS',     price:3799,  lens:'comp',  icon:'💻', desc:'Базовые офисные линзы для работы за ПК. 40–70 см.', specs:'Оптимизированы для экрана · Антибликовые' },
+    { id:'ln08', name:'Office Blue Block',      brand:'NOIR OPTICS',     price:4799,  lens:'comp',  icon:'💻', desc:'Офисные линзы с фильтром синего света.', specs:'Blue Block · Снижают усталость глаз' },
+    { id:'ln09', name:'Progressive Entry',      brand:'NOIR OPTICS',     price:6999,  lens:'prog',  icon:'🔭', desc:'Прогрессивные линзы начального уровня. Широкие зоны зрения.', specs:'3 зоны зрения · Удобная адаптация' },
+    { id:'ln10', name:'Progressive Comfort',    brand:'NOIR OPTICS',     price:8999,  lens:'prog',  icon:'🔭', desc:'Улучшенный дизайн с расширенными боковыми зонами.', specs:'Меньше периферийных искажений · FreeView' },
+    { id:'ln11', name:'Progressive Premium',    brand:'OBSIDIAN OPTICS', price:12999, lens:'prog',  icon:'🔭', desc:'Премиальный прогрессивный дизайн. Плавный переход.', specs:'Минимум аберраций · Для всех дистанций' },
+    { id:'ln12', name:'Drive Day',              brand:'NOIR OPTICS',     price:4299,  lens:'drive', icon:'🚗', desc:'Дневные линзы для вождения с антибликовым покрытием.', specs:'Высокая контрастность · Поляризация' },
+    { id:'ln13', name:'Drive Night',            brand:'NOIR OPTICS',     price:5499,  lens:'drive', icon:'🌙', desc:'Специальное покрытие для ночного вождения.', specs:'Подавляет ореолы от фар встречных машин' },
+    { id:'ln14', name:'Drive Polarized',        brand:'OBSIDIAN OPTICS', price:6999,  lens:'drive', icon:'🚗', desc:'Поляризационные линзы для вождения.', specs:'Устраняют блики от асфальта · Горизонтальная поляризация' },
+    { id:'ln15', name:'Photochromic Classic',   brand:'NOIR CARE',       price:3999,  lens:'photo', icon:'🌤️', desc:'Базовые фотохромные линзы — затемнение до 85% на солнце.', specs:'Прозрачные в помещении · Адаптируются за 30 сек' },
+    { id:'ln16', name:'Photochromic Fast Adapt',brand:'NOIR CARE',       price:5299,  lens:'photo', icon:'🌤️', desc:'Ускоренная адаптация: затемнение за 20 сек.', specs:'Просветление за 3 мин · Blue Block' },
+    { id:'ln17', name:'Sun Classic',            brand:'NOIR CARE',       price:2999,  lens:'sun',   icon:'☀️', desc:'Базовые солнцезащитные линзы с UV400-защитой.', specs:'Нейтральный серый оттенок · UV400' },
+    { id:'ln18', name:'Sun Gradient Noir',      brand:'STUDIO ECLIPSE',  price:4999,  lens:'sun',   icon:'☀️', desc:'Градиентные линзы: тёмные сверху, светлые снизу.', specs:'Стиль и функциональность · UV400' },
+    { id:'ln19', name:'Polarized Gray',         brand:'NOIR CARE',       price:4499,  lens:'polar', icon:'🌊', desc:'Серые поляризационные линзы — нейтральная цветопередача.', specs:'Устраняют блики от воды и дороги' },
+    { id:'ln20', name:'Blue Light Basic',       brand:'NOIR CARE',       price:1799,  lens:'blue',  icon:'📱', desc:'Базовый фильтр синего света.', specs:'Снижает нагрузку при работе за ПК' },
+    { id:'ln21', name:'Blue Light Premium Slim',brand:'STUDIO ECLIPSE',  price:5499,  lens:'blue',  icon:'📱', desc:'Тонкие линзы 1.67 с фильтром синего света и FreeForm.', specs:'Комфорт весь день · Индекс 1.67' },
+  ],
+  liquids: [
+    { id:'lq01', name:'Clean Drops 10 мл',      brand:'NOIR CARE', price:890,  icon:'💧', desc:'Увлажняющие капли для контактных линз. Снимают усталость.', specs:'Объём: 10 мл · Состав: HA 0.1% · Гипоаллергенно' },
+    { id:'lq02', name:'Clean Drops 15 мл',      brand:'NOIR CARE', price:1190, icon:'💧', desc:'Увлажняющие капли увеличенного объёма.', specs:'Объём: 15 мл · Состав: HA 0.1% · Гипоаллергенно' },
+    { id:'lq03', name:'Pro Solution 100 мл',    brand:'NOIR CARE', price:1490, icon:'🧴', desc:'Многофункциональный раствор для мягких линз.', specs:'Объём: 100 мл · Дезинфекция · Хранение' },
+    { id:'lq04', name:'Pro Solution 360 мл',    brand:'NOIR CARE', price:2490, icon:'🧴', desc:'Многофункциональный раствор для мягких линз — увеличенный.', specs:'Объём: 360 мл · Дезинфекция · Хранение' },
+    { id:'lq05', name:'Frame Cleaner Spray',    brand:'NOIR CARE', price:990,  icon:'🌀', desc:'Спрей для очистки оправ и жёстких оптических линз.', specs:'Объём: 50 мл · Не оставляет разводов' },
+    { id:'lq06', name:'Ultra Clean Mist',       brand:'NOIR CARE', price:3500, icon:'✨', desc:'Спрей для быстрой очистки и увлажнения.', specs:'Объём: 30 мл · Микрофибра в комплекте' },
+    { id:'lq07', name:'Sensitive Solution',     brand:'NOIR CARE', price:1890, icon:'🧴', desc:'Раствор для чувствительных глаз. Без консервантов.', specs:'Объём: 200 мл · Без консервантов · Гипоаллергенно' },
+  ],
+  cases: [
+    { id:'cs01', name:'Stone Case 01',    brand:'OBSIDIAN CASES', price:4500, icon:'🗃️', desc:'Жёсткий чехол тёмно-серого цвета. Защита от ударов.', specs:'Материал: поликарбонат · Застёжка: кнопка · Размер: 165×70×40 мм' },
+    { id:'cs02', name:'Stone Case 02',    brand:'OBSIDIAN CASES', price:4900, icon:'🗃️', desc:'Матовый чёрный футляр с магнитной застёжкой.', specs:'Материал: поликарбонат · Застёжка: магнит · Мягкая подкладка' },
+    { id:'cs03', name:'Leather Fold 01',  brand:'NOIR LEATHER',   price:5200, icon:'👜', desc:'Плоский кожаный чехол‑конверт. Минималистичный дизайн.', specs:'Материал: натуральная кожа · Застёжка: кнопка · Размер: 170×75 мм' },
+    { id:'cs04', name:'Leather Box 02',   brand:'NOIR LEATHER',   price:5500, icon:'👜', desc:'Объёмный кожаный футляр с тиснением логотипа.', specs:'Материал: натуральная кожа · Застёжка: металл · Вес: 95 г' },
+    { id:'cs05', name:'Concrete Box 01',  brand:'STUDIO ECLIPSE', price:5800, icon:'🧱', desc:'Дизайнерский чехол с бетонной текстурой. Ограниченная серия.', specs:'Материал: полимер бетон-стиль · Магнит · Размер: 170×70×42 мм' },
+  ],
 };
 
-async function apiFetch(path, opts = {}) {
-  const res = await fetch(API + path, {
-    headers: { "Content-Type": "application/json" },
-    ...opts,
+// ═══════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════
+const state = {
+  cart: JSON.parse(localStorage.getItem('nv_cart') || '[]'),
+  currentPage: 'home',
+  catalogTab: 'frames',
+  shapeFilter: 'all',
+  lensFilter: 'all',
+  isLoggedIn: false,
+  userName: '',
+};
+
+// ═══════════════════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════════════════
+function showPage(name) {
+  const wrapper = document.getElementById('page-home-catalog-wrapper');
+  // скрываем все страницы (кроме home и catalog — они в wrapper)
+  document.querySelectorAll('.page').forEach(p => {
+    if (p.id !== 'page-home' && p.id !== 'page-catalog') {
+      p.classList.remove('active');
+    }
   });
-  if (!res.ok) {
-    const err = await res.text();
-    throw new Error(err);
+
+  if (name === 'home' || name === 'catalog') {
+    // показываем wrapper с обоими
+    wrapper.classList.remove('hidden-wrapper');
+    if (name === 'home') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      // скролл к каталогу
+      setTimeout(() => {
+        const catEl = document.getElementById('page-catalog');
+        catEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 50);
+    }
+  } else {
+    // скрываем wrapper и показываем нужную страницу
+    wrapper.classList.add('hidden-wrapper');
+    const el = document.getElementById('page-' + name);
+    if (el) el.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
-  return res.json();
-}
 
-// ── Корзина ────────────────────────────────────────────────
-function cartSave() { localStorage.setItem("nv_cart", JSON.stringify(state.cart)); }
-function cartLoad() { state.cart = JSON.parse(localStorage.getItem("nv_cart") || "[]"); }
-
-function addToCart(product) {
-  const ex = state.cart.find(i => i.id === product.id);
-  if (ex) ex.qty++;
-  else state.cart.push({ ...product, qty: 1 });
-  cartSave();
-  updateCartBadge();
-  showToast("Добавлено в корзину: " + product.name);
-}
-
-function updateCartBadge() {
-  const total = state.cart.reduce((s, i) => s + i.qty, 0);
-  document.querySelectorAll(".cart-badge").forEach(el => {
-    el.textContent = total || "";
-    el.style.display = total ? "flex" : "none";
+  // обновляем nav
+  const navName = (name === 'catalog') ? 'catalog' : (name === 'home' ? 'home' : name);
+  document.querySelectorAll('nav a').forEach(a => {
+    a.classList.toggle('active', a.dataset.page === navName);
   });
+  state.currentPage = name;
+  if (name === 'cart') renderCart();
 }
 
-function renderCart() {
-  const list = document.getElementById("cart-list-dynamic");
-  const totalEl = document.getElementById("cart-total-dynamic");
-  if (!list) return;
-  list.innerHTML = "";
-  let total = 0;
-  state.cart.forEach(item => {
-    total += item.price * item.qty;
-    const div = document.createElement("article");
-    div.className = "cart-item";
-    div.innerHTML = `
-      <div class="cart-thumb" style="font-size:9px;color:#777;text-align:center;">${item.name}</div>
-      <div>
-        <div class="product-brand">${item.brand}</div>
-        <div class="cart-info-title">${item.name}</div>
-        <div class="cart-qty">
-          <span class="qty-pill" onclick="changeQty(${item.id},-1)" style="cursor:pointer">−</span>
-          <span>${item.qty}</span>
-          <span class="qty-pill" onclick="changeQty(${item.id},1)" style="cursor:pointer">+</span>
-        </div>
+// Кликабельные ссылки в nav
+document.querySelectorAll('nav a').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    showPage(a.dataset.page);
+  });
+});
+
+// Скрываем хедер при скролле вниз
+let lastY = 0;
+window.addEventListener('scroll', () => {
+  const h = document.getElementById('site-header');
+  const y = window.scrollY;
+  if (y > lastY && y > 80) h.classList.add('hidden');
+  else h.classList.remove('hidden');
+  lastY = y;
+});
+
+// ═══════════════════════════════════════════════════════════
+// CATALOG
+// ═══════════════════════════════════════════════════════════
+function setCatalogTab(tab) {
+  state.catalogTab = tab;
+  state.shapeFilter = 'all';
+  state.lensFilter = 'all';
+
+  // активная вкладка
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+
+  // показ нужных фильтров
+  document.getElementById('frame-filters').style.display = tab === 'frames' ? '' : 'none';
+  document.getElementById('lens-filters').style.display  = tab === 'lenses' ? '' : 'none';
+
+  // сброс чипов
+  document.querySelectorAll('#shape-filter .shape-chip').forEach(c => c.classList.toggle('active', c.dataset.shape === 'all'));
+  document.querySelectorAll('#lens-filter .shape-chip').forEach(c => c.classList.toggle('active', c.dataset.lens === 'all'));
+
+  // заголовок
+  const heads = { frames:'Каталог – оправы', lenses:'Каталог – линзы', liquids:'Каталог – жидкости', cases:'Каталог – футляры' };
+  document.getElementById('catalog-heading').textContent = heads[tab] || 'Каталог';
+
+  renderCatalog();
+}
+
+function renderCatalog() {
+  const grid = document.getElementById('catalog-grid');
+  const tab = state.catalogTab;
+  let items = [...(PRODUCTS[tab] || [])];
+
+  // фильтр по форме (оправы)
+  if (tab === 'frames' && state.shapeFilter !== 'all') {
+    items = items.filter(p => p.shape === state.shapeFilter);
+  }
+  // фильтр по типу (линзы)
+  if (tab === 'lenses' && state.lensFilter !== 'all') {
+    items = items.filter(p => p.lens === state.lensFilter);
+  }
+
+  grid.innerHTML = items.map(p => `
+    <article class="product-card" onclick="openModal('${p.id}','${tab}')">
+      <div class="product-img-wrap">${p.icon}</div>
+      <div class="product-brand">${p.brand}</div>
+      <div class="product-name">${p.name}</div>
+      <div class="product-desc">${p.desc}</div>
+      <div class="product-footer">
+        <span class="price">${p.price.toLocaleString('ru-RU')} ₽</span>
+        <span class="add-btn" onclick="event.stopPropagation();addToCart('${p.id}','${tab}')">+ В корзину</span>
       </div>
-      <div style="text-align:right;font-size:12px;">
-        <div>${(item.price * item.qty).toLocaleString("ru-RU")} ₽</div>
-        <div style="font-size:10px;color:var(--text-muted);margin-top:4px;cursor:pointer;" onclick="removeFromCart(${item.id})">Удалить</div>
-      </div>`;
-    list.appendChild(div);
-  });
-  if (totalEl) totalEl.textContent = total.toLocaleString("ru-RU") + " ₽";
+    </article>
+  `).join('');
+}
+
+// Фильтры форм оправ
+document.getElementById('shape-filter').addEventListener('click', e => {
+  const chip = e.target.closest('.shape-chip');
+  if (!chip) return;
+  document.querySelectorAll('#shape-filter .shape-chip').forEach(c => c.classList.remove('active'));
+  chip.classList.add('active');
+  state.shapeFilter = chip.dataset.shape;
+  renderCatalog();
+});
+
+// Фильтры типов линз
+document.getElementById('lens-filter').addEventListener('click', e => {
+  const chip = e.target.closest('.shape-chip');
+  if (!chip) return;
+  document.querySelectorAll('#lens-filter .shape-chip').forEach(c => c.classList.remove('active'));
+  chip.classList.add('active');
+  state.lensFilter = chip.dataset.lens;
+  renderCatalog();
+});
+
+// Первый рендер каталога
+renderCatalog();
+
+// ═══════════════════════════════════════════════════════════
+// PRODUCT MODAL
+// ═══════════════════════════════════════════════════════════
+function findProduct(id, tab) {
+  const pool = tab ? PRODUCTS[tab] : Object.values(PRODUCTS).flat();
+  return pool.find(p => p.id === id);
+}
+
+function openModal(id, tab) {
+  const p = findProduct(id, tab);
+  if (!p) return;
+  document.getElementById('modal-img').textContent   = p.icon;
+  document.getElementById('modal-brand').textContent = p.brand;
+  document.getElementById('modal-title').textContent = p.name;
+  document.getElementById('modal-price').textContent = p.price.toLocaleString('ru-RU') + ' ₽';
+  document.getElementById('modal-desc').textContent  = p.desc;
+  document.getElementById('modal-specs').textContent = p.specs;
+  document.getElementById('modal-add-btn').onclick = () => {
+    addToCart(id, tab);
+    closeModal(null, true);
+  };
+  document.getElementById('product-modal').classList.add('open');
+}
+
+function closeModal(e, force) {
+  if (force || e?.target === document.getElementById('product-modal')) {
+    document.getElementById('product-modal').classList.remove('open');
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// CART
+// ═══════════════════════════════════════════════════════════
+function cartSave() { localStorage.setItem('nv_cart', JSON.stringify(state.cart)); }
+
+function addToCart(id, tab) {
+  const p = findProduct(id, tab);
+  if (!p) return;
+  const ex = state.cart.find(i => i.id === id);
+  if (ex) ex.qty++;
+  else state.cart.push({ id: p.id, name: p.name, brand: p.brand, price: p.price, icon: p.icon, qty: 1 });
+  cartSave();
+  updateBadge();
+  toast('Добавлено: ' + p.name);
 }
 
 function changeQty(id, delta) {
@@ -2283,520 +1186,435 @@ function changeQty(id, delta) {
   if (!item) return;
   item.qty += delta;
   if (item.qty <= 0) state.cart = state.cart.filter(i => i.id !== id);
-  cartSave(); updateCartBadge(); renderCart();
+  cartSave(); updateBadge(); renderCart();
 }
 
-function removeFromCart(id) {
+function removeItem(id) {
   state.cart = state.cart.filter(i => i.id !== id);
-  cartSave(); updateCartBadge(); renderCart();
+  cartSave(); updateBadge(); renderCart();
 }
 
-async function submitOrder() {
-  if (!state.cart.length) { showToast("Корзина пуста!"); return; }
-  try {
-    const body = { items: state.cart.map(i => ({ product_id: i.id, quantity: i.qty })) };
-    const res = await apiFetch("/orders", { method: "POST", body: JSON.stringify(body) });
-    showToast("✅ Заказ №" + res.id + " оформлен!");
-    state.cart = []; cartSave(); updateCartBadge(); renderCart();
-  } catch(e) { showToast("Ошибка: " + e.message); }
+function updateBadge() {
+  const total = state.cart.reduce((s, i) => s + i.qty, 0);
+  const badge = document.getElementById('cart-badge');
+  badge.textContent = total;
+  badge.style.display = total ? 'flex' : 'none';
 }
 
-// ── Товары ─────────────────────────────────────────────────
-async function loadProducts() {
-  try {
-    state.products = await apiFetch("/products");
-  } catch(e) { console.warn("Бэкенд недоступен, работаем офлайн"); }
+function renderCart() {
+  const list = document.getElementById('cart-list');
+  if (!state.cart.length) {
+    list.innerHTML = '<div class="cart-empty">Корзина пуста</div>';
+    document.getElementById('cart-count').textContent = '0';
+    document.getElementById('cart-total').textContent = '0 ₽';
+    document.getElementById('cart-count-label').textContent = 'Корзина пуста';
+    return;
+  }
+  const total = state.cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const count = state.cart.reduce((s, i) => s + i.qty, 0);
+  document.getElementById('cart-count').textContent = count;
+  document.getElementById('cart-total').textContent = total.toLocaleString('ru-RU') + ' ₽';
+  document.getElementById('cart-count-label').textContent = `${count} ${noun(count, 'товар','товара','товаров')}`;
+  list.innerHTML = state.cart.map(item => `
+    <article class="cart-item">
+      <div class="cart-thumb">${item.icon || '🕶️'}</div>
+      <div>
+        <div class="cart-info-brand">${item.brand}</div>
+        <div style="font-size:13px;">${item.name}</div>
+        <div class="cart-qty">
+          <span class="qty-btn" onclick="changeQty('${item.id}',-1)">−</span>
+          <span>${item.qty}</span>
+          <span class="qty-btn" onclick="changeQty('${item.id}',1)">+</span>
+        </div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:13px;">${(item.price * item.qty).toLocaleString('ru-RU')} ₽</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:6px;cursor:pointer;" onclick="removeItem('${item.id}')">Удалить</div>
+      </div>
+    </article>
+  `).join('');
 }
 
-function getProduct(name) {
-  return state.products.find(p => p.name === name);
+document.getElementById('order-btn').addEventListener('click', () => {
+  if (!state.cart.length) { toast('Корзина пуста!'); return; }
+  const name  = document.getElementById('order-name').value.trim();
+  const phone = document.getElementById('order-phone').value.trim();
+  if (!name || !phone) { toast('Заполните имя и телефон'); return; }
+  state.cart = []; cartSave(); updateBadge(); renderCart();
+  toast('✅ Заказ оформлен! Спасибо, ' + name + '!');
+});
+
+function noun(n, one, few, many) {
+  const v = Math.abs(n) % 100;
+  if (v >= 11 && v <= 19) return many;
+  const r = v % 10;
+  if (r === 1) return one;
+  if (r >= 2 && r <= 4) return few;
+  return many;
 }
 
-// ── Карточки: кнопки «В корзину» и «Подробнее» ───────────
-function initProductCards() {
-  document.querySelectorAll(".product-card").forEach(card => {
-    const nameEl = card.querySelector(".product-name, .cart-info-title");
-    const brandEl = card.querySelector(".product-brand");
-    const priceEl = card.querySelector(".product-footer span");
-    if (!nameEl || !priceEl) return;
+updateBadge();
 
-    const name = nameEl.textContent.trim();
-    const brand = brandEl ? brandEl.textContent.trim() : "NOIR VISION";
-    const priceRaw = priceEl.textContent.replace(/[^0-9]/g, "");
-    const price = parseInt(priceRaw) || 0;
+// ═══════════════════════════════════════════════════════════
+// BOOKING — умный календарь
+// ═══════════════════════════════════════════════════════════
+const MONTH_DAYS = [31,28,31,30,31,30,31,31,30,31,30,31]; // дни по индексу (0=Янв)
+const MONTH_NAMES = ['Январь','Февраль','Март','Апрель','Май','Июнь',
+                     'Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
 
-    // Кнопка «Подробнее»
-    const moreBtn = card.querySelector(".link-more, .btn-more");
-    if (moreBtn) {
-      moreBtn.addEventListener("click", () => openProductModal({ name, brand, price }));
-    }
+function isLeapYear(y) { return (y % 4 === 0 && y % 100 !== 0) || y % 400 === 0; }
 
-    // Кнопка «В корзину»
-    const cartBtn = card.querySelector(".btn-cart, .btn-add-cart");
-    if (cartBtn) {
-      cartBtn.addEventListener("click", () => addToCart({ id: Math.random(), name, brand, price }));
-    }
-
-    // Кнопка «Подробнее» в футере (вторая кнопка)
-    const footerBtns = card.querySelectorAll(".product-footer .btn");
-    footerBtns.forEach(btn => {
-      if (btn.textContent.includes("Подробнее") || btn.textContent.includes("подробнее")) {
-        btn.addEventListener("click", () => openProductModal({ name, brand, price }));
-      }
-      if (btn.textContent.includes("корзин") || btn.textContent.includes("Корзин")) {
-        btn.addEventListener("click", () => addToCart({ id: Date.now() + Math.random(), name, brand, price }));
-      }
-    });
-  });
-
-  // Универсальный обработчик для span-кнопок «подробнее» рядом с ценой
-  document.querySelectorAll(".product-footer").forEach(footer => {
-    const spans = footer.querySelectorAll("span");
-    spans.forEach(span => {
-      if (span.style.cursor === "pointer" || span.dataset.action === "more") {
-        const card = span.closest(".product-card");
-        if (!card) return;
-        const name = card.querySelector(".product-name")?.textContent.trim();
-        const brand = card.querySelector(".product-brand")?.textContent.trim();
-        const priceRaw = footer.querySelector("span")?.textContent.replace(/[^0-9]/g,"") || "0";
-        span.style.cursor = "pointer";
-        span.addEventListener("click", () => openProductModal({ name, brand, price: parseInt(priceRaw) }));
-      }
-    });
-  });
+function getDaysInMonth(monthIndex) {
+  const year = new Date().getFullYear();
+  if (monthIndex === 1) return isLeapYear(year) ? 29 : 28;
+  return MONTH_DAYS[monthIndex];
 }
 
-// ── Модальное окно «Подробнее» ─────────────────────────────
-const PRODUCT_DETAILS = {
-  "Noir Round 01": { desc: "Классическая круглая оправа из ацетата. Диаметр 47 мм, дужки 145 мм. Подходит для квадратного и прямоугольного лица.", specs: "Материал: ацетат · Цвет: чёрный · УФ-защита: UV400" },
-  "Noir Round 02": { desc: "Круглая оправа с тонким металлическим ободом. Диаметр 48 мм. Лёгкая и элегантная.", specs: "Материал: металл + ацетат · Цвет: золото/чёрный · Вес: 18 г" },
-  "Noir Round 03": { desc: "Увеличенная круглая оправа для акцентного образа. Диаметр 50 мм.", specs: "Материал: ацетат · Цвет: тёмно-коричневый · Гибкие дужки" },
-  "Noir Oval 01": { desc: "Овальная оправа с мягкими линиями. Ширина 52 мм, высота 38 мм. Универсальна для любого типа лица.", specs: "Материал: ацетат · Цвет: матовый чёрный · Вес: 20 г" },
-  "Noir Oval 02": { desc: "Вытянутая овальная форма с металлическими дужками. Ширина 54 мм.", specs: "Материал: комбинированный · Цвет: чёрный/серебро" },
-  "Noir Oval 03": { desc: "Классический овал в итальянском стиле. Ширина 52 мм, ацетатная оправа.", specs: "Материал: ацетат · Цвет: черепаховый · Дужки 140 мм" },
-  "Noir Square 01": { desc: "Квадратная оправа с чётко выраженными углами. Ширина 52 мм. Для овального лица.", specs: "Материал: ацетат · Цвет: чёрный матовый · Вес: 22 г" },
-  "Noir Square 02": { desc: "Массивная квадратная оправа из толстого ацетата. Ширина 54 мм.", specs: "Материал: ацетат · Цвет: тёмно-серый · Гибкие петли" },
-  "Noir Square 03": { desc: "Квадратная оправа с металлическими вставками на дужках. Ширина 53 мм.", specs: "Материал: ацетат + металл · Цвет: чёрный/золото" },
-  "Noir Rect 01": { desc: "Прямоугольная оправа в минималистичном стиле. Ширина 54 мм, высота 36 мм.", specs: "Материал: ацетат · Цвет: чёрный · Тонкий обод" },
-  "Noir Rect 02": { desc: "Широкая прямоугольная оправа с подчёркнутым верхним ободом. Ширина 56 мм.", specs: "Материал: ацетат · Цвет: матовый чёрный · Вес: 24 г" },
-  "Noir Rect 03": { desc: "Прямоугольная металлическая оправа. Ширина 55 мм. Элегантный деловой стиль.", specs: "Материал: металл (титан) · Цвет: серебро · Вес: 14 г" },
-  "Noir Aviator 01": { desc: "Классические авиаторы с каплевидной формой линз. Ширина 58 мм. Металлическая переносица.", specs: "Материал: металл · Линзы: G-15 · УФ-защита: UV400 · Вес: 16 г" },
-  "Noir Aviator 02": { desc: "Авиаторы с двойным мостом. Ширина 60 мм. Зеркальное покрытие линз.", specs: "Материал: нержавеющая сталь · Цвет: золото/зеркало" },
-  "Noir Aviator 03": { desc: "Узкие авиаторы в ретро-стиле. Ширина 55 мм. Тонкая металлическая дужка.", specs: "Материал: металл · Цвет: матовое серебро · Вес: 14 г" },
-  "Noir Cat 01": { desc: "Кошачий глаз с акцентным верхним ободом. Ширина 52 мм. Для круглого лица.", specs: "Материал: ацетат · Цвет: чёрный · Декоративные петли" },
-  "Noir Cat 02": { desc: "Кошачий глаз с металлической вставкой. Ширина 53 мм. Изящный и современный.", specs: "Материал: ацетат + металл · Цвет: чёрный/золото" },
-  "Noir Cat 03": { desc: "Крупная оправа кошачий глаз. Ширина 55 мм. Максимальный акцент.", specs: "Материал: ацетат · Цвет: матовый чёрный · Вес: 26 г" },
-  "Noir Wayfarer 01": { desc: "Классические вайфареры с трапециевидной формой. Ширина 50 мм. Культовый дизайн.", specs: "Материал: ацетат · Цвет: чёрный · Дужки 145 мм" },
-  "Noir Wayfarer 02": { desc: "Вайфареры увеличенного размера. Ширина 54 мм. Яркий акцент образа.", specs: "Материал: ацетат · Цвет: матовый чёрный · Вес: 28 г" },
-  "Noir Wayfarer 03": { desc: "Классический Wayfarer с тонким ободом. Ширина 51 мм. Лёгкая версия.", specs: "Материал: ацетат тонкий · Цвет: чёрный · Вес: 20 г" },
-  "Pure Clarity": { desc: "Профессиональный спрей для очистки линз и оправ. Без спирта, безопасен для всех покрытий.", specs: "Объём: 100 мл · Состав: деионизированная вода · Без спирта" },
-  "Night Shield Pro": { desc: "Увлажняющий раствор для линз с защитой от синего света. Применение до и после ношения линз.", specs: "Объём: 150 мл · Для контактных линз · Синезащитный фильтр" },
-  "Ultra Clean Mist": { desc: "Ультрамелкодисперсный спрей для очков. Удаляет жир, отпечатки, пыль за 1 секунду.", specs: "Объём: 120 мл · Антибактериальный · Для всех видов линз" },
-  "Stone Case 01": { desc: "Жёсткий чехол из полимера под камень. Магнитная застёжка. Размер 165×70×40 мм.", specs: "Материал: полимер ABS · Вес: 85 г · Цвет: серый камень" },
-  "Stone Case 02": { desc: "Чехол из текстурированного полимера. Внутри бархатная подкладка. Размер 168×72×40 мм.", specs: "Материал: ABS + бархат · Цвет: тёмно-серый · Магнит" },
-  "Leather Fold 01": { desc: "Мягкий складной чехол из натуральной кожи. Для тонких и средних оправ.", specs: "Материал: натуральная кожа · Цвет: чёрный · Размер: 170×75 мм" },
-  "Leather Box 02": { desc: "Жёсткий кожаный футляр с металлической петлёй. Подходит для крупных оправ.", specs: "Материал: натуральная кожа · Застёжка: металл · Вес: 95 г" },
-  "Concrete Box 01": { desc: "Дизайнерский чехол с бетонной текстурой. Ограниченная серия. Жёсткий корпус.", specs: "Материал: полимер бетон-стиль · Магнит · Размер: 170×70×42 мм" },
-};
+function buildCalendar(monthIndex) {
+  const grid = document.getElementById('cal-grid');
+  grid.innerHTML = '';
+  const days = getDaysInMonth(monthIndex);
+  const today = new Date();
+  const currentMonthIdx = today.getMonth();
+  const currentDay = today.getDate();
+  const currentYear = today.getFullYear();
 
-function getProductDetail(name) {
-  return PRODUCT_DETAILS[name] || {
-    desc: "Высококачественный продукт NOIR VISION. Разработан с вниманием к деталям и удобству ношения.",
-    specs: "Материал: премиум · Гарантия: 1 год · Страна: Европа"
-  };
-}
+  for (let i = 1; i <= days; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'cal-cell';
+    cell.textContent = i;
 
-function openProductModal(product) {
-  const modal = document.getElementById("nv-product-modal");
-  if (!modal) return;
-  const detail = getProductDetail(product.name);
-  modal.querySelector(".modal-product-name").textContent = product.name;
-  modal.querySelector(".modal-product-brand").textContent = product.brand;
-  modal.querySelector(".modal-product-price").textContent = product.price.toLocaleString("ru-RU") + " ₽";
-  modal.querySelector(".modal-product-desc").textContent = detail.desc;
-  modal.querySelector(".modal-product-specs").textContent = detail.specs;
-  modal.querySelector(".modal-add-cart").onclick = () => {
-    addToCart({ id: Date.now(), name: product.name, brand: product.brand, price: product.price });
-    closeProductModal();
-  };
-  modal.style.display = "flex";
-}
-
-function closeProductModal() {
-  const modal = document.getElementById("nv-product-modal");
-  if (modal) modal.style.display = "none";
-}
-
-// ── Навигация ──────────────────────────────────────────────
-function scrollTo(id) {
-  const el = document.getElementById(id);
-  if (el) el.scrollIntoView({ behavior: "smooth" });
-}
-
-function initNav() {
-  // Шапка — навигация
-  document.querySelectorAll("nav.main-nav a").forEach(a => {
-    a.addEventListener("click", e => {
-      e.preventDefault();
-      const href = a.getAttribute("href");
-      const el = document.getElementById(href);
-      if (el) el.scrollIntoView({ behavior: "smooth" });
-    });
-  });
-
-  // Кнопка NOIR VISION в лого
-  document.querySelectorAll(".logo-text-button, .logo").forEach(btn => {
-    btn.addEventListener("click", () => scrollTo("home"));
-  });
-
-  // Кнопки корзины в шапке
-  document.querySelectorAll(".icon-btn").forEach(btn => {
-    if (btn.textContent.includes("🛒") || btn.textContent.includes("bag") || btn.innerHTML.includes("cart")) {
-      btn.addEventListener("click", () => {
-        renderCart();
-        scrollTo("cart-section");
+    // Блокируем прошедшие даты
+    const isPast = (monthIndex < currentMonthIdx && new Date().getFullYear() === currentYear)
+                || (monthIndex === currentMonthIdx && i < currentDay);
+    if (isPast) {
+      cell.style.opacity = '.3';
+      cell.style.cursor = 'default';
+      cell.style.pointerEvents = 'none';
+    } else {
+      cell.addEventListener('click', () => {
+        document.querySelectorAll('.cal-cell').forEach(c => c.classList.remove('active'));
+        cell.classList.add('active');
+        document.getElementById('b-day').textContent = i;
       });
     }
-  });
-
-  // Кнопки категорий на главной
-  document.querySelectorAll(".category-card .btn").forEach(btn => {
-    const card = btn.closest(".category-card");
-    const brand = card?.querySelector(".product-brand")?.textContent || "";
-    btn.addEventListener("click", () => {
-      if (brand.includes("CARE") || brand.includes("OPTICS")) scrollTo("catalog-lenses");
-      else scrollTo("catalog-frames");
-    });
-  });
-
-  // Hero CTA кнопки
-  document.querySelectorAll(".hero-cta .btn-primary").forEach(btn => {
-    btn.addEventListener("click", () => scrollTo("catalog-frames"));
-  });
-  document.querySelectorAll(".hero-cta .btn:not(.btn-primary)").forEach(btn => {
-    btn.addEventListener("click", () => scrollTo("booking"));
-  });
-
-  // Кнопки «Помощь с подбором»
-  document.querySelectorAll(".chip-btn").forEach(btn => {
-    if (btn.textContent.includes("подбором") || btn.textContent.includes("Подбором")) {
-      if (!btn.onclick) {
-        btn.addEventListener("click", () => scrollTo("ai-selection"));
-      }
-    }
-  });
-}
-
-// ── Авторизация ────────────────────────────────────────────
-function initAuth() {
-  // Кнопка входа в шапке (.pill)
-  document.querySelectorAll(".pill").forEach(pill => {
-    pill.style.cursor = "pointer";
-    pill.addEventListener("click", () => scrollTo("auth-section"));
-  });
-
-  // Форма входа
-  const loginBtn = document.querySelector("#auth-section .btn-primary");
-  if (loginBtn) {
-    loginBtn.addEventListener("click", async () => {
-      const inputs = document.querySelectorAll("#auth-section .auth-panel:first-child .field-input");
-      const phone = inputs[0]?.value;
-      const pass = inputs[1]?.value;
-      if (!phone || !pass) { showToast("Введите телефон и пароль"); return; }
-      showToast("Вход выполнен! Добро пожаловать.");
-      state.currentUser = { phone };
-      localStorage.setItem("nv_user", JSON.stringify(state.currentUser));
-    });
-  }
-
-  // Форма регистрации
-  const regBtn = document.querySelector("#auth-section .auth-panel:last-child .btn");
-  if (regBtn) {
-    regBtn.addEventListener("click", async () => {
-      const inputs = document.querySelectorAll("#auth-section .auth-panel:last-child .field-input");
-      const name = inputs[0]?.value;
-      const email = inputs[1]?.value;
-      const phone = inputs[2]?.value;
-      const pass = inputs[3]?.value;
-      if (!phone || !pass) { showToast("Заполните обязательные поля"); return; }
-      try {
-        await apiFetch("/users/register", {
-          method: "POST",
-          body: JSON.stringify({ phone, password: pass, first_name: name }),
-        });
-        showToast("✅ Регистрация успешна! Теперь войдите.");
-      } catch(e) {
-        showToast("Ошибка регистрации: " + e.message);
-      }
-    });
+    grid.appendChild(cell);
   }
 }
 
-// ── Запись к врачу ─────────────────────────────────────────
-function initBooking() {
-  // Выбор месяца
-  document.querySelectorAll("#booking .chip").forEach(chip => {
-    chip.addEventListener("click", () => {
-      document.querySelectorAll("#booking .chip").forEach(c => c.classList.remove("active"));
-      chip.classList.add("active");
-    });
+// Инит: текущий месяц
+let selectedMonthIdx = new Date().getMonth();
+document.getElementById('b-month').textContent = MONTH_NAMES[selectedMonthIdx];
+
+// Активируем текущий месяц в чипах
+document.querySelectorAll('#month-grid .chip').forEach((chip, idx) => {
+  if (idx === selectedMonthIdx) chip.classList.add('active');
+  else chip.classList.remove('active');
+
+  chip.addEventListener('click', () => {
+    document.querySelectorAll('#month-grid .chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    selectedMonthIdx = idx;
+    document.getElementById('b-month').textContent = MONTH_NAMES[idx];
+    document.getElementById('b-day').textContent = '—';
+    buildCalendar(idx);
   });
-
-  // Выбор дня
-  document.querySelectorAll("#booking .calendar-cell").forEach(cell => {
-    cell.style.cursor = "pointer";
-    cell.addEventListener("click", () => {
-      document.querySelectorAll("#booking .calendar-cell").forEach(c => c.classList.remove("active"));
-      cell.classList.add("active");
-    });
-  });
-
-  // Выбор времени
-  document.querySelectorAll("#booking .time-slot").forEach(slot => {
-    slot.style.cursor = "pointer";
-    slot.addEventListener("click", () => {
-      document.querySelectorAll("#booking .time-slot").forEach(s => s.classList.remove("active"));
-      slot.classList.add("active");
-    });
-  });
-
-  // Кнопка «Записаться»
-  document.querySelectorAll("#booking .btn-primary").forEach(btn => {
-    btn.addEventListener("click", async () => {
-      const day = document.querySelector("#booking .calendar-cell.active")?.textContent || "9";
-      const time = document.querySelector("#booking .time-slot.active")?.textContent || "11:30";
-      const month = document.querySelector("#booking .chip.active")?.textContent || "Апр";
-      try {
-        await apiFetch("/appointments", {
-          method: "POST",
-          body: JSON.stringify({ date: `2026-04-${day.padStart(2,"0")}`, time }),
-        });
-        showToast(`✅ Запись подтверждена: ${month} ${day}, ${time}`);
-      } catch(e) {
-        showToast("Ошибка записи. Попробуйте снова.");
-      }
-    });
-  });
-}
-
-// ── Зрение popup ───────────────────────────────────────────
-function initZreniePopup() {
-  const dialog = document.querySelector(".zrenie-dialog");
-  if (!dialog) return;
-  dialog.style.display = "none";
-
-  const catalogFrames = document.getElementById("catalog-frames");
-  if (!catalogFrames) return;
-
-  let shown = false;
-  const obs = new IntersectionObserver(entries => {
-    if (entries[0].isIntersecting && !shown) {
-      shown = true;
-      dialog.style.display = "block";
-      obs.disconnect();
-    }
-  }, { threshold: 0.2 });
-  obs.observe(catalogFrames);
-
-  const btns = dialog.querySelectorAll("button");
-  btns.forEach(btn => {
-    btn.addEventListener("click", () => {
-      dialog.style.display = "none";
-      if (btn.textContent.includes("нет") || btn.textContent.includes("Нет") || btn.textContent.includes("помощ")) {
-        scrollTo("booking");
-      }
-    });
-  });
-}
-
-// ── ИИ подбор оправ ────────────────────────────────────────
-const FACE_SHAPES = {
-  round:    { ru: "Круглое",       shapes: ["Кошачий глаз","Авиаторы","Вайфареры"] },
-  oval:     { ru: "Овальное",      shapes: ["Авиаторы","Круглые","Кошачий глаз"] },
-  square:   { ru: "Квадратное",    shapes: ["Авиаторы","Круглые","Кошачий глаз"] },
-  rect:     { ru: "Прямоугольное", shapes: ["Авиаторы","Круглые","Стрекозы"] },
-  triangle: { ru: "Треугольное",   shapes: ["Авиаторы","Стрекозы","Круглые"] },
-  heart:    { ru: "Сердцевидное",  shapes: ["Авиаторы","Вайфареры","Круглые"] },
-};
-
-const FRAMES_BY_SHAPE = {
-  "Авиаторы":    [{ name:"Noir Aviator 01", brand:"NOIR VISION ATELIER", price:36000 },{ name:"Noir Aviator 02", brand:"NOIR VISION ATELIER", price:37000 },{ name:"Noir Aviator 03", brand:"NOIR VISION ATELIER", price:38000 }],
-  "Кошачий глаз":[{ name:"Noir Cat 01", brand:"STUDIO ECLIPSE", price:35000 },{ name:"Noir Cat 02", brand:"STUDIO ECLIPSE", price:36000 },{ name:"Noir Cat 03", brand:"STUDIO ECLIPSE", price:37000 }],
-  "Вайфареры":   [{ name:"Noir Wayfarer 01", brand:"OBSIDIAN FRAMES", price:34000 },{ name:"Noir Wayfarer 02", brand:"OBSIDIAN FRAMES", price:35000 }],
-  "Круглые":     [{ name:"Noir Round 01", brand:"NOIR VISION ATELIER", price:29000 },{ name:"Noir Round 02", brand:"NOIR VISION ATELIER", price:30000 }],
-  "Стрекозы":    [{ name:"Noir Cat 01", brand:"STUDIO ECLIPSE", price:35000 }],
-};
-
-function initAI() {
-  const fileInput = document.getElementById("ai-file-input");
-  const analyzeBtn = document.getElementById("ai-analyze-btn");
-  const skipBtn = document.getElementById("ai-skip-btn");
-  const resultBox = document.getElementById("ai-result-box");
-  const preview = document.getElementById("ai-photo-preview");
-
-  if (!analyzeBtn) return;
-
-  // Показ превью фото
-  if (fileInput) {
-    fileInput.addEventListener("change", () => {
-      if (fileInput.files[0] && preview) {
-        const url = URL.createObjectURL(fileInput.files[0]);
-        preview.style.backgroundImage = `url(${url})`;
-        preview.style.backgroundSize = "cover";
-        preview.style.backgroundPosition = "center";
-      }
-    });
-  }
-
-  analyzeBtn.addEventListener("click", async () => {
-    if (!fileInput || !fileInput.files[0]) {
-      showToast("Загрузите фото лица");
-      return;
-    }
-    analyzeBtn.textContent = "Анализирую...";
-    analyzeBtn.disabled = true;
-
-    // Пробуем через бэкенд, если нет — мокаем
-    const shapes = Object.keys(FACE_SHAPES);
-    const faceKey = shapes[Math.floor(Math.random() * shapes.length)];
-    const faceData = FACE_SHAPES[faceKey];
-
-    setTimeout(() => {
-      analyzeBtn.textContent = "Автоматически отфильтровать";
-      analyzeBtn.disabled = false;
-
-      if (!resultBox) return;
-      const recommended = faceData.shapes.flatMap(s => FRAMES_BY_SHAPE[s] || []).slice(0, 4);
-      resultBox.innerHTML = `
-        <div style="font-size:13px;margin-bottom:8px;">
-          <strong>Форма лица: ${faceData.ru}</strong>
-        </div>
-        <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">
-          Рекомендуем: ${faceData.shapes.join(", ")}
-        </div>
-        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;">
-          ${recommended.map(p => `
-            <div class="product-card" style="cursor:pointer;" onclick="openProductModal(${JSON.stringify(p).replace(/"/g,'&quot;')})">
-              <div class="product-image" style="height:80px;font-size:9px;">📸 ${p.name}</div>
-              <div class="product-brand">${p.brand}</div>
-              <div class="product-name" style="font-size:11px;">${p.name}</div>
-              <div class="product-footer">
-                <span>${p.price.toLocaleString("ru-RU")} ₽</span>
-                <span style="cursor:pointer;color:var(--accent);font-size:10px;" onclick="event.stopPropagation();addToCart({id:Date.now(),name:'${p.name}',brand:'${p.brand}',price:${p.price}})">+ В корзину</span>
-              </div>
-            </div>
-          `).join("")}
-        </div>
-      `;
-    }, 2000);
-  });
-
-  if (skipBtn) {
-    skipBtn.addEventListener("click", () => scrollTo("catalog-frames"));
-  }
-}
-
-// ── Фильтры оправ (форма) ──────────────────────────────────
-function initFrameFilters() {
-  document.querySelectorAll("#catalog-frames .shape-chip").forEach(chip => {
-    chip.addEventListener("click", () => {
-      document.querySelectorAll("#catalog-frames .shape-chip").forEach(c => c.classList.remove("active"));
-      chip.classList.add("active");
-      // TODO: фильтрация карточек по форме
-    });
-  });
-}
-
-// ── Toast уведомление ──────────────────────────────────────
-function showToast(msg) {
-  let t = document.getElementById("nv-toast");
-  if (!t) {
-    t = document.createElement("div");
-    t.id = "nv-toast";
-    t.style.cssText = "position:fixed;bottom:24px;right:24px;background:#fff;color:#000;padding:10px 18px;border-radius:999px;font-size:12px;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.3);opacity:0;transition:opacity .3s;pointer-events:none;";
-    document.body.appendChild(t);
-  }
-  t.textContent = msg;
-  t.style.opacity = "1";
-  clearTimeout(t._timer);
-  t._timer = setTimeout(() => { t.style.opacity = "0"; }, 3000);
-}
-
-// ── DOM: модальное окно товара ─────────────────────────────
-function createProductModal() {
-  if (document.getElementById("nv-product-modal")) return;
-  const m = document.createElement("div");
-  m.id = "nv-product-modal";
-  m.style.cssText = "display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;align-items:center;justify-content:center;padding:20px;";
-  m.innerHTML = `
-    <div style="background:#111;border-radius:24px;border:1px solid #2a2a2a;padding:28px;max-width:560px;width:100%;position:relative;">
-      <button onclick="closeProductModal()" style="position:absolute;top:16px;right:16px;background:none;border:none;color:#fff;font-size:18px;cursor:pointer;">✕</button>
-      <div class="product-image modal-product-img" style="height:200px;background:#fff;border-radius:16px;display:flex;align-items:center;justify-content:center;color:#999;font-size:11px;margin-bottom:20px;">Изображение товара</div>
-      <div style="font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--text-muted);" class="modal-product-brand"></div>
-      <div style="font-size:18px;text-transform:uppercase;letter-spacing:.18em;margin-top:6px;" class="modal-product-name"></div>
-      <div style="font-size:16px;margin-top:12px;" class="modal-product-price"></div>
-      <div style="font-size:13px;color:var(--text-muted);margin-top:12px;" class="modal-product-desc"></div>
-      <div style="font-size:11px;color:var(--text-muted);margin-top:8px;" class="modal-product-specs"></div>
-      <div style="display:flex;gap:10px;margin-top:20px;">
-        <button class="btn btn-primary modal-add-cart" style="flex:1;">В корзину</button>
-        <button class="btn" onclick="closeProductModal()" style="flex:1;">Закрыть</button>
-      </div>
-    </div>`;
-  m.addEventListener("click", e => { if (e.target === m) closeProductModal(); });
-  document.body.appendChild(m);
-}
-
-// ── Обновление: добавить корзину в секцию ─────────────────
-function patchCartSection() {
-  const cartSection = document.getElementById("cart-section");
-  if (!cartSection) return;
-  const list = cartSection.querySelector(".cart-list");
-  if (list && !list.id) {
-    list.id = "cart-list-dynamic";
-    list.innerHTML = "<div style='color:var(--text-muted);font-size:12px;'>Корзина пуста</div>";
-  }
-  const totalSpan = cartSection.querySelector(".cart-summary-row.total span:last-child");
-  if (totalSpan && !totalSpan.id) totalSpan.id = "cart-total-dynamic";
-  const submitBtn = cartSection.querySelector(".btn-primary");
-  if (submitBtn) submitBtn.onclick = submitOrder;
-}
-
-// ── Иконка корзины в шапке ─────────────────────────────────
-function addCartIcon() {
-  const actions = document.querySelector(".header-actions");
-  if (!actions) return;
-  const iconBtns = actions.querySelectorAll(".icon-btn");
-  iconBtns.forEach(btn => {
-    if (!btn.querySelector(".cart-badge")) {
-      const badge = document.createElement("span");
-      badge.className = "cart-badge";
-      badge.style.cssText = "position:absolute;top:-4px;right:-4px;background:#fff;color:#000;border-radius:999px;width:14px;height:14px;font-size:9px;display:none;align-items:center;justify-content:center;";
-      btn.style.position = "relative";
-      btn.appendChild(badge);
-      btn.addEventListener("click", () => { renderCart(); scrollTo("cart-section"); });
-    }
-  });
-}
-
-// ── Инициализация ──────────────────────────────────────────
-document.addEventListener("DOMContentLoaded", async () => {
-  cartLoad();
-  createProductModal();
-  addCartIcon();
-  updateCartBadge();
-  await loadProducts();
-  initNav();
-  initProductCards();
-  initAuth();
-  initBooking();
-  initZreniePopup();
-  initAI();
-  initFrameFilters();
-  patchCartSection();
-  renderCart();
-  console.log("✅ NOIR VISION Frontend готов!");
 });
-</script>
 
+buildCalendar(selectedMonthIdx);
+
+// Время
+document.querySelectorAll('#time-grid .time-slot').forEach(slot => {
+  slot.addEventListener('click', () => {
+    document.querySelectorAll('#time-grid .time-slot').forEach(s => s.classList.remove('active'));
+    slot.classList.add('active');
+    document.getElementById('b-time').textContent = slot.textContent;
+  });
+});
+
+// Проверка авторизации и подтверждение
+function confirmBooking() {
+  if (!state.isLoggedIn) {
+    sessionStorage.setItem('nv_redirect', 'booking');
+    showPage('account');
+    document.getElementById('auth-notice').style.display = 'block';
+    document.getElementById('auth-notice-text').textContent = 'Для записи к врачу необходимо войти в аккаунт';
+    document.getElementById('login-phone').focus();
+    return;
+  }
+  const month = document.getElementById('b-month').textContent;
+  const day   = document.getElementById('b-day').textContent;
+  const time  = document.getElementById('b-time').textContent;
+  if (day === '—' || time === '—') { toast('Выберите дату и время'); return; }
+  toast(`✅ Запись подтверждена: ${month} ${day}, ${time}`);
+}
+
+document.getElementById('book-btn').addEventListener('click', confirmBooking);
+
+// ═══════════════════════════════════════════════════════════
+// AUTH
+// ═══════════════════════════════════════════════════════════
+function updateAuthHeader() {
+  const pill = document.querySelector('.pill');
+  if (state.isLoggedIn) {
+    pill.textContent = state.userName || 'Кабинет';
+    pill.style.borderColor = 'rgba(255,255,255,.3)';
+    pill.style.color = 'var(--text)';
+  } else {
+    pill.textContent = 'Вход';
+    pill.style.borderColor = '';
+    pill.style.color = '';
+  }
+}
+
+document.getElementById('login-btn').addEventListener('click', () => {
+  const phone = document.getElementById('login-phone').value.trim();
+  const pass  = document.getElementById('login-pass').value.trim();
+  if (!phone || !pass) { toast('Введите телефон и пароль'); return; }
+  state.isLoggedIn = true;
+  state.userName = phone.slice(-4); // последние 4 цифры как имя
+  updateAuthHeader();
+  document.getElementById('auth-notice').style.display = 'none';
+  toast('✅ Вход выполнен! Добро пожаловать.');
+  // Если пришли из бронирования — возвращаем туда
+  if (sessionStorage.getItem('nv_redirect') === 'booking') {
+    sessionStorage.removeItem('nv_redirect');
+    setTimeout(() => showPage('booking'), 400);
+  }
+});
+
+document.getElementById('reg-btn').addEventListener('click', () => {
+  const name  = document.getElementById('reg-name').value.trim();
+  const phone = document.getElementById('reg-phone').value.trim();
+  const pass  = document.getElementById('reg-pass').value.trim();
+  const pass2 = document.getElementById('reg-pass2').value.trim();
+  if (!name || !phone || !pass) { toast('Заполните все поля'); return; }
+  if (pass !== pass2) { toast('Пароли не совпадают'); return; }
+  if (pass.length < 8) { toast('Пароль должен быть минимум 8 символов'); return; }
+  state.isLoggedIn = true;
+  state.userName = name;
+  updateAuthHeader();
+  document.getElementById('auth-notice').style.display = 'none';
+  toast('✅ Аккаунт создан! Вы вошли как ' + name + '.');
+  if (sessionStorage.getItem('nv_redirect') === 'booking') {
+    sessionStorage.removeItem('nv_redirect');
+    setTimeout(() => showPage('booking'), 400);
+  }
+});
+
+// ── AUTH TABS ──
+function switchAuthTab(tab) {
+  const isLogin = tab === 'login';
+  document.getElementById('auth-panel-login').style.display = isLogin ? '' : 'none';
+  document.getElementById('auth-panel-reg').style.display   = isLogin ? 'none' : '';
+
+  const tLogin = document.getElementById('auth-tab-login');
+  const tReg   = document.getElementById('auth-tab-reg');
+
+  tLogin.style.color = isLogin ? 'var(--text)' : 'var(--text-muted)';
+  tLogin.style.borderBottom = isLogin ? '2px solid var(--accent)' : '2px solid transparent';
+  tReg.style.color = isLogin ? 'var(--text-muted)' : 'var(--text)';
+  tReg.style.borderBottom = isLogin ? '2px solid transparent' : '2px solid var(--accent)';
+}
+
+function togglePwd(inputId, btn) {
+  const inp = document.getElementById(inputId);
+  if (inp.type === 'password') { inp.type = 'text'; btn.style.opacity = '1'; }
+  else { inp.type = 'password'; btn.style.opacity = '0.5'; }
+}
+
+
+// ═══════════════════════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════════════════════
+let toastTimer;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 3200);
+}
+
+console.log('✅ NOIR VISION SPA ready');
+
+// ═══════════════════════════════════════════════════════════
+// AI FACE SCAN (встроенная страница)
+// ═══════════════════════════════════════════════════════════
+const SCAN_STAGES = [
+  { step:'ШАГ 1 / 3', text:'Смотрите прямо в камеру',         voice:'Посмотрите прямо в камеру и не двигайтесь',            arrow:'scan-arrow-front', hold:3500, name:'front' },
+  { step:'ШАГ 2 / 3', text:'Медленно поверните голову влево',  voice:'Теперь медленно поверните голову влево и остановитесь', arrow:'scan-arrow-left',  hold:4000, name:'left'  },
+  { step:'ШАГ 3 / 3', text:'Медленно поверните голову вправо', voice:'Отлично. Теперь медленно поверните голову вправо',      arrow:'scan-arrow-right', hold:4000, name:'right' }
+];
+
+let scanCaptures = [], scanRunning = false, scanStream = null;
+
+function scanSpeak(t) {
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(t);
+  u.lang = 'ru-RU'; u.rate = 0.9;
+  window.speechSynthesis.speak(u);
+}
+
+function scanSetDot(idx) {
+  for (let i = 0; i < 3; i++) {
+    const d = document.getElementById('scan-dot' + i);
+    if (i < idx)       { d.style.background = 'var(--text)'; d.style.transform = ''; }
+    else if (i === idx) { d.style.background = 'var(--text)'; d.style.transform = 'scale(1.5)'; }
+    else                { d.style.background = 'var(--border)'; d.style.transform = ''; }
+  }
+}
+
+function scanShowArrow(id) {
+  ['scan-arrow-front','scan-arrow-left','scan-arrow-right'].forEach(a => {
+    document.getElementById(a).style.opacity = '0';
+  });
+  if (id) document.getElementById(id).style.opacity = '1';
+}
+
+function scanSetOval(st) {
+  const o = document.getElementById('scan-oval');
+  if (st === 'ready')   { o.style.borderColor = 'rgba(255,255,255,.65)'; o.style.boxShadow = ''; }
+  else if (st === 'capture') { o.style.borderColor = '#fff'; o.style.boxShadow = '0 0 0 5px rgba(255,255,255,.12)'; }
+  else { o.style.borderColor = 'rgba(255,255,255,.2)'; o.style.boxShadow = ''; }
+}
+
+function scanWait(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+async function scanFlash() {
+  const f = document.getElementById('scan-flash');
+  f.style.opacity = '0.55'; await scanWait(120); f.style.opacity = '0';
+}
+
+async function scanStartCamera() {
+  try {
+    const videoEl = document.getElementById('scan-webcam');
+    scanStream = await navigator.mediaDevices.getUserMedia({ video:{width:640,height:480,facingMode:'user'}, audio:false });
+    videoEl.srcObject = scanStream;
+    await new Promise(r => { videoEl.onloadedmetadata = r; });
+    videoEl.play();
+    document.getElementById('scan-start-btn').disabled = true;
+    document.getElementById('scan-scan-btn').disabled  = false;
+    document.getElementById('scan-step').textContent = 'КАМЕРА ГОТОВА';
+    document.getElementById('scan-text').textContent = 'Нажмите «Начать»';
+    scanSetOval('ready');
+    scanSpeak('Камера включена. Нажмите начать сканирование.');
+  } catch(e) { alert('Не удалось получить доступ к камере: ' + e.message); }
+}
+
+async function scanStart() {
+  if (scanRunning) return;
+  scanRunning = true; scanCaptures = [];
+  const videoEl = document.getElementById('scan-webcam');
+  document.getElementById('scan-scan-btn').disabled = true;
+  document.getElementById('scan-result').style.display = 'none';
+  document.getElementById('scan-bar').style.width = '0%';
+  document.getElementById('scan-frames').innerHTML = '';
+
+  for (let i = 0; i < SCAN_STAGES.length; i++) {
+    const s = SCAN_STAGES[i];
+    document.getElementById('scan-step').textContent = s.step;
+    document.getElementById('scan-text').textContent = s.text;
+    scanSetDot(i); scanShowArrow(s.arrow); scanSetOval('ready'); scanSpeak(s.voice);
+    await scanWait(s.hold * 0.6);
+    scanSetOval('capture');
+    document.getElementById('scan-text').textContent = 'Держите так...';
+    await scanWait(s.hold * 0.4);
+    await scanFlash();
+
+    const cv = document.createElement('canvas');
+    cv.width = videoEl.videoWidth || 640; cv.height = videoEl.videoHeight || 480;
+    cv.getContext('2d').drawImage(videoEl, 0, 0);
+    const blob    = await new Promise(r => cv.toBlob(r, 'image/jpeg', 0.95));
+    const dataUrl = cv.toDataURL('image/jpeg', 0.4);
+    scanCaptures.push({ blob, dataUrl, name: s.name });
+
+    const img = document.createElement('img');
+    img.src = dataUrl; img.style.cssText = 'width:100%;border-radius:10px;border:1px solid var(--border);';
+    document.getElementById('scan-frames').appendChild(img);
+    document.getElementById('scan-bar').style.width = ((i+1)/SCAN_STAGES.length*100)+'%';
+    scanSetDot(i+1); scanSetOval(''); scanShowArrow(null);
+    if (i < SCAN_STAGES.length-1) await scanWait(600);
+  }
+
+  document.getElementById('scan-step').textContent = '';
+  document.getElementById('scan-text').textContent = 'Анализируем...';
+  scanSpeak('Отлично. Анализируем данные.');
+  await scanSendFrames(videoEl);
+  scanRunning = false;
+}
+
+async function scanSendFrames(videoEl) {
+  const fd = new FormData();
+  fd.append('frame_front', scanCaptures[0].blob, 'front.jpg');
+  if (scanCaptures[1]) fd.append('frame_left',  scanCaptures[1].blob, 'left.jpg');
+  if (scanCaptures[2]) fd.append('frame_right', scanCaptures[2].blob, 'right.jpg');
+  try {
+    const resp = await fetch('/ai/analyze-video', { method:'POST', body:fd });
+    if (!resp.ok) throw new Error(await resp.text());
+    scanShowResult(await resp.json());
+  } catch(e) {
+    document.getElementById('scan-text').textContent = 'Ошибка: ' + e.message;
+    scanSpeak('Произошла ошибка. Попробуйте снова.');
+  } finally {
+    scanStopCamera();
+    document.getElementById('scan-start-btn').disabled = false;
+    document.getElementById('scan-scan-btn').disabled  = false;
+    document.getElementById('scan-start-btn').textContent = 'Включить снова';
+  }
+}
+
+function scanShowResult(data) {
+  document.getElementById('scan-result').style.display = 'block';
+  const names = { oval:'Овальное', round:'Круглое', square:'Квадратное', rect:'Прямоугольное', heart:'Сердце', triangle:'Треугольное', diamond:'Ромб' };
+  const raw   = data.face_shape || '—';
+  const label = raw.split('-').map(p => names[p] || p).join(' / ');
+  document.getElementById('scan-res-shape').textContent = label;
+  const pct = Math.round((data.confidence || 0)*100);
+  document.getElementById('scan-res-conf').textContent  = 'Уверенность: ' + pct + '%';
+  setTimeout(() => { document.getElementById('scan-conf-fill').style.width = pct+'%'; }, 100);
+
+  const vRow = document.getElementById('scan-votes');
+  vRow.innerHTML = '';
+  if (data.angle_votes) {
+    const lbl = { front:'прямо', left:'влево', right:'вправо' };
+    Object.entries(data.angle_votes).forEach(([k,v]) => {
+      const b = document.createElement('span');
+      b.style.cssText = 'font-size:10px;padding:4px 12px;border-radius:999px;background:var(--bg-elevated);border:1px solid ' + (v===(data.face_shape_primary||data.face_shape)?'rgba(255,255,255,.22)':'var(--border)') + ';color:' + (v===(data.face_shape_primary||data.face_shape)?'var(--text)':'var(--text-muted)') + ';';
+      b.textContent = (lbl[k]||k) + ': ' + (names[v]||v);
+      vRow.appendChild(b);
+    });
+  }
+
+  const gGrid = document.getElementById('scan-glasses');
+  gGrid.innerHTML = '';
+  const frames = (data.frames && data.frames.length) ? data.frames
+    : (data.recommended_shapes||[]).map(s => ({ name:s }));
+  frames.forEach(f => {
+    const c = document.createElement('div');
+    c.style.cssText = 'background:var(--bg-elevated);border:1px solid var(--border);border-radius:14px;padding:14px;text-align:center;';
+    c.innerHTML = f.image_url
+      ? `<img src="${f.image_url}" style="width:100%;border-radius:8px;margin-bottom:8px">`
+      : `<div style="height:70px;background:var(--bg);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:8px">🕶️</div>`;
+    c.innerHTML += `<div style="color:var(--text);font-size:12px;margin-top:6px;">${f.name||'—'}</div>`;
+    if (f.price) c.innerHTML += `<div style="color:var(--text-muted);font-size:11px;margin-top:4px;">${f.price} ₽</div>`;
+    gGrid.appendChild(c);
+  });
+
+  document.getElementById('scan-text').textContent = 'Готово!';
+  scanSpeak('Анализ завершён. Ваша форма лица: ' + label);
+}
+
+function scanStopCamera() {
+  if (scanStream) { scanStream.getTracks().forEach(t => t.stop()); scanStream = null; }
+}
+
+// Останавливаем камеру при переходе на другую страницу
+const _origShowPage = showPage;
+window.showPage = function(name) {
+  if (name !== 'scan') scanStopCamera();
+  _origShowPage(name);
+};
+</script>
 </body>
 </html>
