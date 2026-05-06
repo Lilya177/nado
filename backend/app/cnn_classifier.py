@@ -7,11 +7,11 @@ from torch.utils.data import DataLoader
 
 DATASET_PATH  = r"C:\dataset"
 MODEL_SAVE_PATH = r"C:\models\face_cnn_custom.pth"
-LEARNING_RATE = 0.0001
+LEARNING_RATE = 0.00005
 BATCH_SIZE    = 32
-EPOCHS        = 25
+EPOCHS        = 40
 IMG_SIZE      = 224
-DROPOUT       = 0.4
+DROPOUT       = 0.3
 DEVICE        = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 train_transform = transforms.Compose([
@@ -32,15 +32,20 @@ val_transform = transforms.Compose([
 
 def build_model(num_classes):
     model = models.efficientnet_b0(weights=models.EfficientNet_B0_Weights.DEFAULT)
-    for param in model.features.parameters():
-        param.requires_grad = False
+    
+    # Замораживаем только первые 5 блоков из 8
+    for i, block in enumerate(model.features):
+        if i < 5:
+            for param in block.parameters():
+                param.requires_grad = False
+
     in_features = model.classifier[1].in_features
     model.classifier = nn.Sequential(
         nn.Dropout(p=DROPOUT),
-        nn.Linear(in_features, 256),
+        nn.Linear(in_features, 512),
         nn.ReLU(),
-        nn.Dropout(p=0.2),
-        nn.Linear(256, num_classes),
+        nn.Dropout(p=0.3),
+        nn.Linear(512, num_classes),
     )
     return model.to(DEVICE)
 
@@ -120,5 +125,37 @@ def train():
 
     print(f"\nГотово. Лучшая точность: {best_val_acc:.1%}")
     print(f"Модель сохранена: {MODEL_SAVE_PATH}")
-    if __name__ == "__main__":
-     train()
+
+# ВОТ СЮДА — без отступов, на уровне корня файла
+if __name__ == "__main__":
+    train()
+
+_cnn_model   = None
+_cnn_classes = None
+
+def _load_model():
+    global _cnn_model, _cnn_classes
+    if _cnn_model is None:
+        checkpoint   = torch.load(MODEL_SAVE_PATH, map_location=DEVICE)
+        _cnn_classes = checkpoint["classes"]
+        _cnn_model   = build_model(len(_cnn_classes))
+        _cnn_model.load_state_dict(checkpoint["model_state"])
+        _cnn_model.eval()
+    return _cnn_model, _cnn_classes
+
+def classify_with_cnn(image_bytes: bytes) -> dict:
+    import io
+    from PIL import Image
+
+    model, classes = _load_model()
+
+    img    = Image.open(io.BytesIO(image_bytes)).convert("RGB")
+    tensor = val_transform(img).unsqueeze(0).to(DEVICE)
+
+    with torch.no_grad():
+        logits = model(tensor)
+        probs  = torch.softmax(logits, dim=1)[0]
+
+    return {
+        "all_scores": {cls: round(float(probs[i]), 4) for i, cls in enumerate(classes)}
+    }
