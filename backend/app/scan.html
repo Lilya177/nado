@@ -331,7 +331,8 @@ const STAGES = [
     {
         step:   "ШАГ 1 / 3",
         text:   "Смотрите прямо в камеру",
-        voice:  "Посмотрите прямо в камеру и не двигайтесь",
+       
+
         arrow:  "arrowFront",
         hold:   3500,
         name:   "front"
@@ -339,7 +340,7 @@ const STAGES = [
     {
         step:   "ШАГ 2 / 3",
         text:   "Медленно поверните голову влево",
-        voice:  "Теперь медленно поверните голову влево и остановитесь",
+       
         arrow:  "arrowLeft",
         hold:   4000,
         name:   "left"
@@ -347,7 +348,7 @@ const STAGES = [
     {
         step:   "ШАГ 3 / 3",
         text:   "Медленно поверните голову вправо",
-        voice:  "Отлично. Теперь медленно поверните голову вправо",
+        
         arrow:  "arrowRight",
         hold:   4000,
         name:   "right"
@@ -409,7 +410,7 @@ async function startCamera() {
         document.getElementById("scanBtn").disabled  = false;
         document.getElementById("instrText").textContent = "Камера готова. Нажмите «Начать»";
         setOval("ready");
-        speak("Камера включена. Нажмите начать сканирование.");
+        
     } catch(e) {
         alert("Не удалось получить доступ к камере: " + e.message);
     }
@@ -433,7 +434,7 @@ async function startScan() {
         setDot(i, "current");
         showArrow(stage.arrow);
         setOval("ready");
-        speak(stage.voice);
+        
 
         // Даём человеку время повернуть голову
         // Разбиваем на 2 части: сначала ждём половину, потом подсвечиваем овал
