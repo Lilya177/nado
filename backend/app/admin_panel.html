@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NOIR VISION — Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --surface: #111111;
+    --border: #222222;
+    --accent: #c9a84c;
+    --accent2: #e8c97e;
+    --text: #e8e2d6;
+    --muted: #666;
+    --red: #c0392b;
+    --green: #27ae60;
+    --blue: #2980b9;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    min-height: 100vh;
+    display: flex;
+  }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    width: 220px;
+    min-height: 100vh;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    padding: 32px 0;
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+  }
+
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    color: var(--accent);
+    letter-spacing: 3px;
+    text-align: center;
+    padding: 0 24px 32px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 24px;
+  }
+  .logo span { display: block; font-size: 9px; letter-spacing: 5px; color: var(--muted); margin-top: 4px; font-family: 'DM Mono'; }
+
+  .nav-item {
+    padding: 12px 24px;
+    cursor: pointer;
+    color: var(--muted);
+    letter-spacing: 1px;
+    font-size: 11px;
+    text-transform: uppercase;
+    border-left: 2px solid transparent;
+    transition: all 0.2s;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .nav-item:hover { color: var(--text); background: rgba(201,168,76,0.05); }
+  .nav-item.active { color: var(--accent); border-left-color: var(--accent); background: rgba(201,168,76,0.08); }
+  .nav-icon { font-size: 14px; }
+
+  .sidebar-bottom {
+    margin-top: auto;
+    padding: 16px 24px;
+    border-top: 1px solid var(--border);
+    font-size: 10px;
+    color: var(--muted);
+  }
+
+  /* ── Main ── */
+  .main {
+    margin-left: 220px;
+    flex: 1;
+    padding: 40px;
+    min-height: 100vh;
+  }
+
+  .page { display: none; }
+  .page.active { display: block; animation: fadeIn 0.3s ease; }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ── Page header ── */
+  .page-header {
+    display: flex; align-items: baseline; justify-content: space-between;
+    margin-bottom: 32px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .page-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    color: var(--accent);
+    letter-spacing: 1px;
+  }
+  .page-sub { font-size: 11px; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; }
+
+  /* ── Login ── */
+  .login-wrap {
+    max-width: 380px; margin: 80px auto;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 40px;
+  }
+  .login-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px; color: var(--accent);
+    text-align: center; margin-bottom: 8px;
+  }
+  .login-sub { text-align: center; color: var(--muted); font-size: 10px; letter-spacing: 3px; margin-bottom: 32px; }
+
+  .field { margin-bottom: 20px; }
+  .field label { display: block; font-size: 10px; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; margin-bottom: 8px; }
+  .field input {
+    width: 100%; background: var(--bg); border: 1px solid var(--border);
+    color: var(--text); padding: 12px 14px; font-family: 'DM Mono'; font-size: 13px;
+    outline: none; transition: border 0.2s;
+  }
+  .field input:focus { border-color: var(--accent); }
+
+  .btn {
+    width: 100%; padding: 13px; background: var(--accent);
+    color: #000; font-family: 'DM Mono'; font-size: 12px;
+    letter-spacing: 3px; text-transform: uppercase; border: none;
+    cursor: pointer; transition: background 0.2s;
+  }
+  .btn:hover { background: var(--accent2); }
+  .btn-sm {
+    padding: 6px 14px; font-size: 10px; letter-spacing: 1px;
+    background: transparent; border: 1px solid var(--border);
+    color: var(--muted); cursor: pointer; transition: all 0.2s; font-family: 'DM Mono';
+  }
+  .btn-sm:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-danger { border-color: var(--red); color: var(--red); }
+  .btn-danger:hover { background: var(--red); color: #fff; }
+
+  .error-msg { color: var(--red); font-size: 11px; margin-top: 12px; text-align: center; }
+
+  /* ── Stats cards ── */
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px; }
+  .stat-card {
+    background: var(--surface); border: 1px solid var(--border);
+    padding: 24px; position: relative; overflow: hidden;
+  }
+  .stat-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: var(--accent);
+  }
+  .stat-label { font-size: 9px; letter-spacing: 3px; color: var(--muted); text-transform: uppercase; margin-bottom: 12px; }
+  .stat-value { font-family: 'Playfair Display', serif; font-size: 36px; color: var(--accent); }
+  .stat-icon { position: absolute; right: 20px; top: 20px; font-size: 24px; opacity: 0.15; }
+
+  /* ── Table ── */
+  .table-wrap { background: var(--surface); border: 1px solid var(--border); overflow: auto; }
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    text-align: left; padding: 14px 16px;
+    font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--muted); border-bottom: 1px solid var(--border);
+    background: rgba(201,168,76,0.04);
+  }
+  td { padding: 12px 16px; border-bottom: 1px solid var(--border); color: var(--text); font-size: 12px; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(201,168,76,0.03); }
+
+  /* ── Badges ── */
+  .badge {
+    display: inline-block; padding: 2px 8px;
+    font-size: 9px; letter-spacing: 1px; text-transform: uppercase; border: 1px solid;
+  }
+  .badge-pending { color: #f39c12; border-color: #f39c12; }
+  .badge-approved { color: var(--green); border-color: var(--green); }
+  .badge-rejected { color: var(--red); border-color: var(--red); }
+  .badge-admin { color: var(--accent); border-color: var(--accent); }
+  .badge-doctor { color: var(--blue); border-color: var(--blue); }
+  .badge-user { color: var(--muted); border-color: var(--border); }
+
+  /* ── Action log colors ── */
+  .action-login { color: var(--green); }
+  .action-logout { color: var(--muted); }
+  .action-register { color: var(--blue); }
+  .action-create_order { color: var(--accent); }
+  .action-create_appointment { color: #9b59b6; }
+  .action-face_analyze { color: #1abc9c; }
+  .action-login_failed { color: var(--red); }
+  .action-delete_product { color: var(--red); }
+
+  /* ── Filter bar ── */
+  .filter-bar { display: flex; gap: 12px; margin-bottom: 20px; align-items: center; }
+  .filter-bar input, .filter-bar select {
+    background: var(--surface); border: 1px solid var(--border);
+    color: var(--text); padding: 8px 12px; font-family: 'DM Mono'; font-size: 12px;
+    outline: none;
+  }
+  .filter-bar input:focus, .filter-bar select:focus { border-color: var(--accent); }
+
+  .loading { color: var(--muted); text-align: center; padding: 40px; letter-spacing: 3px; font-size: 11px; }
+  .empty { color: var(--muted); text-align: center; padding: 40px; font-size: 11px; }
+
+  /* ── Modal ── */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.8); z-index: 100;
+    align-items: center; justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--surface); border: 1px solid var(--border);
+    padding: 32px; width: 420px; max-height: 80vh; overflow-y: auto;
+  }
+  .modal-title { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--accent); margin-bottom: 24px; }
+  .modal-actions { display: flex; gap: 12px; margin-top: 24px; }
+
+  select.inline {
+    background: var(--bg); border: 1px solid var(--border);
+    color: var(--text); padding: 4px 8px; font-family: 'DM Mono'; font-size: 11px;
+  }
+
+  .price { color: var(--accent); font-family: 'Playfair Display', serif; }
+  .mono { font-family: 'DM Mono', monospace; }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen" style="width:100%;min-height:100vh;display:flex;align-items:center;background:var(--bg);">
+  <div class="login-wrap">
+    <div class="login-title">NOIR VISION</div>
+    <div class="login-sub">Admin Panel</div>
+    <div class="field"><label>Телефон</label><input id="loginPhone" type="text" value="+71111111111" placeholder="+7..."></div>
+    <div class="field"><label>Пароль</label><input id="loginPass" type="password" value="admin123"></div>
+    <button class="btn" onclick="doLogin()">Войти</button>
+    <div class="error-msg" id="loginErr"></div>
+  </div>
+</div>
+
+<!-- ADMIN APP -->
+<div id="adminApp" style="display:none;width:100%;">
+  <div class="sidebar">
+    <div class="logo">NOIR<span>admin panel</span></div>
+    <div class="nav-item active" onclick="showPage('dashboard')" id="nav-dashboard"><span class="nav-icon">◈</span> Dashboard</div>
+    <div class="nav-item" onclick="showPage('journal')" id="nav-journal"><span class="nav-icon">◉</span> Журнал</div>
+    <div class="nav-item" onclick="showPage('orders')" id="nav-orders"><span class="nav-icon">◻</span> Заказы</div>
+    <div class="nav-item" onclick="showPage('appointments')" id="nav-appointments"><span class="nav-icon">◷</span> Записи</div>
+    <div class="nav-item" onclick="showPage('products')" id="nav-products"><span class="nav-icon">◈</span> Товары</div>
+    <div class="nav-item" onclick="showPage('users')" id="nav-users"><span class="nav-icon">◯</span> Пользователи</div>
+    <div class="sidebar-bottom" id="sidebarUser"></div>
+  </div>
+
+  <div class="main">
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dashboard">
+      <div class="page-header">
+        <div><div class="page-title">Dashboard</div><div class="page-sub">Обзор системы</div></div>
+        <button class="btn-sm" onclick="loadDashboard()">↻ Обновить</button>
+      </div>
+      <div class="stats" id="statsGrid">
+        <div class="stat-card"><div class="stat-label">Пользователи</div><div class="stat-value" id="statUsers">—</div><div class="stat-icon">◯</div></div>
+        <div class="stat-card"><div class="stat-label">Товары</div><div class="stat-value" id="statProducts">—</div><div class="stat-icon">◈</div></div>
+        <div class="stat-card"><div class="stat-label">Заказы</div><div class="stat-value" id="statOrders">—</div><div class="stat-icon">◻</div></div>
+        <div class="stat-card"><div class="stat-label">Записи</div><div class="stat-value" id="statAppts">—</div><div class="stat-icon">◷</div></div>
+      </div>
+      <div class="page-header" style="margin-top:32px;"><div class="page-title" style="font-size:18px;">Последние действия</div></div>
+      <div class="table-wrap"><div id="recentLog"><div class="loading">Загрузка...</div></div></div>
+    </div>
+
+    <!-- JOURNAL -->
+    <div class="page" id="page-journal">
+      <div class="page-header">
+        <div><div class="page-title">Журнал действий</div><div class="page-sub">Все события системы</div></div>
+      </div>
+      <div class="filter-bar">
+        <input id="journalFilter" placeholder="Поиск по действию..." oninput="filterJournal()">
+        <select id="journalActionFilter" onchange="filterJournal()">
+          <option value="">Все действия</option>
+          <option value="login">login</option>
+          <option value="login_failed">login_failed</option>
+          <option value="logout">logout</option>
+          <option value="register">register</option>
+          <option value="create_order">create_order</option>
+          <option value="create_appointment">create_appointment</option>
+          <option value="face_analyze">face_analyze</option>
+          <option value="create_product">create_product</option>
+          <option value="update_product">update_product</option>
+          <option value="delete_product">delete_product</option>
+        </select>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>#</th><th>Время</th><th>Действие</th><th>Пользователь</th><th>Объект</th><th>Детали</th><th>IP</th></tr></thead>
+          <tbody id="journalBody"><tr><td colspan="7" class="loading">Загрузка...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ORDERS -->
+    <div class="page" id="page-orders">
+      <div class="page-header">
+        <div><div class="page-title">Заказы</div><div class="page-sub">Управление заказами</div></div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>#</th><th>Дата</th><th>Пользователь</th><th>Сумма</th><th>Статус</th><th>Действие</th></tr></thead>
+          <tbody id="ordersBody"><tr><td colspan="6" class="loading">Загрузка...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- APPOINTMENTS -->
+    <div class="page" id="page-appointments">
+      <div class="page-header">
+        <div><div class="page-title">Записи к врачу</div><div class="page-sub">Управление записями</div></div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>#</th><th>Дата</th><th>Время</th><th>Статус</th><th>Действие</th></tr></thead>
+          <tbody id="apptBody"><tr><td colspan="5" class="loading">Загрузка...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- PRODUCTS -->
+    <div class="page" id="page-products">
+      <div class="page-header">
+        <div><div class="page-title">Товары</div><div class="page-sub">Каталог оптики</div></div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>#</th><th>Название</th><th>Бренд</th><th>Категория</th><th>Форма</th><th>Цена</th><th>В наличии</th></tr></thead>
+          <tbody id="productsBody"><tr><td colspan="7" class="loading">Загрузка...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- USERS -->
+    <div class="page" id="page-users">
+      <div class="page-header">
+        <div><div class="page-title">Пользователи</div><div class="page-sub">Управление аккаунтами</div></div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>#</th><th>Телефон</th><th>Имя</th><th>Роль</th></tr></thead>
+          <tbody id="usersBody"><tr><td colspan="4" class="loading">Загрузка...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = 'http://127.0.0.1:8000';
+let TOKEN = '';
+let allJournal = [];
+
+async function doLogin() {
+  const phone = document.getElementById('loginPhone').value;
+  const password = document.getElementById('loginPass').value;
+  try {
+    const r = await fetch(`${API}/users/login`, {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({phone, password})
+    });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.detail || 'Ошибка');
+    if (d.user.role !== 'admin') throw new Error('Доступ только для администратора');
+    TOKEN = d.access_token;
+    document.getElementById('sidebarUser').innerHTML = `<div style="color:var(--accent);margin-bottom:4px">${d.user.phone}</div><div style="font-size:9px;letter-spacing:2px;color:var(--muted)">ADMIN</div>`;
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('adminApp').style.display = 'flex';
+    loadDashboard();
+    loadJournal();
+    loadOrders();
+    loadAppointments();
+    loadProducts();
+    loadUsers();
+  } catch(e) {
+    document.getElementById('loginErr').textContent = e.message;
+  }
+}
+
+function authHeaders() {
+  return {'Authorization': `Bearer ${TOKEN}`, 'Content-Type':'application/json'};
+}
+
+async function apiFetch(url, opts={}) {
+  opts.headers = {...authHeaders(), ...(opts.headers||{})};
+  const r = await fetch(API + url, opts);
+  return r.json();
+}
+
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  document.getElementById('nav-' + name).classList.add('active');
+}
+
+function fmtDate(s) {
+  if (!s) return '—';
+  return new Date(s).toLocaleString('ru', {day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+}
+
+function badge(status) {
+  const cls = `badge badge-${status}`;
+  return `<span class="${cls}">${status}</span>`;
+}
+
+// ── Dashboard ──
+async function loadDashboard() {
+  const [users, products, orders, appts, journal] = await Promise.all([
+    apiFetch('/users'), apiFetch('/products'), apiFetch('/admin/orders'),
+    apiFetch('/doctor/appointments'), apiFetch('/admin/journal?limit=10')
+  ]);
+  document.getElementById('statUsers').textContent = users.length || 0;
+  document.getElementById('statProducts').textContent = products.length || 0;
+  document.getElementById('statOrders').textContent = orders.length || 0;
+  document.getElementById('statAppts').textContent = appts.length || 0;
+
+  const tbody = document.getElementById('recentLog');
+  if (!journal.length) { tbody.innerHTML = '<div class="empty">Нет записей</div>'; return; }
+  tbody.innerHTML = `<table style="width:100%"><thead><tr><th>Время</th><th>Действие</th><th>Детали</th></tr></thead><tbody>
+    ${journal.map(e => `<tr>
+      <td style="color:var(--muted)">${fmtDate(e.created_at)}</td>
+      <td><span class="action-${e.action}">${e.action}</span></td>
+      <td style="color:var(--muted)">${e.detail||'—'}</td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+
+// ── Journal ──
+async function loadJournal() {
+  const data = await apiFetch('/admin/journal?limit=500');
+  allJournal = data;
+  renderJournal(data);
+}
+
+function renderJournal(data) {
+  const tbody = document.getElementById('journalBody');
+  if (!data.length) { tbody.innerHTML = '<tr><td colspan="7" class="empty">Нет записей</td></tr>'; return; }
+  tbody.innerHTML = data.map(e => `<tr>
+    <td style="color:var(--muted)">${e.id}</td>
+    <td style="color:var(--muted);white-space:nowrap">${fmtDate(e.created_at)}</td>
+    <td><span class="action-${e.action}">${e.action}</span></td>
+    <td>${e.user_id ? `#${e.user_id}` : '<span style="color:var(--muted)">—</span>'}</td>
+    <td>${e.entity ? `${e.entity} ${e.entity_id ? '#'+e.entity_id : ''}` : '—'}</td>
+    <td style="color:var(--muted);max-width:200px;overflow:hidden;text-overflow:ellipsis">${e.detail||'—'}</td>
+    <td style="color:var(--muted)">${e.ip_address||'—'}</td>
+  </tr>`).join('');
+}
+
+function filterJournal() {
+  const q = document.getElementById('journalFilter').value.toLowerCase();
+  const action = document.getElementById('journalActionFilter').value;
+  const filtered = allJournal.filter(e =>
+    (!action || e.action === action) &&
+    (!q || JSON.stringify(e).toLowerCase().includes(q))
+  );
+  renderJournal(filtered);
+}
+
+// ── Orders ──
+async function loadOrders() {
+  const data = await apiFetch('/admin/orders');
+  const tbody = document.getElementById('ordersBody');
+  if (!data.length) { tbody.innerHTML = '<tr><td colspan="6" class="empty">Нет заказов</td></tr>'; return; }
+  tbody.innerHTML = data.map(o => `<tr>
+    <td>#${o.id}</td>
+    <td style="color:var(--muted)">${fmtDate(o.created_at)}</td>
+    <td style="color:var(--muted)">user_id</td>
+    <td class="price">${o.total_price?.toLocaleString('ru')} ₽</td>
+    <td>${badge(o.status)}</td>
+    <td>
+      <select class="inline" onchange="updateOrder(${o.id}, this.value)">
+        <option value="pending" ${o.status==='pending'?'selected':''}>pending</option>
+        <option value="approved" ${o.status==='approved'?'selected':''}>approved</option>
+        <option value="rejected" ${o.status==='rejected'?'selected':''}>rejected</option>
+      </select>
+    </td>
+  </tr>`).join('');
+}
+
+async function updateOrder(id, status) {
+  await apiFetch(`/admin/orders/${id}?status=${status}`, {method:'PATCH'});
+  loadOrders();
+}
+
+// ── Appointments ──
+async function loadAppointments() {
+  const data = await apiFetch('/doctor/appointments');
+  const tbody = document.getElementById('apptBody');
+  if (!data.length) { tbody.innerHTML = '<tr><td colspan="5" class="empty">Нет записей</td></tr>'; return; }
+  tbody.innerHTML = data.map(a => `<tr>
+    <td>#${a.id}</td>
+    <td>${a.date}</td>
+    <td>${a.time}</td>
+    <td>${badge(a.status)}</td>
+    <td>
+      <select class="inline" onchange="updateAppt(${a.id}, this.value)">
+        <option value="pending" ${a.status==='pending'?'selected':''}>pending</option>
+        <option value="approved" ${a.status==='approved'?'selected':''}>approved</option>
+        <option value="rejected" ${a.status==='rejected'?'selected':''}>rejected</option>
+      </select>
+    </td>
+  </tr>`).join('');
+}
+
+async function updateAppt(id, status) {
+  await apiFetch(`/doctor/appointments/${id}?status=${status}`, {method:'PATCH'});
+  loadAppointments();
+}
+
+// ── Products ──
+async function loadProducts() {
+  const data = await apiFetch('/products');
+  const tbody = document.getElementById('productsBody');
+  if (!data.length) { tbody.innerHTML = '<tr><td colspan="7" class="empty">Нет товаров</td></tr>'; return; }
+  tbody.innerHTML = data.map(p => `<tr>
+    <td style="color:var(--muted)">#${p.id}</td>
+    <td>${p.name}</td>
+    <td style="color:var(--muted)">${p.brand}</td>
+    <td>${p.category}</td>
+    <td style="color:var(--muted)">${p.shape||'—'}</td>
+    <td class="price">${p.price?.toLocaleString('ru')} ₽</td>
+    <td>${p.in_stock ? '<span style="color:var(--green)">●</span>' : '<span style="color:var(--red)">●</span>'}</td>
+  </tr>`).join('');
+}
+
+// ── Users ──
+async function loadUsers() {
+  const data = await apiFetch('/users');
+  const tbody = document.getElementById('usersBody');
+  if (!data.length) { tbody.innerHTML = '<tr><td colspan="4" class="empty">Нет пользователей</td></tr>'; return; }
+  tbody.innerHTML = data.map(u => `<tr>
+    <td style="color:var(--muted)">#${u.id}</td>
+    <td>${u.phone}</td>
+    <td>${u.first_name ? u.first_name + ' ' + (u.last_name||'') : '<span style="color:var(--muted)">—</span>'}</td>
+    <td>${badge(u.role)}</td>
+  </tr>`).join('');
+}
+
+document.getElementById('loginPass').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+</script>
+</body>
+</html>

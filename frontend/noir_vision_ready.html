@@ -1,0 +1,1912 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NOIR VISION – Салон оптики</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/catalog.css">
+  <link rel="stylesheet" href="css/auth.css">
+</head>
+<body>
+<div class="page" id="page-profile">
+  <div class="container">
+    <div class="section-head" style="margin-bottom:32px;">
+      <div>
+        <div class="section-title">Личный кабинет</div>
+        <div class="section-sub" style="margin-top:6px;">Ваши данные, записи и история просмотров</div>
+      </div>
+      <button class="btn" style="border-color: var(--error); color: var(--error);" onclick="logoutUser()">Выйти</button>
+    </div>
+    
+    <div class="profile-layout">
+      <div class="booking-panel">
+        <div class="section-title" style="font-size: 15px; margin-bottom: 20px;">Мои данные</div>
+        
+        <div class="field-group">
+          <div class="field-label">Фамилия</div>
+          <div class="field-wrap">
+            <input type="text" class="field-input" id="prof-lname" placeholder="Иванов" maxlength="40">
+            <span class="field-status" id="prof-lname-status"></span>
+          </div>
+          <div class="field-error" id="prof-lname-error"></div>
+        </div>
+
+        <div class="field-group">
+          <div class="field-label">Имя</div>
+          <div class="field-wrap">
+            <input type="text" class="field-input" id="prof-fname" placeholder="Иван" maxlength="40">
+            <span class="field-status" id="prof-fname-status"></span>
+          </div>
+          <div class="field-error" id="prof-fname-error"></div>
+        </div>
+
+        <div class="field-group">
+          <div class="field-label">Телефон</div>
+          <div class="field-wrap">
+            <input type="tel" class="field-input" id="prof-phone" placeholder="+7 (900) 000-00-00">
+            <span class="field-status" id="prof-phone-status"></span>
+          </div>
+          <div class="field-error" id="prof-phone-error"></div>
+        </div>
+
+        <div class="field-group">
+          <div class="field-label">Email</div>
+          <div class="field-wrap">
+            <input type="email" class="field-input" id="prof-email" placeholder="mail@example.com">
+            <span class="field-status" id="prof-email-status"></span>
+          </div>
+          <div class="field-error" id="prof-email-error"></div>
+        </div>
+
+        <div class="field-group">
+          <div class="field-label">Дата рождения</div>
+          <div class="field-wrap">
+            <input type="date" class="field-input" id="prof-dob" min="1920-01-01" max="2015-01-01" style="font-family: inherit;">
+          </div>
+        </div>
+        
+        <button class="btn btn-primary" style="width:100%; margin-top:10px;" onclick="saveProfile()">Сохранить изменения</button>
+      </div>
+      <div>
+        <div class="catalog-tabs" style="margin-bottom: 20px;">
+          <button class="tab-btn active" id="tab-btn-appointments" onclick="switchProfileTab('appointments')">Мои записи к врачу</button>
+          <button class="tab-btn" id="tab-btn-history" onclick="switchProfileTab('history')">История просмотров</button>
+        </div>
+        
+        <div id="profile-tab-appointments">
+          <div id="profile-appointments-list"></div>
+        </div>
+        
+        <div id="profile-tab-history" style="display: none;">
+          <div class="catalog-grid" id="profile-history-grid" style="grid-template-columns: repeat(2, 1fr); gap: 14px;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── HEADER ── -->
+<header id="site-header">
+  <div class="logo" onclick="showPage('home')">
+    <div class="logo-mark"></div>
+    NOIR VISION
+  </div>
+  <nav>
+    <a data-page="home" class="active">Главная</a>
+    <a data-page="catalog">Каталог</a>
+    <a data-page="booking">Запись к врачу</a>
+    <a data-page="cart">Корзина</a>
+  </nav>
+  <div class="header-actions">
+    <div class="pill" id="auth-pill" onclick="showPage('account')">Вход</div>
+    <div class="icon-btn" onclick="showPage('cart')">
+      🛒<span class="cart-badge" id="cart-badge"></span>
+    </div>
+    <div class="menu-toggle" id="menu-toggle" onclick="toggleMobileMenu()">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</header>
+
+<!-- ── MOBILE NAV ── -->
+<nav class="mobile-nav" id="mobile-nav">
+  <a data-page="home"    onclick="mobileNav('home')">Главная</a>
+  <a data-page="catalog" onclick="mobileNav('catalog')">Каталог</a>
+  <a data-page="booking" onclick="mobileNav('booking')">Запись к врачу</a>
+  <a data-page="cart"    onclick="mobileNav('cart')">Корзина</a>
+  <a data-page="account" onclick="mobileNav('account')">Аккаунт</a>
+  <div class="mobile-nav-cats">
+    <div class="mobile-nav-cat-title">Категории</div>
+    <div class="mobile-nav-cat-links">
+      <div class="mobile-nav-cat-link" onclick="mobileNav('cat-frames')">🕶️ Оправы</div>
+      <div class="mobile-nav-cat-link" onclick="mobileNav('cat-lenses')">🔬 Линзы</div>
+      <div class="mobile-nav-cat-link" onclick="mobileNav('cat-liquids')">🧴 Жидкости</div>
+      <div class="mobile-nav-cat-link" onclick="mobileNav('cat-cases')">🗃️ Футляры</div>
+    </div>
+  </div>
+</nav>
+
+<!-- ══════ PAGE: HOME + CATALOG ══════ -->
+<div id="page-home-catalog-wrapper">
+<div class="page active" id="page-home">
+  <div class="container">
+    <section class="hero">
+      <div class="hero-copy">
+        <div class="eyebrow">Салон оптики</div>
+        <h1 class="hero-title">Всё для очков<br>в одном месте</h1>
+        <p class="hero-sub">Оправы, жидкости для линз и футляры в удобном онлайн‑каталоге.</p>
+        <div class="hero-cta">
+          <button class="btn btn-primary" onclick="showPage('catalog')">Смотреть оправы</button>
+          <button class="btn" onclick="showPage('booking')">Онлайн запись к врачу</button>
+        </div>
+      </div>
+      <div class="hero-card">
+        <div class="hero-card-label">Пример карточки оправы</div>
+        <div class="hero-card-img">🕶️</div>
+        <div class="hero-card-meta">
+          <div>
+            <div class="product-brand" style="color:#999">NOIR VISION ATELIER</div>
+            <div style="font-size:13px">Noir Round 01</div>
+          </div>
+          <div style="font-size:13px;color:#111">29 000 ₽</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Категории -->
+    <div class="section-head">
+      <div class="section-title">Категории</div>
+      <div class="section-sub">Оправы · Жидкости · Футляры · Линзы</div>
+    </div>
+    <div class="category-grid">
+      <article class="category-card" onclick="showPage('cat-frames')">
+        <div class="category-img">🕶️</div>
+        <div class="category-meta">
+          <div>
+            <div class="product-brand">NOIR VISION</div>
+            <div>Оправы</div>
+          </div>
+          <button class="btn" style="padding:6px 14px;" onclick="event.stopPropagation();showPage('cat-frames')">Смотреть</button>
+        </div>
+      </article>
+      <article class="category-card" onclick="showPage('cat-liquids')">
+        <div class="category-img">🧴</div>
+        <div class="category-meta">
+          <div>
+            <div class="product-brand">NOIR CARE</div>
+            <div>Жидкости для линз</div>
+          </div>
+          <button class="btn" style="padding:6px 14px;" onclick="event.stopPropagation();showPage('cat-liquids')">Смотреть</button>
+        </div>
+      </article>
+      <article class="category-card" onclick="showPage('cat-cases')">
+        <div class="category-img">🗃️</div>
+        <div class="category-meta">
+          <div>
+            <div class="product-brand">OBSIDIAN / NOIR</div>
+            <div>Футляры</div>
+          </div>
+          <button class="btn" style="padding:6px 14px;" onclick="event.stopPropagation();showPage('cat-cases')">Смотреть</button>
+        </div>
+      </article>
+      <article class="category-card" onclick="showPage('cat-lenses')">
+        <div class="category-img">🔬</div>
+        <div class="category-meta">
+          <div>
+            <div class="product-brand">NOIR OPTICS</div>
+            <div>Линзы</div>
+          </div>
+          <button class="btn" style="padding:6px 14px;" onclick="event.stopPropagation();showPage('cat-lenses')">Смотреть</button>
+        </div>
+      </article>
+    </div>
+  </div>
+</div>
+
+<!-- каталог (общий) -->
+<div class="page" id="page-catalog">
+  <div class="container">
+    <div class="section-head" style="margin-bottom:20px;">
+      <div class="section-title" id="catalog-heading">Каталог – оправы</div>
+    </div>
+    <div class="catalog-tabs">
+      <button class="tab-btn active" data-tab="frames"  onclick="setCatalogTab('frames')">Оправы</button>
+      <button class="tab-btn"        data-tab="lenses"  onclick="setCatalogTab('lenses')">Линзы</button>
+      <button class="tab-btn"        data-tab="liquids" onclick="setCatalogTab('liquids')">Жидкости</button>
+      <button class="tab-btn"        data-tab="cases"   onclick="setCatalogTab('cases')">Футляры</button>
+    </div>
+    <div id="frame-filters" style="margin-bottom:20px;">
+      <div class="filter-label">Форма оправы</div>
+      <div class="shape-row" id="shape-filter">
+        <div class="shape-chip active" data-shape="all">Все</div>
+        <div class="shape-chip" data-shape="round">Круглые</div>
+        <div class="shape-chip" data-shape="oval">Овальные</div>
+        <div class="shape-chip" data-shape="square">Квадратные</div>
+        <div class="shape-chip" data-shape="rect">Прямоугольные</div>
+        <div class="shape-chip" data-shape="aviator">Авиаторы</div>
+        <div class="shape-chip" data-shape="cat">Кошачий глаз</div>
+        <div class="shape-chip" data-shape="wayfarer">Вайфареры</div>
+      </div>
+    </div>
+    <div id="lens-filters" style="display:none;margin-bottom:20px;">
+      <div class="filter-label">Тип линз</div>
+      <div class="shape-row" id="lens-filter">
+        <div class="shape-chip active" data-lens="all">Все</div>
+        <div class="shape-chip" data-lens="dal">Для дали</div>
+        <div class="shape-chip" data-lens="bliz">Для близи</div>
+        <div class="shape-chip" data-lens="comp">Компьютерные</div>
+        <div class="shape-chip" data-lens="prog">Прогрессивные</div>
+        <div class="shape-chip" data-lens="drive">Для вождения</div>
+        <div class="shape-chip" data-lens="photo">Фотохромные</div>
+        <div class="shape-chip" data-lens="sun">Солнцезащитные</div>
+        <div class="shape-chip" data-lens="polar">Поляризационные</div>
+        <div class="shape-chip" data-lens="blue">Синий свет</div>
+      </div>
+    </div>
+    <div style="margin-bottom:28px;">
+      <button class="btn-ai-scan" onclick="showPage('scan')">
+        <span class="btn-ai-scan-icon">🤖</span>
+        ИИ-подбор оправы по форме лица
+        <span style="font-size:10px;opacity:.6;margin-left:4px;">↗</span>
+      </button>
+      <div style="text-align:center;font-size:10px;color:var(--text-muted);letter-spacing:.14em;">Сканирование займёт менее 30 секунд</div>
+    </div>
+    <div class="catalog-grid" id="catalog-grid"></div>
+  </div>
+</div>
+</div><!-- /wrapper -->
+
+<!-- ══════ CATEGORY PAGES ══════ -->
+<!-- ОПРАВЫ -->
+<div class="page" id="page-cat-frames">
+  <div class="container">
+    <div class="cat-page-back" onclick="showPage('home')">← Назад на главную</div>
+    <div class="cat-page-hero">
+      <div class="cat-page-icon">🕶️</div>
+      <div>
+        <div class="cat-page-title">Оправы</div>
+        <div class="cat-page-sub">Ацетатные и металлические оправы от NOIR VISION ATELIER, OBSIDIAN FRAMES и STUDIO ECLIPSE. Круглые, овальные, квадратные, авиаторы и кошачий глаз.</div>
+      </div>
+    </div>
+    <div style="margin-bottom:20px;">
+      <div class="filter-label">Форма оправы</div>
+      <div class="shape-row" id="cat-frames-shape-filter">
+        <div class="shape-chip active" data-shape="all">Все</div>
+        <div class="shape-chip" data-shape="round">Круглые</div>
+        <div class="shape-chip" data-shape="oval">Овальные</div>
+        <div class="shape-chip" data-shape="square">Квадратные</div>
+        <div class="shape-chip" data-shape="rect">Прямоугольные</div>
+        <div class="shape-chip" data-shape="aviator">Авиаторы</div>
+        <div class="shape-chip" data-shape="cat">Кошачий глаз</div>
+        <div class="shape-chip" data-shape="wayfarer">Вайфареры</div>
+      </div>
+    </div>
+    <div style="margin-bottom:28px;">
+      <button class="btn-ai-scan" onclick="showPage('scan')">
+        <span class="btn-ai-scan-icon">🤖</span>
+        ИИ-подбор оправы по форме лица
+      </button>
+    </div>
+    <div class="catalog-grid" id="cat-frames-grid"></div>
+  </div>
+</div>
+
+<!-- ЛИНЗЫ -->
+<div class="page" id="page-cat-lenses">
+  <div class="container">
+    <div class="cat-page-back" onclick="showPage('home')">← Назад на главную</div>
+    <div class="cat-page-hero">
+      <div class="cat-page-icon">🔬</div>
+      <div>
+        <div class="cat-page-title">Линзы</div>
+        <div class="cat-page-sub">Монофокальные, прогрессивные, фотохромные, поляризационные и линзы с фильтром синего света. Индексы от 1.50 до 1.74.</div>
+      </div>
+    </div>
+    <div style="margin-bottom:20px;">
+      <div class="filter-label">Тип линз</div>
+      <div class="shape-row" id="cat-lenses-lens-filter">
+        <div class="shape-chip active" data-lens="all">Все</div>
+        <div class="shape-chip" data-lens="dal">Для дали</div>
+        <div class="shape-chip" data-lens="bliz">Для близи</div>
+        <div class="shape-chip" data-lens="comp">Компьютерные</div>
+        <div class="shape-chip" data-lens="prog">Прогрессивные</div>
+        <div class="shape-chip" data-lens="drive">Для вождения</div>
+        <div class="shape-chip" data-lens="photo">Фотохромные</div>
+        <div class="shape-chip" data-lens="sun">Солнцезащитные</div>
+        <div class="shape-chip" data-lens="polar">Поляризационные</div>
+        <div class="shape-chip" data-lens="blue">Синий свет</div>
+      </div>
+    </div>
+    <div class="catalog-grid" id="cat-lenses-grid"></div>
+  </div>
+</div>
+
+<!-- ЖИДКОСТИ -->
+<div class="page" id="page-cat-liquids">
+  <div class="container">
+    <div class="cat-page-back" onclick="showPage('home')">← Назад на главную</div>
+    <div class="cat-page-hero">
+      <div class="cat-page-icon">🧴</div>
+      <div>
+        <div class="cat-page-title">Жидкости для линз</div>
+        <div class="cat-page-sub">Увлажняющие капли, многофункциональные растворы и спреи для очистки оправ от NOIR CARE. Гипоаллергенные формулы без консервантов.</div>
+      </div>
+    </div>
+    <div class="catalog-grid" id="cat-liquids-grid"></div>
+  </div>
+</div>
+
+<!-- ФУТЛЯРЫ -->
+<div class="page" id="page-cat-cases">
+  <div class="container">
+    <div class="cat-page-back" onclick="showPage('home')">← Назад на главную</div>
+    <div class="cat-page-hero">
+      <div class="cat-page-icon">🗃️</div>
+      <div>
+        <div class="cat-page-title">Футляры</div>
+        <div class="cat-page-sub">Жёсткие и кожаные чехлы от OBSIDIAN CASES и NOIR LEATHER. Надёжная защита оправ с магнитными и кнопочными застёжками.</div>
+      </div>
+    </div>
+    <div class="catalog-grid" id="cat-cases-grid"></div>
+  </div>
+</div>
+
+<!-- ══════ PAGE: BOOKING ══════ -->
+<div class="page" id="page-booking">
+  <div class="container">
+    <div class="section-head" style="margin-bottom:32px;">
+      <div>
+        <div class="section-title">Запись к врачу</div>
+        <div class="section-sub" style="margin-top:6px;">Выберите удобное время приёма</div>
+      </div>
+    </div>
+    <div class="booking-layout">
+      <div class="booking-panel">
+        <div>
+          <div class="step-label">Шаг 1 · Месяц</div>
+          <div class="month-grid" id="month-grid">
+            <div class="chip">Январь</div><div class="chip">Февраль</div><div class="chip">Март</div>
+            <div class="chip">Апрель</div><div class="chip">Май</div><div class="chip">Июнь</div>
+            <div class="chip">Июль</div><div class="chip">Август</div><div class="chip">Сентябрь</div>
+            <div class="chip">Октябрь</div><div class="chip">Ноябрь</div><div class="chip">Декабрь</div>
+          </div>
+        </div>
+        <div>
+          <div class="step-label">Шаг 2 · Дата</div>
+          <div class="calendar-grid" id="cal-grid"></div>
+        </div>
+        <div>
+          <div class="step-label">Шаг 3 · Время</div>
+          <div class="time-grid" id="time-grid">
+            <div class="time-slot">10:00</div><div class="time-slot">11:30</div><div class="time-slot">13:00</div>
+            <div class="time-slot">14:30</div><div class="time-slot">16:00</div><div class="time-slot">17:30</div>
+          </div>
+        </div>
+        <button class="btn btn-primary" id="book-btn" style="align-self:flex-start;">Подтвердить запись</button>
+      </div>
+      <aside class="booking-summary">
+        <div class="section-title">Ваша запись</div>
+        <div class="booking-row"><span class="booking-row-label">Месяц</span><span class="booking-row-val" id="b-month">Май</span></div>
+        <div class="booking-row"><span class="booking-row-label">Дата</span><span class="booking-row-val" id="b-day">—</span></div>
+        <div class="booking-row"><span class="booking-row-label">Время</span><span class="booking-row-val" id="b-time">—</span></div>
+        <div class="booking-row"><span class="booking-row-label">Врач</span><span class="booking-row-val">Любой доступный</span></div>
+        <div class="booking-row"><span class="booking-row-label">Адрес</span><span class="booking-row-val" style="font-size:11px;text-align:right;max-width:160px;">ул. Оптическая, 12</span></div>
+        <button class="btn btn-primary" style="width:100%;margin-top:28px;padding:14px 22px;font-size:12px;letter-spacing:.2em;" onclick="confirmBooking()">Записаться →</button>
+        <div style="text-align:center;margin-top:10px;font-size:10px;color:var(--text-muted);">Бесплатная отмена за 2 часа</div>
+      </aside>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ PAGE: CART ══════ -->
+<div class="page" id="page-cart">
+  <div class="container">
+    <div class="section-head" style="margin-bottom:32px;">
+      <div>
+        <div class="section-title">Корзина</div>
+        <div class="section-sub" id="cart-count-label" style="margin-top:6px;">Проверьте товары перед оформлением</div>
+      </div>
+    </div>
+    <div class="cart-layout">
+      <div class="cart-list" id="cart-list">
+        <div class="cart-empty">Корзина пуста</div>
+      </div>
+      <aside class="cart-summary">
+        <div class="summary-row"><span>Товары</span><span id="cart-count">0</span></div>
+        <div class="summary-row total"><span>Итого</span><span id="cart-total">0 ₽</span></div>
+        <div style="margin-top:20px;border-top:1px solid var(--border);padding-top:18px;">
+          <div class="section-title" style="margin-bottom:14px;">Оформление</div>
+          <div class="field-group">
+            <div class="field-label">Имя</div>
+            <div class="field-wrap">
+              <input type="text" class="field-input" id="order-name" placeholder="Ваше имя" maxlength="40" autocomplete="name" />
+              <span class="field-status" id="order-name-status"></span>
+            </div>
+            <div class="field-error" id="order-name-error"></div>
+          </div>
+          <div class="field-group">
+            <div class="field-label">Телефон</div>
+            <div class="field-wrap">
+              <input type="tel" class="field-input" id="order-phone" placeholder="+7 (900) 000-00-00" maxlength="18" autocomplete="tel" />
+              <span class="field-status" id="order-phone-status"></span>
+            </div>
+            <div class="field-hint">Формат: +7 (XXX) XXX-XX-XX</div>
+            <div class="field-error" id="order-phone-error"></div>
+          </div>
+        </div>
+        <button class="btn btn-primary" style="width:100%;margin-top:16px;" id="order-btn">Оформить заказ</button>
+      </aside>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ PAGE: ACCOUNT ══════ -->
+<div class="page" id="page-account">
+  <div class="container" style="display:flex;align-items:flex-start;justify-content:center;min-height:calc(100vh - 72px);padding-top:60px;">
+    <div style="width:100%;max-width:460px;">
+
+      <div id="auth-notice" style="display:none;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:14px;padding:14px 20px;margin-bottom:28px;font-size:13px;color:var(--text);letter-spacing:.02em;">
+        ⚠️ <span id="auth-notice-text">Для записи к врачу необходимо войти в аккаунт</span>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:36px;">
+        <div style="width:20px;height:20px;border-radius:5px 5px 5px 18px;border:1.5px solid #fff;"></div>
+        <span style="font-size:12px;letter-spacing:.3em;text-transform:uppercase;">NOIR VISION</span>
+      </div>
+
+      <div style="background:var(--bg-elevated);border:1px solid var(--border);border-radius:28px;overflow:hidden;">
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--border);">
+          <button id="auth-tab-login" onclick="switchAuthTab('login')"
+            style="padding:18px 0;font-size:11px;letter-spacing:.22em;text-transform:uppercase;background:transparent;border:none;color:var(--text);cursor:pointer;border-bottom:2px solid var(--accent);transition:all .2s;font-family:inherit;">
+            Вход
+          </button>
+          <button id="auth-tab-reg" onclick="switchAuthTab('reg')"
+            style="padding:18px 0;font-size:11px;letter-spacing:.22em;text-transform:uppercase;background:transparent;border:none;color:var(--text-muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;font-family:inherit;">
+            Регистрация
+          </button>
+        </div>
+
+        <!-- LOGIN -->
+        <div id="auth-panel-login" style="padding:36px 36px 40px;">
+          <div style="margin-bottom:28px;">
+            <div style="font-size:22px;font-weight:300;letter-spacing:.06em;margin-bottom:6px;">Добро пожаловать</div>
+            <div style="font-size:12px;color:var(--text-muted);">Войдите по номеру телефона или email</div>
+          </div>
+
+          <div class="field-group" id="login-phone-group">
+            <div class="field-label">Номер телефона</div>
+            <div class="field-wrap">
+              <input type="tel" class="field-input" id="login-phone" placeholder="+7 (999) 123-45-67" maxlength="20" autocomplete="tel" />
+              <span class="field-status" id="login-phone-status"></span>
+            </div>
+            <div class="field-error" id="login-phone-error"></div>
+            <div style="margin-top:6px;font-size:10px;color:var(--text-muted);">
+              <span id="login-toggle-email" style="cursor:pointer;text-decoration:underline;">Войти по email</span>
+            </div>
+          </div>
+
+          <div class="field-group" id="login-email-group" style="display:none;">
+            <div class="field-label">Email</div>
+            <div class="field-wrap">
+              <input type="email" class="field-input" id="login-email" placeholder="mail@example.com" maxlength="80" autocomplete="email" />
+              <span class="field-status" id="login-email-status"></span>
+            </div>
+            <div class="field-error" id="login-email-error"></div>
+            <div style="margin-top:6px;font-size:10px;color:var(--text-muted);">
+              <span id="login-toggle-phone" style="cursor:pointer;text-decoration:underline;">Войти по телефону</span>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <div class="field-label">Пароль</div>
+            <div class="field-wrap">
+              <input type="password" class="field-input with-eye" id="login-pass" placeholder="••••••••" maxlength="64" autocomplete="current-password" />
+              <span onclick="togglePwd('login-pass',this)" style="position:absolute;right:16px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:14px;color:var(--text-muted);user-select:none;pointer-events:all;">👁</span>
+            </div>
+            <div class="field-error" id="login-pass-error"></div>
+          </div>
+
+          <div style="text-align:right;margin-top:-6px;margin-bottom:20px;">
+            <span style="font-size:11px;color:var(--text-muted);letter-spacing:.1em;cursor:pointer;text-decoration:underline;">Забыли пароль?</span>
+          </div>
+
+          <button class="btn btn-primary" style="width:100%;padding:13px;border-radius:14px;font-size:11px;letter-spacing:.22em;" id="login-btn">Войти</button>
+
+          <div style="margin-top:24px;text-align:center;font-size:11px;color:var(--text-muted);">
+            Нет аккаунта? <span onclick="switchAuthTab('reg')" style="color:var(--text);text-decoration:underline;cursor:pointer;">Зарегистрироваться</span>
+          </div>
+        </div>
+
+        <!-- REGISTER -->
+        <div id="auth-panel-reg" style="padding:36px 36px 40px;display:none;">
+          <div style="margin-bottom:28px;">
+            <div style="font-size:22px;font-weight:300;letter-spacing:.06em;margin-bottom:6px;">Создать аккаунт</div>
+            <div style="font-size:12px;color:var(--text-muted);">Займёт меньше минуты</div>
+          </div>
+
+          <!-- Error box for server errors -->
+          <div id="reg-error-box" class="error-box" style="display:none;margin-bottom:16px;padding:10px 14px;background:rgba(255,85,85,.12);border:1px solid rgba(255,85,85,.3);border-radius:10px;font-size:11px;color:var(--error);line-height:1.6;"></div>
+
+          <div class="field-group">
+            <div class="field-label">Никнейм</div>
+            <div class="field-wrap">
+              <input type="text" class="field-input" id="reg-nickname" placeholder="john_doe" maxlength="30" autocomplete="username" />
+              <span class="field-status" id="reg-nickname-status"></span>
+            </div>
+            <div class="field-error" id="reg-nickname-error"></div>
+          </div>
+
+          <div class="field-group">
+            <div class="field-label">Номер телефона</div>
+            <div class="field-wrap">
+              <input type="tel" class="field-input" id="reg-phone" placeholder="+7 (999) 123-45-67" maxlength="20" autocomplete="tel" />
+              <span class="field-status" id="reg-phone-status"></span>
+            </div>
+            <div class="field-error" id="reg-phone-error"></div>
+          </div>
+
+          <div class="field-group">
+            <div class="field-label">Email</div>
+            <div class="field-wrap">
+              <input type="email" class="field-input" id="reg-email" placeholder="mail@example.com" maxlength="80" autocomplete="email" />
+              <span class="field-status" id="reg-email-status"></span>
+            </div>
+            <div class="field-error" id="reg-email-error"></div>
+          </div>
+
+          <!-- Пароль -->
+          <div class="field-group">
+            <div class="field-label">Пароль</div>
+            <div class="field-wrap">
+              <input type="password" class="field-input with-eye" id="reg-pass" placeholder="Минимум 8 символов" maxlength="64" autocomplete="new-password" />
+              <span onclick="togglePwd('reg-pass',this)" style="position:absolute;right:16px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:14px;color:var(--text-muted);user-select:none;pointer-events:all;">👁</span>
+            </div>
+            <div class="field-hint">От 8 до 64 символов. Хотя бы 1 буква и 1 цифра.</div>
+            <div class="field-error" id="reg-pass-error"></div>
+            <!-- Strength bar -->
+            <div style="margin-top:8px;height:3px;background:var(--border);border-radius:3px;overflow:hidden;">
+              <div id="pass-strength-bar" style="height:100%;width:0%;transition:width .3s,background .3s;border-radius:3px;"></div>
+            </div>
+            <div id="pass-strength-label" style="font-size:9px;color:var(--text-muted);margin-top:4px;padding-left:14px;"></div>
+          </div>
+
+          <!-- Повторите пароль -->
+          <div class="field-group">
+            <div class="field-label">Повторите пароль</div>
+            <div class="field-wrap">
+              <input type="password" class="field-input" id="reg-pass2" placeholder="••••••••" maxlength="64" autocomplete="new-password" />
+              <span class="field-status" id="reg-pass2-status"></span>
+            </div>
+            <div class="field-error" id="reg-pass2-error"></div>
+          </div>
+
+          <button class="btn btn-primary" style="width:100%;padding:13px;border-radius:14px;font-size:11px;letter-spacing:.22em;" id="reg-btn">Создать аккаунт</button>
+
+          <div style="margin-top:24px;text-align:center;font-size:11px;color:var(--text-muted);">
+            Уже есть аккаунт? <span onclick="switchAuthTab('login')" style="color:var(--text);text-decoration:underline;cursor:pointer;">Войти</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:16px;margin:24px 0;">
+        <div style="flex:1;height:1px;background:var(--border);"></div>
+        <span style="font-size:10px;color:var(--text-muted);letter-spacing:.18em;">ИЛИ</span>
+        <div style="flex:1;height:1px;background:var(--border);"></div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <button onclick="toast('Скоро')" style="padding:13px;border-radius:14px;border:1px solid var(--border);background:transparent;color:var(--text-muted);font-size:11px;letter-spacing:.16em;text-transform:uppercase;cursor:pointer;font-family:inherit;transition:all .2s;" onmouseover="this.style.borderColor='rgba(255,255,255,.3)';this.style.color='var(--text)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-muted)'">📱 Войти через VK</button>
+        <button onclick="toast('Скоро')" style="padding:13px;border-radius:14px;border:1px solid var(--border);background:transparent;color:var(--text-muted);font-size:11px;letter-spacing:.16em;text-transform:uppercase;cursor:pointer;font-family:inherit;transition:all .2s;" onmouseover="this.style.borderColor='rgba(255,255,255,.3)';this.style.color='var(--text)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-muted)'">✉️ Войти через Email</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ PAGE: SCAN ══════ -->
+<div class="page" id="page-scan">
+  <div class="container" style="max-width:820px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;flex-wrap:wrap;gap:12px;">
+      <div>
+        <div class="eyebrow">Искусственный интеллект</div>
+        <div class="section-title" style="font-size:20px;letter-spacing:.14em;margin-top:6px;font-weight:300;">AI Face Scan</div>
+      </div>
+      <button class="btn" onclick="showPage('catalog')">← Назад в каталог</button>
+    </div>
+    <div style="background:var(--bg-elevated);border:1px solid var(--border);border-radius:24px;padding:32px;">
+      <div id="scan-video-wrap" style="position:relative;width:100%;aspect-ratio:4/3;background:#000;border-radius:16px;overflow:hidden;border:1px solid var(--border);margin-bottom:20px;">
+        <video id="scan-webcam" autoplay playsinline muted style="width:100%;height:100%;object-fit:cover;transform:scaleX(-1);display:block;"></video>
+        <div style="position:absolute;inset:0;pointer-events:none;">
+          <div id="scan-oval" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-58%);width:210px;height:270px;border:2px solid rgba(255,255,255,.2);border-radius:50%;transition:border-color .4s,box-shadow .4s;"></div>
+          <svg id="scan-arrow-front" viewBox="0 0 640 480" xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity .4s;">
+            <circle cx="320" cy="100" r="4" fill="#fff" opacity="0.6"/>
+            <circle cx="320" cy="380" r="4" fill="#fff" opacity="0.6"/>
+            <circle cx="150" cy="240" r="4" fill="#fff" opacity="0.6"/>
+            <circle cx="490" cy="240" r="4" fill="#fff" opacity="0.6"/>
+            <text x="320" y="66" text-anchor="middle" fill="rgba(255,255,255,0.6)" font-size="11" font-family="SF Pro Text,system-ui" letter-spacing="3">ПРЯМО</text>
+          </svg>
+          <svg id="scan-arrow-left" viewBox="0 0 640 480" xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity .4s;">
+            <defs><marker id="sahl" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></marker></defs>
+            <line x1="490" y1="240" x2="168" y2="240" stroke="rgba(255,255,255,0.75)" stroke-width="2" stroke-linecap="round" marker-end="url(#sahl)"/>
+            <text x="320" y="66" text-anchor="middle" fill="rgba(255,255,255,0.6)" font-size="11" font-family="SF Pro Text,system-ui" letter-spacing="3">МЕДЛЕННО ВЛЕВО</text>
+          </svg>
+          <svg id="scan-arrow-right" viewBox="0 0 640 480" xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity .4s;">
+            <defs><marker id="sahr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></marker></defs>
+            <line x1="150" y1="240" x2="472" y2="240" stroke="rgba(255,255,255,0.75)" stroke-width="2" stroke-linecap="round" marker-end="url(#sahr)"/>
+            <text x="320" y="66" text-anchor="middle" fill="rgba(255,255,255,0.6)" font-size="11" font-family="SF Pro Text,system-ui" letter-spacing="3">МЕДЛЕННО ВПРАВО</text>
+          </svg>
+          <div id="scan-flash" style="position:absolute;inset:0;background:#fff;opacity:0;border-radius:16px;pointer-events:none;transition:opacity .08s;"></div>
+          <div style="position:absolute;bottom:16px;left:50%;transform:translateX(-50%);background:rgba(5,5,5,.88);border:1px solid var(--border);border-radius:999px;padding:8px 28px;white-space:nowrap;backdrop-filter:blur(10px);">
+            <div id="scan-step" style="font-size:9px;color:var(--text-muted);letter-spacing:.22em;text-transform:uppercase;margin-bottom:2px;text-align:center;">AI FACE SCAN</div>
+            <div id="scan-text" style="font-size:12px;color:var(--text);text-align:center;">Нажмите «Включить камеру»</div>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:center;gap:10px;margin-bottom:16px;">
+        <div id="scan-dot0" style="width:7px;height:7px;border-radius:50%;background:var(--border);transition:background .4s,transform .3s;"></div>
+        <div id="scan-dot1" style="width:7px;height:7px;border-radius:50%;background:var(--border);transition:background .4s,transform .3s;"></div>
+        <div id="scan-dot2" style="width:7px;height:7px;border-radius:50%;background:var(--border);transition:background .4s,transform .3s;"></div>
+      </div>
+      <div style="height:2px;background:var(--border);border-radius:2px;overflow:hidden;margin-bottom:24px;">
+        <div id="scan-bar" style="height:100%;width:0%;background:var(--accent);transition:width .6s ease;"></div>
+      </div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+        <button class="btn" id="scan-start-btn" onclick="scanStartCamera()">Включить камеру</button>
+        <button class="btn btn-primary" id="scan-scan-btn" onclick="scanStart()" disabled>Начать сканирование</button>
+      </div>
+      <div id="scan-result" style="display:none;margin-top:28px;background:var(--bg-soft);border:1px solid var(--border);border-radius:20px;padding:26px;">
+        <div style="font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px;">Результат анализа</div>
+        <div id="scan-res-shape" style="font-size:28px;font-weight:200;text-transform:uppercase;letter-spacing:.16em;margin-bottom:4px;">—</div>
+        <div id="scan-res-conf"  style="font-size:11px;color:var(--text-muted);margin-bottom:16px;">—</div>
+        <div style="height:2px;background:var(--border);border-radius:2px;margin-bottom:24px;"><div id="scan-conf-fill" style="height:100%;background:var(--accent);border-radius:2px;transition:width 1s ease;width:0%;"></div></div>
+        <div style="font-size:9px;color:var(--text-muted);letter-spacing:.2em;text-transform:uppercase;margin-bottom:10px;">Захваченные кадры</div>
+        <div id="scan-frames" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:24px;"></div>
+        <div style="font-size:9px;color:var(--text-muted);letter-spacing:.2em;text-transform:uppercase;margin-bottom:10px;margin-top:20px;">Рекомендуемые оправы</div>
+        <div id="scan-glasses" style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PRODUCT MODAL -->
+<div class="modal-overlay" id="product-modal" onclick="closeModal(event)">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal(null,true)">✕</button>
+    <div class="modal-img" id="modal-img">🕶️</div>
+    <div class="modal-brand" id="modal-brand"></div>
+    <div class="modal-title" id="modal-title"></div>
+    <div class="modal-price" id="modal-price"></div>
+    <div class="modal-desc" id="modal-desc"></div>
+    <div class="modal-specs" id="modal-specs"></div>
+    <div class="modal-actions">
+      <button class="btn btn-primary" id="modal-add-btn" style="flex:1;">В корзину</button>
+      <button class="btn" onclick="closeModal(null,true)" style="flex:1;">Закрыть</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+
+  // ═══════════════════════════════
+// ПРОФИЛЬ И ИСТОРИЯ
+// ═══════════════════════════════
+
+// Переключение вкладок в профиле
+function switchProfileTab(tab) {
+  document.getElementById('tab-btn-appointments').classList.toggle('active', tab === 'appointments');
+  document.getElementById('tab-btn-history').classList.toggle('active', tab === 'history');
+  document.getElementById('profile-tab-appointments').style.display = tab === 'appointments' ? 'block' : 'none';
+  document.getElementById('profile-tab-history').style.display = tab === 'history' ? 'block' : 'none';
+}
+
+// Загрузка данных в инпуты
+function loadProfileData() {
+  document.getElementById('prof-fname').value = state.profile.firstName || '';
+  document.getElementById('prof-lname').value = state.profile.lastName || '';
+  document.getElementById('prof-phone').value = state.profile.phone || '';
+  document.getElementById('prof-email').value = state.profile.email || '';
+  document.getElementById('prof-dob').value = state.profile.dob || ''; // Единое поле YYYY-MM-DD
+  
+  // Принудительно триггерим валидацию, чтобы загорелись зеленые галочки
+  ['prof-fname', 'prof-lname', 'prof-phone', 'prof-email'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el && el.value) el.dispatchEvent(new Event('blur'));
+  });
+}
+
+function saveProfile() {
+  const fname = document.getElementById('prof-fname').value.trim();
+  const lname = document.getElementById('prof-lname').value.trim();
+  const phone = document.getElementById('prof-phone').value.trim();
+  const email = document.getElementById('prof-email').value.trim();
+  const dob = document.getElementById('prof-dob').value;
+
+  // Жесткая проверка перед сохранением
+  if (fname && !validateField(fname, RULES.name)) { toast('Проверьте поле Имя (только буквы)'); return; }
+  if (lname && !validateField(lname, RULES.name)) { toast('Проверьте поле Фамилия (только буквы)'); return; }
+  if (phone && !validateField(phone, RULES.phone)) { toast('Проверьте телефон'); return; }
+  if (email && !validateField(email, RULES.email)) { toast('Проверьте email'); return; }
+
+  state.profile.firstName = fname;
+  state.profile.lastName = lname;
+  state.profile.phone = phone;
+  state.profile.email = email;
+  state.profile.dob = dob; // Сохраняем дату
+  
+  localStorage.setItem('nv_profile', JSON.stringify(state.profile));
+  toast('✅ Данные профиля успешно сохранены');
+}
+// Отрисовка записей к врачу
+function renderProfileAppointments() {
+  const container = document.getElementById('profile-appointments-list');
+  if (state.appointments.length === 0) {
+    container.innerHTML = '<div style="color:var(--text-muted);font-size:13px;padding:20px 0;">У вас пока нет активных записей.</div>';
+    return;
+  }
+  
+  container.innerHTML = state.appointments.map((a, i) => `
+    <div style="background:var(--bg-elevated); border:1px solid var(--border); border-radius:20px; padding:20px; margin-bottom:14px; display:flex; justify-content:space-between; align-items:center; flex-wrap: wrap; gap: 14px;">
+      <div>
+        <div style="font-size:10px; color:var(--text-muted); letter-spacing:.18em; text-transform:uppercase; margin-bottom:10px;">Запись №${Math.floor(Math.random()*9000)+1000}</div>
+        <div style="font-size:16px; font-weight:500; margin-bottom: 4px;">🗓 ${a.day} ${a.month} в ${a.time}</div>
+        <div style="font-size:12px; color:var(--text-muted);">🩺 Оптометрист · Салон на ул. Оптическая, 12</div>
+      </div>
+      <div style="text-align: right;">
+        <div style="display:inline-block; padding: 6px 12px; background: rgba(85, 204, 136, 0.1); color: var(--success); border-radius: 8px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px;">Ожидается</div>
+        <div><span style="font-size:11px; color:var(--text-muted); cursor:pointer; text-decoration:underline;" onclick="toast('Для отмены позвоните в салон')">Отменить</span></div>
+      </div>
+    </div>
+  `).reverse().join('');
+}
+
+// Отрисовка истории товаров
+async function renderProfileHistory() {
+  const grid = document.getElementById('profile-history-grid');
+  if (state.viewHistory.length === 0) {
+    grid.innerHTML = '<div style="color:var(--text-muted);font-size:13px;padding:20px 0;grid-column:1/-1;">Вы пока не смотрели товары.</div>';
+    return;
+  }
+
+  const promises = state.viewHistory.map(async h => {
+    try {
+      const p = await apiGet('/products/' + h.id);
+      return mapProduct(p);
+    } catch(e) {
+      return null;
+    }
+  });
+  const products = (await Promise.all(promises)).filter(Boolean);
+
+  const itemsHTML = products.map(p => `
+    <article class="product-card" onclick="openModal('${p.id}')">
+      <div class="product-img-wrap" style="height:110px; font-size:32px;">${p.icon}</div>
+      <div class="product-brand">${p.brand}</div>
+      <div class="product-name">${p.name}</div>
+      <div class="product-footer">
+        <span class="price">${p.price.toLocaleString('ru-RU')} ₽</span>
+        <span class="add-btn">+ В корзину</span>
+      </div>
+    </article>
+  `).join('');
+  
+  grid.innerHTML = itemsHTML;
+}
+
+// Выход из аккаунта
+// Функция очистки инпутов авторизации
+function clearAuthForms() {
+  const authInputs = ['login-phone', 'login-email', 'login-pass', 'reg-nickname', 'reg-phone', 'reg-email', 'reg-pass', 'reg-pass2'];
+  authInputs.forEach(id => {
+    const el = document.getElementById(id);
+    if(el) {
+      el.value = '';
+      el.classList.remove('valid', 'invalid');
+    }
+    const status = document.getElementById(id + '-status');
+    if(status) status.textContent = '';
+    const err = document.getElementById(id + '-error');
+    if(err) { err.textContent = ''; err.classList.remove('show'); }
+  });
+  const bar = document.getElementById('pass-strength-bar');
+  if(bar) bar.style.width = '0%';
+  const lbl = document.getElementById('pass-strength-label');
+  if(lbl) lbl.textContent = '';
+}
+
+function logoutUser() {
+  state.isLoggedIn = false;
+  state.userName = '';
+  localStorage.removeItem('nv_logged_in');
+  localStorage.removeItem('nv_username');
+  localStorage.removeItem('nv_token');
+  clearAuthForms();
+  updateAuthHeader();
+  showPage('home');
+  toast('Вы вышли из аккаунта');
+}
+
+// ═══════════════════════════════
+// DATA  — теперь всё с бэкенда
+// ═══════════════════════════════
+
+function mapProduct(apiItem) {
+  return {
+    id: String(apiItem.id),
+    name: apiItem.title,
+    brand: apiItem.brand,
+    price: apiItem.price,
+    icon: apiItem.image_url || '',
+    desc: apiItem.description,
+    specs: (apiItem.attributes || []).map(a => a.key + ': ' + a.value).join(' · '),
+    shape: apiItem.shape,
+    lens: apiItem.shape,
+  };
+}
+
+const productsCache = {};
+
+async function apiLoadProducts(tab, extraParams = {}) {
+  const cacheKey = tab + ':' + JSON.stringify(extraParams);
+  if (productsCache[cacheKey]) return productsCache[cacheKey];
+  const params = { type: tab, page: 1, limit: 100, ...extraParams };
+  try {
+    const data = await apiGet('/products', params);
+    const items = (data.items || []).map(mapProduct);
+    productsCache[cacheKey] = items;
+    return items;
+  } catch(e) {
+    toast('Ошибка загрузки каталога');
+    return [];
+  }
+}
+
+// ═══════════════════════════════
+// STATE
+// ═══════════════════════════════
+const state = {
+  cart: JSON.parse(localStorage.getItem('nv_cart') || '[]'),
+  profile: JSON.parse(localStorage.getItem('nv_profile') || '{"firstName":"","lastName":"","phone":"","email":"","dobD":"","dobM":"","dobY":""}'),
+  appointments: JSON.parse(localStorage.getItem('nv_appointments') || '[]'),
+  viewHistory: JSON.parse(localStorage.getItem('nv_history') || '[]'),
+  currentPage: 'home',
+  catalogTab: 'frames',
+  shapeFilter: 'all',
+  lensFilter: 'all',
+  catFramesShape: 'all',
+  catLensesType: 'all',
+  isLoggedIn: localStorage.getItem('nv_logged_in') === 'true',
+  userName: localStorage.getItem('nv_username') || '',
+};
+// ═══════════════════════════════
+// VALIDATION RULES
+// ═══════════════════════════════
+const RULES = {
+  nickname: {
+    regex: /^[a-zA-Z0-9_\-]{2,30}$/,
+    msg: 'Только латиница, цифры, дефис и подчёркивание. От 2 до 30 символов.',
+  },
+  phone: {
+    // +7XXXXXXXXXX или +7 (XXX) XXX-XX-XX
+    regex: /^(\+7|8)[\s\-]?\(?\d{3}\)?[\s\-]?\d{3}[\s\-]?\d{2}[\s\-]?\d{2}$/,
+    msg: 'Введите корректный номер телефона (+7XXXXXXXXXX)',
+  },
+  email: {
+    regex: /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/,
+    msg: 'Введите корректный email (например: you@mail.ru)',
+  },
+  username: {
+    // латиница, цифры, _, от 3 до 20 символов
+    regex: /^[a-zA-Z0-9_]{3,20}$/,
+    msg: 'Только латиница, цифры и _. От 3 до 20 символов.',
+  },
+  password: {
+    // минимум 8 символов, хотя бы 1 буква и 1 цифра, до 64
+    regex: /^(?=.*[A-Za-z])(?=.*\d).{8,64}$/,
+    msg: 'Минимум 8 символов, хотя бы 1 буква и 1 цифра.',
+  },
+  name: {
+    // имя: буквы (рус/лат), пробелы, дефис, от 2 до 40 символов
+    regex: /^[а-яёА-ЯЁa-zA-Z\s\-]{2,40}$/,
+    msg: 'Только буквы, пробелы и дефис. От 2 до 40 символов.',
+  },
+};
+
+function validateField(value, rule) {
+  return rule.regex.test(value.trim());
+}
+
+function setFieldState(inputEl, statusEl, errorEl, isValid, errorMsg) {
+  if (!value_has_content(inputEl.value)) {
+    inputEl.classList.remove('valid', 'invalid');
+    if (statusEl) statusEl.textContent = '';
+    if (errorEl) { errorEl.textContent = ''; errorEl.classList.remove('show'); }
+    return;
+  }
+  if (isValid) {
+    inputEl.classList.add('valid'); inputEl.classList.remove('invalid');
+    if (statusEl) statusEl.textContent = '✓';
+    if (statusEl) statusEl.style.color = 'var(--success)';
+    if (errorEl) { errorEl.textContent = ''; errorEl.classList.remove('show'); }
+  } else {
+    inputEl.classList.add('invalid'); inputEl.classList.remove('valid');
+    if (statusEl) statusEl.textContent = '✕';
+    if (statusEl) statusEl.style.color = 'var(--error)';
+    if (errorEl) { errorEl.textContent = errorMsg; errorEl.classList.add('show'); }
+  }
+}
+
+function value_has_content(v) { return v && v.trim().length > 0; }
+
+function formatPhone(input, e) {
+  // Отключаем навязчивое форматирование, если пользователь стирает текст
+  if (e && e.inputType === 'deleteContentBackward') return;
+
+  const pos = input.selectionStart;
+  const oldVal = input.value;
+
+  let digits = oldVal.replace(/\D/g, '');
+  if (!digits) {
+    input.value = '';
+    return;
+  }
+
+  if (digits.startsWith('8')) digits = '7' + digits.slice(1);
+  if (digits.length > 0 && !digits.startsWith('7')) digits = '7' + digits;
+  digits = digits.slice(0, 11);
+
+  let formatted = '';
+  if (digits.length > 0)  formatted = '+' + digits[0];
+  if (digits.length > 1)  formatted += ' (' + digits.slice(1, 4);
+  // Исправлены пороги (5, 8, 10 вместо 4, 7, 9), чтобы знак не добавлялся в пустую строку
+  if (digits.length >= 5) formatted += ') ' + digits.slice(4, 7); 
+  if (digits.length >= 8) formatted += '-' + digits.slice(7, 9); 
+  if (digits.length >= 10) formatted += '-' + digits.slice(9, 11); 
+
+  if (formatted === oldVal) return;
+
+  input.value = formatted;
+
+  // Восстанавливаем позицию курсора без прыжков
+  let newPos = pos;
+  const diff = formatted.length - oldVal.length;
+  newPos = Math.max(0, pos + diff);
+  input.setSelectionRange(newPos, newPos);
+}
+// Password strength
+function passStrength(pass) {
+  let score = 0;
+  if (pass.length >= 8)  score++;
+  if (pass.length >= 12) score++;
+  if (/[A-Z]/.test(pass)) score++;
+  if (/[0-9]/.test(pass)) score++;
+  if (/[^A-Za-z0-9]/.test(pass)) score++;
+  return score;
+}
+
+// Wire live validation
+function wireValidation() {
+  const liveValidate = (inputId, statusId, errorId, ruleName, extra) => {
+    const inp = document.getElementById(inputId);
+    const stat = document.getElementById(statusId);
+    const err = document.getElementById(errorId);
+    if (!inp) return;
+    inp.addEventListener('input', () => {
+      const rule = RULES[ruleName];
+      const ok = validateField(inp.value, rule);
+      setFieldState(inp, stat, err, ok, rule.msg);
+      if (extra) extra(inp.value);
+    });
+    inp.addEventListener('blur', () => {
+      if (!value_has_content(inp.value)) return;
+      const rule = RULES[ruleName];
+      const ok = validateField(inp.value, rule);
+      setFieldState(inp, stat, err, ok, rule.msg);
+    });
+    // Валидация профиля
+  liveValidate('prof-fname', 'prof-fname-status', 'prof-fname-error', 'name');
+  liveValidate('prof-lname', 'prof-lname-status', 'prof-lname-error', 'name');
+  liveValidate('prof-email', 'prof-email-status', 'prof-email-error', 'email');
+
+  const profPhone = document.getElementById('prof-phone');
+  if (profPhone) {
+    profPhone.addEventListener('input', (e) => {
+      formatPhone(profPhone, e);
+      const ok = validateField(profPhone.value, RULES.phone);
+      setFieldState(profPhone, document.getElementById('prof-phone-status'), document.getElementById('prof-phone-error'), ok, RULES.phone.msg);
+    });
+  }
+  };
+
+  // Phone inputs — auto format
+  ['order-phone', 'reg-phone', 'login-phone'].forEach(id => {
+    const inp = document.getElementById(id);
+    if (!inp) return;
+    
+    // ДОБАВЛЕНО: принимаем (e) и передаем в formatPhone(inp, e)
+    inp.addEventListener('input', (e) => {
+      formatPhone(inp, e); 
+      const ok = validateField(inp.value, RULES.phone);
+      const statId = id + '-status', errId = id + '-error';
+      setFieldState(inp, document.getElementById(statId), document.getElementById(errId), ok, RULES.phone.msg);
+    });
+
+    inp.addEventListener('blur', () => {
+      if (!value_has_content(inp.value)) return;
+      const ok = validateField(inp.value, RULES.phone);
+      setFieldState(inp, document.getElementById(id + '-status'), document.getElementById(id + '-error'), ok, RULES.phone.msg);
+    });
+  });
+
+  liveValidate('reg-nickname', 'reg-nickname-status', 'reg-nickname-error', 'nickname');
+  liveValidate('reg-phone',    'reg-phone-status',    'reg-phone-error',    'phone');
+  liveValidate('reg-email',    'reg-email-status',    'reg-email-error',    'email');
+  liveValidate('login-phone',  'login-phone-status',  'login-phone-error',  'phone');
+  liveValidate('login-email',  'login-email-status',  'login-email-error',  'email');
+  liveValidate('reg-pass',     null,                  'reg-pass-error',     'password', (v) => {
+    const bar = document.getElementById('pass-strength-bar');
+    const lbl = document.getElementById('pass-strength-label');
+    const s = passStrength(v);
+    const pct = v.length === 0 ? 0 : Math.max(10, (s / 5) * 100);
+    const colors = ['#ff5555','#ff9944','#ffcc00','#88cc55','#55cc88'];
+    const labels = ['','Слабый','Средний','Хороший','Сильный','Отличный'];
+    bar.style.width = pct + '%';
+    bar.style.background = colors[Math.min(s, 4)];
+    lbl.textContent = v.length === 0 ? '' : labels[Math.min(s, 5)];
+  });
+
+  // pass2 confirm
+  const pass2 = document.getElementById('reg-pass2');
+  if (pass2) {
+    pass2.addEventListener('input', () => {
+      const p1 = document.getElementById('reg-pass').value;
+      const ok = pass2.value === p1 && pass2.value.length > 0;
+      setFieldState(pass2, document.getElementById('reg-pass2-status'), document.getElementById('reg-pass2-error'), ok, 'Пароли не совпадают');
+    });
+  }
+
+  // order-name
+  const orderName = document.getElementById('order-name');
+  if (orderName) {
+    orderName.addEventListener('input', () => {
+      const ok = validateField(orderName.value, RULES.name);
+      setFieldState(orderName, document.getElementById('order-name-status'), document.getElementById('order-name-error'), ok, RULES.name.msg);
+    });
+  }
+}
+
+// ═══════════════════════════════
+// MOBILE MENU
+// ═══════════════════════════════
+function toggleMobileMenu() {
+  const nav = document.getElementById('mobile-nav');
+  const btn = document.getElementById('menu-toggle');
+  nav.classList.toggle('open');
+  btn.classList.toggle('open');
+}
+
+function mobileNav(page) {
+  const nav = document.getElementById('mobile-nav');
+  const btn = document.getElementById('menu-toggle');
+  nav.classList.remove('open');
+  btn.classList.remove('open');
+  showPage(page);
+}
+
+// ═══════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════
+const CAT_PAGES = ['cat-frames','cat-lenses','cat-liquids','cat-cases'];
+
+async function showPage(name) {
+  const wrapper = document.getElementById('page-home-catalog-wrapper');
+
+  document.querySelectorAll('.page').forEach(p => {
+    if (p.id !== 'page-home' && p.id !== 'page-catalog') {
+      p.classList.remove('active');
+    }
+  });
+
+  if (name === 'home' || name === 'catalog') {
+    wrapper.classList.remove('hidden-wrapper');
+    if (name === 'home') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      setTimeout(() => {
+        document.getElementById('page-catalog').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 50);
+    }
+  } else {
+    wrapper.classList.add('hidden-wrapper');
+    const el = document.getElementById('page-' + name);
+    if (el) el.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  if (name === 'cat-frames') await renderCatGrid('frames', 'cat-frames-grid', state.catFramesShape, 'shape');
+  if (name === 'cat-lenses') await renderCatGrid('lenses', 'cat-lenses-grid', state.catLensesType, 'lens');
+  if (name === 'cat-liquids') await renderCatGrid('liquids', 'cat-liquids-grid', null, null);
+  if (name === 'cat-cases')  await renderCatGrid('cases',  'cat-cases-grid',  null, null);
+
+  const navName = (name === 'catalog') ? 'catalog' : name === 'home' ? 'home' : name;
+  document.querySelectorAll('nav a, .mobile-nav a').forEach(a => {
+    a.classList.toggle('active', a.dataset.page === navName);
+  });
+
+  state.currentPage = name;
+   if (name === 'profile') {
+    loadProfileData();
+    renderProfileAppointments();
+    await renderProfileHistory();
+  }
+}
+
+  
+document.querySelectorAll('nav a').forEach(a => {
+  a.addEventListener('click', e => { e.preventDefault(); showPage(a.dataset.page); });
+});
+
+// ── hide header on scroll down ──
+let lastY = 0;
+window.addEventListener('scroll', () => {
+  const h = document.getElementById('site-header');
+  const y = window.scrollY;
+  if (y > lastY && y > 80) h.classList.add('hidden');
+  else h.classList.remove('hidden');
+  lastY = y;
+  // close mobile menu on scroll
+  if (Math.abs(y - lastY) > 5) {
+    document.getElementById('mobile-nav').classList.remove('open');
+    document.getElementById('menu-toggle').classList.remove('open');
+  }
+});
+
+// ═══════════════════════════════
+// CATALOG
+// ═══════════════════════════════
+async function setCatalogTab(tab) {
+  state.catalogTab = tab;
+  state.shapeFilter = 'all';
+  state.lensFilter = 'all';
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+  document.getElementById('frame-filters').style.display = tab === 'frames' ? '' : 'none';
+  document.getElementById('lens-filters').style.display  = tab === 'lenses' ? '' : 'none';
+  document.querySelectorAll('#shape-filter .shape-chip').forEach(c => c.classList.toggle('active', c.dataset.shape === 'all'));
+  document.querySelectorAll('#lens-filter .shape-chip').forEach(c => c.classList.toggle('active', c.dataset.lens === 'all'));
+  const heads = { frames:'Каталог – оправы', lenses:'Каталог – линзы', liquids:'Каталог – жидкости', cases:'Каталог – футляры' };
+  document.getElementById('catalog-heading').textContent = heads[tab] || 'Каталог';
+  await renderCatalog();
+}
+
+async function renderCatalog() {
+  const grid = document.getElementById('catalog-grid');
+  const tab = state.catalogTab;
+  const params = {};
+  if (tab === 'frames' && state.shapeFilter !== 'all') params.shape = state.shapeFilter;
+  if (tab === 'lenses' && state.lensFilter !== 'all')  params.lens_type = state.lensFilter;
+  const items = await apiLoadProducts(tab, params);
+  grid.innerHTML = buildCards(items, tab);
+}
+
+async function renderCatGrid(tab, gridId, filterVal, filterKey) {
+  const grid = document.getElementById(gridId);
+  if (!grid) return;
+  const params = {};
+  if (filterVal && filterVal !== 'all') {
+    params[tab === 'lenses' ? 'lens_type' : filterKey] = filterVal;
+  }
+  const items = await apiLoadProducts(tab, params);
+  grid.innerHTML = buildCards(items, tab);
+}
+
+function buildCards(items, tab) {
+  if (!items.length) return '<div style="color:var(--text-muted);font-size:13px;grid-column:1/-1;text-align:center;padding:40px 0;">Ничего не найдено</div>';
+  return items.map(p => `
+    <article class="product-card" onclick="openModal('${p.id}','${tab}')">
+      <div class="product-img-wrap">${p.icon}</div>
+      <div class="product-brand">${p.brand}</div>
+      <div class="product-name">${p.name}</div>
+      <div class="product-desc">${p.desc}</div>
+      <div class="product-footer">
+        <span class="price">${p.price.toLocaleString('ru-RU')} ₽</span>
+        <span class="add-btn">+ В корзину</span>
+      </div>
+    </article>
+  `).join('');
+}
+
+// Filters in catalog page
+document.getElementById('shape-filter').addEventListener('click', async e => {
+  const chip = e.target.closest('.shape-chip'); if (!chip) return;
+  document.querySelectorAll('#shape-filter .shape-chip').forEach(c => c.classList.remove('active'));
+  chip.classList.add('active');
+  state.shapeFilter = chip.dataset.shape;
+  await renderCatalog();
+});
+document.getElementById('lens-filter').addEventListener('click', async e => {
+  const chip = e.target.closest('.shape-chip'); if (!chip) return;
+  document.querySelectorAll('#lens-filter .shape-chip').forEach(c => c.classList.remove('active'));
+  chip.classList.add('active');
+  state.lensFilter = chip.dataset.lens;
+  await renderCatalog();
+});
+
+// Filters on category pages
+document.getElementById('cat-frames-shape-filter').addEventListener('click', async e => {
+  const chip = e.target.closest('.shape-chip'); if (!chip) return;
+  document.querySelectorAll('#cat-frames-shape-filter .shape-chip').forEach(c => c.classList.remove('active'));
+  chip.classList.add('active');
+  state.catFramesShape = chip.dataset.shape;
+  await renderCatGrid('frames', 'cat-frames-grid', state.catFramesShape, 'shape');
+});
+document.getElementById('cat-lenses-lens-filter').addEventListener('click', async e => {
+  const chip = e.target.closest('.shape-chip'); if (!chip) return;
+  document.querySelectorAll('#cat-lenses-lens-filter .shape-chip').forEach(c => c.classList.remove('active'));
+  chip.classList.add('active');
+  state.catLensesType = chip.dataset.lens;
+  await renderCatGrid('lenses', 'cat-lenses-grid', state.catLensesType, 'lens');
+});
+// renderCatalog() вызывается внутри restoreSession() при загрузке
+
+// ═══════════════════════════════
+// PRODUCT MODAL
+// ═══════════════════════════════
+async function findProduct(id) {
+  try {
+    const p = await apiGet('/products/' + id);
+    return mapProduct(p);
+  } catch(e) {
+    return null;
+  }
+}
+async function openModal(id, tab) {
+  const p = await findProduct(id); if (!p) return;
+  
+  // --- ДОБАВЛЯЕМ В ИСТОРИЮ ---
+  state.viewHistory = state.viewHistory.filter(item => item.id !== id);
+  state.viewHistory.unshift({ id: p.id, tab: tab });
+  if (state.viewHistory.length > 20) state.viewHistory.pop();
+  localStorage.setItem('nv_history', JSON.stringify(state.viewHistory));
+  // ---------------------------
+
+  document.getElementById('modal-img').textContent   = p.icon;
+  document.getElementById('modal-brand').textContent = p.brand;
+  document.getElementById('modal-title').textContent = p.name;
+  document.getElementById('modal-price').textContent = p.price.toLocaleString('ru-RU') + ' ₽';
+  document.getElementById('modal-desc').textContent  = p.desc;
+  document.getElementById('modal-specs').textContent = p.specs;
+  document.getElementById('modal-add-btn').onclick = async () => { await addToCart(id, tab); closeModal(null, true); };
+  document.getElementById('product-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+} 
+function closeModal(e, force) {
+  if (force || e?.target === document.getElementById('product-modal')) {
+    document.getElementById('product-modal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(null, true); });
+
+// ═══════════════════════════════
+// CART
+// ═══════════════════════════════
+function cartSave() { localStorage.setItem('nv_cart', JSON.stringify(state.cart)); }
+async function addToCart(id, tab) {
+  const p = await findProduct(id); if (!p) return;
+  const ex = state.cart.find(i => i.id === id);
+  if (ex) ex.qty++;
+  else state.cart.push({ id: p.id, name: p.name, brand: p.brand, price: p.price, icon: p.icon, qty: 1 });
+  cartSave(); updateBadge(); toast('Добавлено: ' + p.name);
+}
+function changeQty(id, delta) {
+  const item = state.cart.find(i => i.id === id); if (!item) return;
+  item.qty += delta;
+  if (item.qty <= 0) state.cart = state.cart.filter(i => i.id !== id);
+  cartSave(); updateBadge(); renderCart();
+}
+function removeItem(id) {
+  state.cart = state.cart.filter(i => i.id !== id);
+  cartSave(); updateBadge(); renderCart();
+}
+function updateBadge() {
+  const total = state.cart.reduce((s, i) => s + i.qty, 0);
+  const badge = document.getElementById('cart-badge');
+  badge.textContent = total;
+  badge.style.display = total ? 'flex' : 'none';
+}
+function renderCart() {
+  const list = document.getElementById('cart-list');
+  if (!state.cart.length) {
+    list.innerHTML = '<div class="cart-empty">Корзина пуста</div>';
+    document.getElementById('cart-count').textContent = '0';
+    document.getElementById('cart-total').textContent = '0 ₽';
+    document.getElementById('cart-count-label').textContent = 'Корзина пуста';
+    return;
+  }
+  const total = state.cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const count = state.cart.reduce((s, i) => s + i.qty, 0);
+  document.getElementById('cart-count').textContent = count;
+  document.getElementById('cart-total').textContent = total.toLocaleString('ru-RU') + ' ₽';
+  document.getElementById('cart-count-label').textContent = `${count} ${noun(count, 'товар','товара','товаров')}`;
+  list.innerHTML = state.cart.map(item => `
+    <article class="cart-item">
+      <div class="cart-thumb">${item.icon || '🕶️'}</div>
+      <div>
+        <div class="cart-info-brand">${item.brand}</div>
+        <div style="font-size:13px;">${item.name}</div>
+        <div class="cart-qty">
+          <span class="qty-btn" onclick="changeQty('${item.id}',-1)">−</span>
+          <span>${item.qty}</span>
+          <span class="qty-btn" onclick="changeQty('${item.id}',1)">+</span>
+        </div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:13px;">${(item.price * item.qty).toLocaleString('ru-RU')} ₽</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:6px;cursor:pointer;" onclick="removeItem('${item.id}')">Удалить</div>
+      </div>
+    </article>
+  `).join('');
+}
+
+// Cart order validation
+document.getElementById('order-btn').addEventListener('click', () => {
+  if (!state.cart.length) { toast('Корзина пуста!'); return; }
+  const nameEl  = document.getElementById('order-name');
+  const phoneEl = document.getElementById('order-phone');
+  const name  = nameEl.value.trim();
+  const phone = phoneEl.value.trim();
+  let ok = true;
+
+  if (!validateField(name, RULES.name)) {
+    setFieldState(nameEl, document.getElementById('order-name-status'), document.getElementById('order-name-error'), false, RULES.name.msg);
+    ok = false;
+  }
+  if (!validateField(phone, RULES.phone)) {
+    setFieldState(phoneEl, document.getElementById('order-phone-status'), document.getElementById('order-phone-error'), false, RULES.phone.msg);
+    ok = false;
+  }
+  if (!ok) { toast('Проверьте заполнение полей'); return; }
+
+  state.cart = []; cartSave(); updateBadge(); renderCart();
+  nameEl.value = ''; phoneEl.value = '';
+  [nameEl, phoneEl].forEach(el => { el.classList.remove('valid','invalid'); });
+  toast('✅ Заказ оформлен! Ждите звонка, ' + name + '!');
+});
+
+function noun(n, one, few, many) {
+  const v = Math.abs(n) % 100;
+  if (v >= 11 && v <= 19) return many;
+  const r = v % 10;
+  if (r === 1) return one; if (r >= 2 && r <= 4) return few; return many;
+}
+updateBadge();
+
+// ═══════════════════════════════
+// BOOKING
+// ═══════════════════════════════
+const MONTH_DAYS  = [31,28,31,30,31,30,31,31,30,31,30,31];
+const MONTH_NAMES = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+function isLeapYear(y) { return (y%4===0&&y%100!==0)||y%400===0; }
+function getDaysInMonth(mi) { const y=new Date().getFullYear(); return mi===1 ? (isLeapYear(y)?29:28) : MONTH_DAYS[mi]; }
+function buildCalendar(mi) {
+  const grid = document.getElementById('cal-grid');
+  grid.innerHTML = '';
+  const today = new Date();
+  const days = getDaysInMonth(mi);
+  for (let i = 1; i <= days; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'cal-cell'; cell.textContent = i;
+    const isPast = (mi < today.getMonth() && today.getFullYear() === new Date().getFullYear())
+                || (mi === today.getMonth() && i < today.getDate());
+    if (isPast) { cell.style.opacity = '.3'; cell.style.cursor = 'default'; cell.style.pointerEvents = 'none'; }
+    else {
+      cell.addEventListener('click', () => {
+        document.querySelectorAll('.cal-cell').forEach(c => c.classList.remove('active'));
+        cell.classList.add('active');
+        document.getElementById('b-day').textContent = i;
+      });
+    }
+    grid.appendChild(cell);
+  }
+}
+let selectedMonthIdx = new Date().getMonth();
+document.getElementById('b-month').textContent = MONTH_NAMES[selectedMonthIdx];
+document.querySelectorAll('#month-grid .chip').forEach((chip, idx) => {
+  if (idx === selectedMonthIdx) chip.classList.add('active');
+  chip.addEventListener('click', () => {
+    document.querySelectorAll('#month-grid .chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    selectedMonthIdx = idx;
+    document.getElementById('b-month').textContent = MONTH_NAMES[idx];
+    document.getElementById('b-day').textContent = '—';
+    buildCalendar(idx);
+  });
+});
+buildCalendar(selectedMonthIdx);
+document.querySelectorAll('#time-grid .time-slot').forEach(slot => {
+  slot.addEventListener('click', () => {
+    document.querySelectorAll('#time-grid .time-slot').forEach(s => s.classList.remove('active'));
+    slot.classList.add('active');
+    document.getElementById('b-time').textContent = slot.textContent;
+  });
+});
+function confirmBooking() {
+  if (!state.isLoggedIn) {
+    sessionStorage.setItem('nv_redirect', 'booking');
+    showPage('account');
+    document.getElementById('auth-notice').style.display = 'block';
+    document.getElementById('auth-notice-text').textContent = 'Для записи к врачу необходимо войти в аккаунт';
+    document.getElementById('login-phone').focus();
+    return;
+  }
+  const month = document.getElementById('b-month').textContent;
+  const day   = document.getElementById('b-day').textContent;
+  const time  = document.getElementById('b-time').textContent;
+  if (day === '—' || time === '—') { toast('Выберите дату и время'); return; }
+  
+  // --- СОХРАНЯЕМ ЗАПИСЬ ---
+  state.appointments.push({ month, day, time });
+  localStorage.setItem('nv_appointments', JSON.stringify(state.appointments));
+  // ------------------------
+
+  toast(`✅ Запись подтверждена: ${month} ${day}, ${time}`);
+  
+  // Через секунду перекидываем в профиль
+  setTimeout(() => showPage('profile'), 1500); 
+}
+// ═══════════════════════════════
+// API
+// ═══════════════════════════════
+const API_BASE = '/api';
+
+function getToken() { return localStorage.getItem('nv_token'); }
+
+function apiHeaders() {
+  const h = { 'Content-Type': 'application/json' };
+  const t = getToken();
+  if (t) h['Authorization'] = 'Bearer ' + t;
+  return h;
+}
+
+async function apiPost(path, body, isFormData) {
+  const opts = { method: 'POST' };
+  if (isFormData) {
+    opts.body = body;
+  } else {
+    opts.headers = apiHeaders();
+    opts.body = JSON.stringify(body);
+  }
+  const resp = await fetch(API_BASE + path, opts);
+  const data = await resp.json();
+  if (!resp.ok) {
+    const msg = typeof data.detail === 'string' ? data.detail : 'Ошибка запроса';
+    const err = new Error(msg);
+    err.detail = data.detail;
+    err.status = resp.status;
+    throw err;
+  }
+  return data;
+}
+
+async function apiGet(path, params) {
+  const qs = params ? '?' + new URLSearchParams(params).toString() : '';
+  const resp = await fetch(API_BASE + path + qs, { headers: apiHeaders() });
+  const data = await resp.json();
+  if (!resp.ok) {
+    const msg = typeof data.detail === 'string' ? data.detail : 'Ошибка запроса';
+    const err = new Error(msg);
+    err.detail = data.detail;
+    err.status = resp.status;
+    throw err;
+  }
+  return data;
+}
+
+// ═══════════════════════════════
+// AUTH
+// ═══════════════════════════════
+function updateAuthHeader() {
+  const pill = document.getElementById('auth-pill');
+  if (state.isLoggedIn) {
+    pill.textContent = state.userName || 'кабинет';
+    pill.style.borderColor = 'rgba(255,255,255,.3)';
+    pill.style.color = 'var(--text)';
+    pill.onclick = () => showPage('profile'); 
+  } else {
+    pill.textContent = 'Вход';
+    pill.style.borderColor = '';
+    pill.style.color = '';
+    pill.onclick = () => showPage('account');
+  }
+}
+
+// Normalize phone: +7 (999) 123-45-67 → +79991234567
+function normalizePhone(raw) {
+  const d = raw.replace(/\D/g, '');
+  if (d.length === 11 && (d.startsWith('7') || d.startsWith('8'))) {
+    return (d.startsWith('7') ? '+' : '+7') + (d.startsWith('7') ? d : d.slice(1));
+  }
+  return raw.trim();
+}
+
+function validateLoginForm() {
+  const usePhone = document.getElementById('login-phone-group').style.display !== 'none';
+  const loginEl = document.getElementById(usePhone ? 'login-phone' : 'login-email');
+  const passEl  = document.getElementById('login-pass');
+  const val = loginEl.value.trim();
+  let ok = true;
+  if (usePhone) {
+    if (!validateField(val, RULES.phone)) {
+      setFieldState(loginEl, document.getElementById('login-phone-status'), document.getElementById('login-phone-error'), false, RULES.phone.msg);
+      ok = false;
+    }
+  } else {
+    if (!validateField(val, RULES.email)) {
+      setFieldState(loginEl, document.getElementById('login-email-status'), document.getElementById('login-email-error'), false, RULES.email.msg);
+      ok = false;
+    }
+  }
+  if (!passEl.value.trim()) {
+    setFieldState(passEl, null, document.getElementById('login-pass-error'), false, 'Введите пароль');
+    ok = false;
+  }
+  return ok;
+}
+
+// Toggle between phone and email login
+document.getElementById('login-toggle-email').addEventListener('click', () => {
+  document.getElementById('login-phone-group').style.display = 'none';
+  document.getElementById('login-email-group').style.display = '';
+  document.getElementById('login-email').focus();
+});
+document.getElementById('login-toggle-phone').addEventListener('click', () => {
+  document.getElementById('login-email-group').style.display = 'none';
+  document.getElementById('login-phone-group').style.display = '';
+  document.getElementById('login-phone').focus();
+});
+
+function validateRegForm() {
+  const nicknameEl = document.getElementById('reg-nickname');
+  const phoneEl    = document.getElementById('reg-phone');
+  const emailEl    = document.getElementById('reg-email');
+  const passEl     = document.getElementById('reg-pass');
+  const pass2El    = document.getElementById('reg-pass2');
+  let ok = true;
+
+  if (!validateField(nicknameEl.value, RULES.nickname)) {
+    setFieldState(nicknameEl, document.getElementById('reg-nickname-status'), document.getElementById('reg-nickname-error'), false, RULES.nickname.msg);
+    ok = false;
+  }
+  if (!validateField(phoneEl.value, RULES.phone)) {
+    setFieldState(phoneEl, document.getElementById('reg-phone-status'), document.getElementById('reg-phone-error'), false, RULES.phone.msg);
+    ok = false;
+  }
+  if (!validateField(emailEl.value, RULES.email)) {
+    setFieldState(emailEl, document.getElementById('reg-email-status'), document.getElementById('reg-email-error'), false, RULES.email.msg);
+    ok = false;
+  }
+  if (!validateField(passEl.value, RULES.password)) {
+    setFieldState(passEl, null, document.getElementById('reg-pass-error'), false, RULES.password.msg);
+    ok = false;
+  }
+  if (pass2El.value !== passEl.value || !pass2El.value) {
+    setFieldState(pass2El, document.getElementById('reg-pass2-status'), document.getElementById('reg-pass2-error'), false, 'Пароли не совпадают');
+    ok = false;
+  }
+  return ok;
+}
+
+document.getElementById('login-btn').addEventListener('click', async () => {
+  if (!validateLoginForm()) { toast('Проверьте введённые данные'); return; }
+  const usePhone = document.getElementById('login-phone-group').style.display !== 'none';
+  const raw = document.getElementById(usePhone ? 'login-phone' : 'login-email').value.trim();
+  const username = usePhone ? normalizePhone(raw) : raw;
+  const password = document.getElementById('login-pass').value;
+  try {
+    const fd = new FormData();
+    fd.append('username', username);
+    fd.append('password', password);
+    const data = await apiPost('/auth/token', fd, true);
+    localStorage.setItem('nv_token', data.access_token);
+    localStorage.setItem('nv_logged_in', 'true');
+    const displayName = data.user.nickname || data.user.email || username;
+    localStorage.setItem('nv_username', displayName);
+    state.isLoggedIn = true;
+    state.userName = displayName;
+    updateAuthHeader();
+    document.getElementById('auth-notice').style.display = 'none';
+    document.getElementById('page-account').classList.remove('active');
+    document.getElementById('page-home-catalog-wrapper').classList.remove('hidden-wrapper');
+    toast('✅ Вход выполнен!');
+    showPage('home');
+  } catch(e) {
+    toast('Ошибка: ' + (e.detail || e.message));
+  }
+});
+
+document.getElementById('reg-btn').addEventListener('click', async () => {
+  if (!validateRegForm()) { toast('Проверьте введённые данные'); return; }
+  const nickname = document.getElementById('reg-nickname').value.trim();
+  const phone    = document.getElementById('reg-phone').value.trim();
+  const email    = document.getElementById('reg-email').value.trim();
+  const password = document.getElementById('reg-pass').value;
+  const errorBox = document.getElementById('reg-error-box');
+  errorBox.style.display = 'none';
+  errorBox.innerHTML = '';
+  try {
+    const data = await apiPost('/auth/register', {
+      nickname: nickname,
+      phone: phone,
+      email: email,
+      password: password
+    });
+    localStorage.setItem('nv_token', data.access_token);
+    localStorage.setItem('nv_logged_in', 'true');
+    localStorage.setItem('nv_username', data.user.nickname || email.split('@')[0]);
+    state.isLoggedIn = true;
+    state.userName = data.user.nickname || email.split('@')[0];
+    updateAuthHeader();
+    document.getElementById('auth-notice').style.display = 'none';
+    document.getElementById('page-account').classList.remove('active');
+    document.getElementById('page-home-catalog-wrapper').classList.remove('hidden-wrapper');
+    toast('✅ Аккаунт создан!');
+    showPage('home');
+  } catch(e) {
+    const detail = e.detail || e.message;
+    const clean = (s) => String(s).replace(/^(Value error,\s*)?/i, '');
+    if (typeof detail === 'object' && detail.errors) {
+      const lines = Object.entries(detail.errors).map(([field, msg]) => {
+        const fieldNames = { nickname: 'Никнейм', phone: 'Телефон', email: 'Email', password: 'Пароль' };
+        return `<div><strong>${fieldNames[field] || field}:</strong> ${clean(msg)}</div>`;
+      }).join('');
+      errorBox.innerHTML = lines;
+      errorBox.style.display = 'block';
+    } else if (typeof detail === 'object' && Array.isArray(detail)) {
+      const lines = detail.map(d => `<div>${clean(d.msg || d)}</div>`).join('');
+      errorBox.innerHTML = lines;
+      errorBox.style.display = 'block';
+    } else {
+      errorBox.innerHTML = `<div>${clean(detail)}</div>`;
+      errorBox.style.display = 'block';
+    }
+    toast('Ошибка регистрации');
+  }
+});
+
+function switchAuthTab(tab) {
+  const isLogin = tab === 'login';
+  document.getElementById('auth-panel-login').style.display = isLogin ? '' : 'none';
+  document.getElementById('auth-panel-reg').style.display   = isLogin ? 'none' : '';
+  const tLogin = document.getElementById('auth-tab-login');
+  const tReg   = document.getElementById('auth-tab-reg');
+  tLogin.style.color = isLogin ? 'var(--text)' : 'var(--text-muted)';
+  tLogin.style.borderBottom = isLogin ? '2px solid var(--accent)' : '2px solid transparent';
+  tReg.style.color = isLogin ? 'var(--text-muted)' : 'var(--text)';
+  tReg.style.borderBottom = isLogin ? '2px solid transparent' : '2px solid var(--accent)';
+  if (isLogin) {
+    document.getElementById('login-phone-group').style.display = '';
+    document.getElementById('login-email-group').style.display = 'none';
+  }
+}
+
+function togglePwd(inputId, btn) {
+  const inp = document.getElementById(inputId);
+  if (inp.type === 'password') { inp.type = 'text'; btn.style.opacity = '1'; }
+  else { inp.type = 'password'; btn.style.opacity = '0.5'; }
+}
+
+// ═══════════════════════════════
+// TOAST
+// ═══════════════════════════════
+let toastTimer;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 3200);
+}
+
+// ═══════════════════════════════
+// AI FACE SCAN
+// ═══════════════════════════════
+const SCAN_STAGES = [
+  { step:'ШАГ 1 / 3', text:'Смотрите прямо в камеру',         voice:'Посмотрите прямо в камеру и не двигайтесь',            arrow:'scan-arrow-front', hold:3500, name:'front' },
+  { step:'ШАГ 2 / 3', text:'Медленно поверните голову влево',  voice:'Теперь медленно поверните голову влево и остановитесь', arrow:'scan-arrow-left',  hold:4000, name:'left'  },
+  { step:'ШАГ 3 / 3', text:'Медленно поверните голову вправо', voice:'Отлично. Теперь медленно поверните голову вправо',      arrow:'scan-arrow-right', hold:4000, name:'right' }
+];
+let scanCaptures = [], scanRunning = false, scanStream = null;
+function scanSpeak(t) { window.speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(t); u.lang='ru-RU'; u.rate=0.9; window.speechSynthesis.speak(u); }
+function scanSetDot(idx) {
+  for (let i=0;i<3;i++) {
+    const d = document.getElementById('scan-dot'+i);
+    if (i < idx) { d.style.background='var(--text)'; d.style.transform=''; }
+    else if (i === idx) { d.style.background='var(--text)'; d.style.transform='scale(1.5)'; }
+    else { d.style.background='var(--border)'; d.style.transform=''; }
+  }
+}
+function scanShowArrow(id) {
+  ['scan-arrow-front','scan-arrow-left','scan-arrow-right'].forEach(a => { document.getElementById(a).style.opacity='0'; });
+  if (id) document.getElementById(id).style.opacity='1';
+}
+function scanSetOval(st) {
+  const o = document.getElementById('scan-oval');
+  if (st==='ready') { o.style.borderColor='rgba(255,255,255,.65)'; o.style.boxShadow=''; }
+  else if (st==='capture') { o.style.borderColor='#fff'; o.style.boxShadow='0 0 0 5px rgba(255,255,255,.12)'; }
+  else { o.style.borderColor='rgba(255,255,255,.2)'; o.style.boxShadow=''; }
+}
+function scanWait(ms) { return new Promise(r => setTimeout(r, ms)); }
+async function scanFlash() {
+  const f = document.getElementById('scan-flash');
+  f.style.opacity='0.55'; await scanWait(120); f.style.opacity='0';
+}
+async function scanStartCamera() {
+  try {
+    const videoEl = document.getElementById('scan-webcam');
+    scanStream = await navigator.mediaDevices.getUserMedia({ video:{width:640,height:480,facingMode:'user'}, audio:false });
+    videoEl.srcObject = scanStream;
+    await new Promise(r => { videoEl.onloadedmetadata = r; });
+    videoEl.play();
+    document.getElementById('scan-start-btn').disabled = true;
+    document.getElementById('scan-scan-btn').disabled  = false;
+    document.getElementById('scan-step').textContent = 'КАМЕРА ГОТОВА';
+    document.getElementById('scan-text').textContent = 'Нажмите «Начать»';
+    scanSetOval('ready');
+    scanSpeak('Камера включена. Нажмите начать сканирование.');
+  } catch(e) { alert('Не удалось получить доступ к камере: ' + e.message); }
+}
+async function scanStart() {
+  if (scanRunning) return;
+  scanRunning = true; scanCaptures = [];
+  const videoEl = document.getElementById('scan-webcam');
+  document.getElementById('scan-scan-btn').disabled = true;
+  document.getElementById('scan-result').style.display = 'none';
+  document.getElementById('scan-bar').style.width = '0%';
+  document.getElementById('scan-frames').innerHTML = '';
+  for (let i=0; i<SCAN_STAGES.length; i++) {
+    const s = SCAN_STAGES[i];
+    document.getElementById('scan-step').textContent = s.step;
+    document.getElementById('scan-text').textContent = s.text;
+    scanSetDot(i); scanShowArrow(s.arrow); scanSetOval('ready'); scanSpeak(s.voice);
+    await scanWait(s.hold*0.6); scanSetOval('capture');
+    document.getElementById('scan-text').textContent = 'Держите так...';
+    await scanWait(s.hold*0.4);
+    await scanFlash();
+    const cv = document.createElement('canvas');
+    cv.width = videoEl.videoWidth||640; cv.height = videoEl.videoHeight||480;
+    cv.getContext('2d').drawImage(videoEl,0,0);
+    const blob = await new Promise(r => cv.toBlob(r,'image/jpeg',0.95));
+    const dataUrl = cv.toDataURL('image/jpeg',0.4);
+    scanCaptures.push({ blob, dataUrl, name: s.name });
+    const img = document.createElement('img');
+    img.src = dataUrl; img.style.cssText = 'width:100%;border-radius:10px;border:1px solid var(--border);';
+    document.getElementById('scan-frames').appendChild(img);
+    document.getElementById('scan-bar').style.width = ((i+1)/SCAN_STAGES.length*100)+'%';
+    scanSetDot(i+1); scanSetOval(''); scanShowArrow(null);
+    if (i < SCAN_STAGES.length-1) await scanWait(600);
+  }
+  document.getElementById('scan-step').textContent = '';
+  document.getElementById('scan-text').textContent = 'Анализируем...';
+  scanSpeak('Отлично. Анализируем данные.');
+  await scanSendFrames(videoEl);
+  scanRunning = false;
+}
+async function scanSendFrames(videoEl) {
+  const fd = new FormData();
+  fd.append('frame_front', scanCaptures[0].blob, 'front.jpg');
+  if (scanCaptures[1]) fd.append('frame_left',  scanCaptures[1].blob, 'left.jpg');
+  if (scanCaptures[2]) fd.append('frame_right', scanCaptures[2].blob, 'right.jpg');
+  try {
+    const resp = await fetch('/ai/analyze-video', { method:'POST', body:fd });
+    if (!resp.ok) throw new Error(await resp.text());
+    scanShowResult(await resp.json());
+  } catch(e) {
+    document.getElementById('scan-text').textContent = 'Ошибка: ' + e.message;
+    scanSpeak('Произошла ошибка. Попробуйте снова.');
+  } finally {
+    scanStopCamera();
+    document.getElementById('scan-start-btn').disabled = false;
+    document.getElementById('scan-scan-btn').disabled  = false;
+    document.getElementById('scan-start-btn').textContent = 'Включить снова';
+  }
+}
+function scanShowResult(data) {
+  document.getElementById('scan-result').style.display = 'block';
+  const names = { oval:'Овальное', round:'Круглое', square:'Квадратное', rect:'Прямоугольное', heart:'Сердце', triangle:'Треугольное', diamond:'Ромб' };
+  const raw = data.face_shape || '—';
+  const label = raw.split('-').map(p => names[p]||p).join(' / ');
+  document.getElementById('scan-res-shape').textContent = label;
+  const pct = Math.round((data.confidence||0)*100);
+  document.getElementById('scan-res-conf').textContent = 'Уверенность: '+pct+'%';
+  setTimeout(() => { document.getElementById('scan-conf-fill').style.width = pct+'%'; }, 100);
+  const gGrid = document.getElementById('scan-glasses');
+  gGrid.innerHTML = '';
+  const frames = (data.frames&&data.frames.length) ? data.frames : (data.recommended_shapes||[]).map(s=>({name:s}));
+  frames.forEach(f => {
+    const c = document.createElement('div');
+    c.style.cssText = 'background:var(--bg-elevated);border:1px solid var(--border);border-radius:14px;padding:14px;text-align:center;';
+    c.innerHTML = f.image_url ? `<img src="${f.image_url}" style="width:100%;border-radius:8px;margin-bottom:8px">`
+      : `<div style="height:70px;background:var(--bg);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:8px">🕶️</div>`;
+    c.innerHTML += `<div style="color:var(--text);font-size:12px;margin-top:6px;">${f.name||'—'}</div>`;
+    if (f.price) c.innerHTML += `<div style="color:var(--text-muted);font-size:11px;margin-top:4px;">${f.price} ₽</div>`;
+    gGrid.appendChild(c);
+  });
+  document.getElementById('scan-text').textContent = 'Готово!';
+  scanSpeak('Анализ завершён. Ваша форма лица: '+label);
+}
+function scanStopCamera() {
+  if (scanStream) { scanStream.getTracks().forEach(t => t.stop()); scanStream = null; }
+}
+
+// Intercept showPage to stop camera
+const _origShowPage = showPage;
+window.showPage = function(name) {
+  if (name !== 'scan') scanStopCamera();
+  _origShowPage(name);
+};
+
+// Init
+wireValidation();
+
+// ── Session restore ──────────────────────────────────
+(async function restoreSession() {
+  const token = getToken();
+  if (!token) {
+    updateAuthHeader();
+    renderCatalog();
+    return;
+  }
+  try {
+    const me = await apiGet('/auth/me');
+    state.isLoggedIn = true;
+    const displayName = me.nickname || me.email || 'кабинет';
+    state.userName = displayName;
+    localStorage.setItem('nv_logged_in', 'true');
+    localStorage.setItem('nv_username', displayName);
+    state.profile.firstName = me.first_name || '';
+    state.profile.lastName = me.last_name || '';
+    state.profile.phone = me.phone || '';
+    state.profile.email = me.email || '';
+    localStorage.setItem('nv_profile', JSON.stringify(state.profile));
+    updateAuthHeader();
+  } catch(e) {
+    localStorage.removeItem('nv_token');
+    localStorage.removeItem('nv_logged_in');
+    localStorage.removeItem('nv_username');
+    state.isLoggedIn = false;
+    updateAuthHeader();
+  }
+  renderCatalog();
+})();
+
+// ── Cart: fix for async addToCart ──
+// Перехватываем ошибочные клики по "В корзину" (защита от race condition в async)
+document.addEventListener('click', async (e) => {
+  const btn = e.target.closest('.add-btn');
+  if (!btn) return;
+  e.stopPropagation();
+  const card = btn.closest('.product-card');
+  if (!card) return;
+  const onclick = card.getAttribute('onclick') || '';
+  const match = onclick.match(/openModal\('(\d+)'/);
+  if (!match) return;
+  const id = match[1];
+  const tab = btn.closest('[data-tab]')?.dataset?.tab || state.catalogTab;
+  btn.textContent = '...';
+  btn.style.opacity = '0.5';
+  try {
+    await addToCart(id, tab);
+  } catch(err) {
+    toast('Ошибка при добавлении');
+  } finally {
+    btn.textContent = '+ В корзину';
+    btn.style.opacity = '1';
+  }
+});
+
+console.log('✅ NOIR VISION v2 ready');
+</script>
+</body>
+</html>

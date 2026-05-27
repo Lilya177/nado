@@ -1,0 +1,315 @@
+.scan-card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 32px;
+  width: 100%;
+  max-width: 760px;
+}
+
+.scan-card-eyebrow {
+  font-size: 10px;
+  letter-spacing: .28em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.scan-card-heading {
+  font-size: 22px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  font-weight: 300;
+  margin-bottom: 28px;
+}
+
+.scan-video-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4/3;
+  background: #000;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  margin-bottom: 20px;
+}
+
+.scan-video-wrap video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1);
+  display: block;
+}
+
+.scan-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.scan-oval {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -58%);
+  width: 210px;
+  height: 270px;
+  border: 2px solid rgba(255,255,255,.2);
+  border-radius: 50%;
+  transition: border-color .4s, box-shadow .4s;
+}
+
+.scan-oval.ready {
+  border-color: rgba(255,255,255,.65);
+}
+
+.scan-oval.capture {
+  border-color: #fff;
+  box-shadow: 0 0 0 5px rgba(255,255,255,.12);
+}
+
+.scan-arrow-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity .4s;
+}
+
+.scan-arrow-svg.visible {
+  opacity: 1;
+}
+
+.scan-flash {
+  position: absolute;
+  inset: 0;
+  background: #fff;
+  opacity: 0;
+  border-radius: 16px;
+  pointer-events: none;
+  transition: opacity .08s;
+}
+
+.scan-flash.go {
+  opacity: 0.55;
+}
+
+.scan-instruction-box {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(5,5,5,.88);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 8px 28px;
+  white-space: nowrap;
+  backdrop-filter: blur(10px);
+}
+
+.scan-instruction-step {
+  font-size: 9px;
+  color: var(--text-muted);
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+  text-align: center;
+}
+
+.scan-instruction-text {
+  font-size: 12px;
+  color: var(--text);
+  text-align: center;
+}
+
+.scan-dots {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.scan-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--border);
+  transition: background .4s, transform .3s;
+}
+
+.scan-dot.done {
+  background: var(--text);
+}
+
+.scan-dot.current {
+  background: var(--text);
+  transform: scale(1.5);
+}
+
+.scan-bar-wrap {
+  height: 2px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+.scan-bar-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--accent);
+  transition: width .6s ease;
+}
+
+.scan-btn-row {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.scan-result-block {
+  display: none;
+  margin-top: 28px;
+  background: var(--bg-soft);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 26px;
+}
+
+.scan-result-eyebrow {
+  font-size: 9px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.scan-result-shape {
+  font-size: 28px;
+  font-weight: 200;
+  text-transform: uppercase;
+  letter-spacing: .16em;
+  margin-bottom: 4px;
+}
+
+.scan-result-conf {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+}
+
+.scan-conf-bar {
+  height: 2px;
+  background: var(--border);
+  border-radius: 2px;
+  margin-bottom: 24px;
+}
+
+.scan-conf-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 2px;
+  transition: width 1s ease;
+  width: 0%;
+}
+
+.scan-rec-label {
+  font-size: 9px;
+  color: var(--text-muted);
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.scan-rec-label-margin {
+  margin-top: 20px;
+}
+
+.scan-votes {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.scan-vote-badge {
+  font-size: 10px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+
+.scan-vote-badge.win {
+  border-color: rgba(255,255,255,.22);
+  color: var(--text);
+}
+
+.scan-frames-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.scan-frames-grid img {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+
+.scan-glasses-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.scan-glass-card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px;
+  text-align: center;
+  transition: border-color .2s;
+}
+
+.scan-glass-card:hover {
+  border-color: rgba(255,255,255,.14);
+}
+
+.scan-glass-img {
+  height: 70px;
+  background: var(--bg);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  margin-bottom: 8px;
+}
+
+.scan-glass-img img {
+  width: 100%;
+  border-radius: 8px;
+}
+
+.scan-glass-name {
+  color: var(--text);
+  font-size: 12px;
+  margin-top: 6px;
+}
+
+.scan-glass-price {
+  color: var(--text-muted);
+  font-size: 11px;
+  margin-top: 4px;
+}
+
+@media (max-width: 580px) {
+  .scan-card { padding: 20px 16px; }
+  .scan-glasses-grid { grid-template-columns: 1fr; }
+}

@@ -1,0 +1,38 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg: #050505;
+  --bg-elevated: #111111;
+  --bg-soft: #181818;
+  --text: #f5f5f5;
+  --text-muted: #9b9b9b;
+  --accent: #ffffff;
+  --border: #2a2a2a;
+  --error: #ff5555;
+  --success: #55cc88;
+  --radius: 16px;
+  --gap: 28px;
+  --container: 1200px;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 112%;
+}
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+  background: radial-gradient(circle at top, #1e1e1e 0, #050505 55%);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  padding-top: 72px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}

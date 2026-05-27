@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Noir Vision — AI Scan</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    background: #0a0a0a;
+    color: #fff;
+    font-family: 'Segoe UI', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 2rem 1rem;
+}
+
+.card {
+    background: #141414;
+    border: 1px solid #2a2a2a;
+    border-radius: 20px;
+    padding: 28px;
+    width: 100%;
+    max-width: 700px;
+    text-align: center;
+}
+
+h1 {
+    font-size: 1.2rem;
+    font-weight: 300;
+    letter-spacing: 4px;
+    color: #c9a96e;
+    margin-bottom: 6px;
+}
+
+.subtitle {
+    font-size: 0.75rem;
+    color: #555;
+    letter-spacing: 2px;
+    margin-bottom: 24px;
+}
+
+/* Видео + оверлей */
+.video-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4/3;
+    background: #000;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #2a2a2a;
+}
+
+video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scaleX(-1);
+    display: block;
+}
+
+.overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+/* Овальная маска лица */
+.face-oval {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -58%);
+    width: 210px;
+    height: 270px;
+    border: 2px solid rgba(201,169,110,0.5);
+    border-radius: 50%;
+    transition: border-color 0.4s, box-shadow 0.4s;
+}
+.face-oval.ready   { border-color: #c9a96e; }
+.face-oval.capture { border-color: #4ade80; box-shadow: 0 0 0 4px rgba(74,222,128,0.2); }
+
+/* SVG стрелки поверх овала */
+.arrow-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.4s;
+}
+.arrow-svg.visible { opacity: 1; }
+
+/* Вспышка при захвате */
+.flash {
+    position: absolute;
+    inset: 0;
+    background: #fff;
+    opacity: 0;
+    border-radius: 12px;
+    pointer-events: none;
+    transition: opacity 0.08s;
+}
+.flash.go { opacity: 0.55; }
+
+/* Инструкция */
+.instruction-box {
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.75);
+    border: 1px solid #2a2a2a;
+    border-radius: 10px;
+    padding: 8px 24px;
+    white-space: nowrap;
+}
+.inst-step  { font-size: 0.7rem; color: #c9a96e; letter-spacing: 1px; margin-bottom: 2px; }
+.inst-text  { font-size: 0.95rem; color: #fff; }
+
+/* Точки прогресса */
+.dots {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 16px 0 12px;
+}
+.dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #2a2a2a;
+    transition: background 0.4s, transform 0.3s;
+}
+.dot.done    { background: #4ade80; }
+.dot.current { background: #c9a96e; transform: scale(1.3); }
+
+/* Прогресс-бар */
+.bar-wrap {
+    height: 3px;
+    background: #1e1e1e;
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+.bar-fill {
+    height: 100%;
+    width: 0%;
+    background: #c9a96e;
+    transition: width 0.6s ease;
+}
+
+/* Кнопки */
+.btn-row { display: flex; gap: 12px; justify-content: center; }
+
+button {
+    padding: 11px 28px;
+    border-radius: 8px;
+    border: 1px solid #3a3a3a;
+    background: transparent;
+    color: #fff;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+    letter-spacing: 0.5px;
+}
+button:hover:not(:disabled) { background: #1e1e1e; border-color: #555; }
+button:disabled { opacity: 0.35; cursor: default; }
+
+.btn-primary {
+    background: #c9a96e;
+    border-color: #c9a96e;
+    color: #0a0a0a;
+    font-weight: 500;
+}
+.btn-primary:hover:not(:disabled) { background: #b8944f; border-color: #b8944f; }
+
+/* Результат */
+.result-block {
+    display: none;
+    margin-top: 20px;
+    background: #0f0f0f;
+    border: 1px solid #2a2a2a;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: left;
+}
+.result-shape {
+    font-size: 1.8rem;
+    font-weight: 300;
+    color: #c9a96e;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+}
+.result-conf {
+    font-size: 0.8rem;
+    color: #555;
+    margin-bottom: 16px;
+}
+.conf-bar { height: 3px; background: #1e1e1e; border-radius: 2px; margin-bottom: 16px; }
+.conf-fill { height: 100%; background: #4ade80; border-radius: 2px; transition: width 1s ease; width: 0%; }
+
+.votes { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+.vote-badge {
+    font-size: 0.75rem;
+    padding: 4px 10px;
+    border-radius: 20px;
+    background: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    color: #888;
+}
+.vote-badge.win { border-color: #c9a96e44; color: #c9a96e; }
+
+.frames-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; }
+.frames-row img { width:100%; border-radius:6px; border:1px solid #2a2a2a; }
+
+.glasses-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-top:14px; }
+.glass-card {
+    background:#0f0f0f;
+    border:1px solid #2a2a2a;
+    border-radius:8px;
+    padding:10px;
+    text-align:center;
+    font-size:0.8rem;
+    color:#888;
+}
+.rec-label { font-size:0.7rem; color:#555; letter-spacing:1px; margin-bottom:10px; }
+</style>
+</head>
+<body>
+
+<div class="card">
+    <h1>NOIR VISION</h1>
+    <div class="subtitle">AI FACE SCAN</div>
+
+    <div class="video-wrap" id="videoWrap">
+        <video id="webcam" autoplay playsinline muted></video>
+
+        <div class="overlay">
+            <!-- Овал -->
+            <div class="face-oval" id="faceOval"></div>
+
+            <!-- Стрелки (SVG поверх овала) -->
+            <!-- Стрелка ПРЯМО — нет стрелки, просто точки по периметру -->
+            <svg class="arrow-svg" id="arrowFront" viewBox="0 0 640 480" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="320" cy="100" r="5" fill="#c9a96e" opacity="0.8"/>
+                <circle cx="320" cy="380" r="5" fill="#c9a96e" opacity="0.8"/>
+                <circle cx="150" cy="240" r="5" fill="#c9a96e" opacity="0.8"/>
+                <circle cx="490" cy="240" r="5" fill="#c9a96e" opacity="0.8"/>
+                <text x="320" y="68" text-anchor="middle" fill="#c9a96e" font-size="13" font-family="Segoe UI" letter-spacing="2">ПРЯМО</text>
+            </svg>
+
+            <!-- Стрелка ВЛЕВО -->
+            <svg class="arrow-svg" id="arrowLeft" viewBox="0 0 640 480" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <marker id="ah-l" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                        <path d="M2 1L8 5L2 9" fill="none" stroke="#c9a96e" stroke-width="1.5" stroke-linecap="round"/>
+                    </marker>
+                </defs>
+                <!-- Большая стрелка влево -->
+                <line x1="490" y1="240" x2="168" y2="240"
+                      stroke="#c9a96e" stroke-width="2.5" stroke-linecap="round"
+                      marker-end="url(#ah-l)" opacity="0.9"/>
+                <!-- Дуга подсказка -->
+                <path d="M 380 160 Q 240 200 240 240" fill="none" stroke="#c9a96e" stroke-width="1" stroke-dasharray="5 4" opacity="0.4"/>
+                <text x="320" y="68" text-anchor="middle" fill="#c9a96e" font-size="13" font-family="Segoe UI" letter-spacing="2">МЕДЛЕННО ВЛЕВО</text>
+                <text x="320" y="420" text-anchor="middle" fill="#555" font-size="11" font-family="Segoe UI">поверните голову по стрелке</text>
+            </svg>
+
+            <!-- Стрелка ВПРАВО -->
+            <svg class="arrow-svg" id="arrowRight" viewBox="0 0 640 480" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <marker id="ah-r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                        <path d="M2 1L8 5L2 9" fill="none" stroke="#c9a96e" stroke-width="1.5" stroke-linecap="round"/>
+                    </marker>
+                </defs>
+                <line x1="150" y1="240" x2="472" y2="240"
+                      stroke="#c9a96e" stroke-width="2.5" stroke-linecap="round"
+                      marker-end="url(#ah-r)" opacity="0.9"/>
+                <path d="M 260 160 Q 400 200 400 240" fill="none" stroke="#c9a96e" stroke-width="1" stroke-dasharray="5 4" opacity="0.4"/>
+                <text x="320" y="68" text-anchor="middle" fill="#c9a96e" font-size="13" font-family="Segoe UI" letter-spacing="2">МЕДЛЕННО ВПРАВО</text>
+                <text x="320" y="420" text-anchor="middle" fill="#555" font-size="11" font-family="Segoe UI">поверните голову по стрелке</text>
+            </svg>
+
+            <!-- Вспышка при захвате -->
+            <div class="flash" id="flash"></div>
+
+            <!-- Текст инструкции -->
+            <div class="instruction-box" id="instrBox">
+                <div class="inst-step" id="instrStep">ШАГ 1 / 3</div>
+                <div class="inst-text"  id="instrText">Нажмите «Начать сканирование»</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Прогресс-точки -->
+    <div class="dots">
+        <div class="dot" id="dot0"></div>
+        <div class="dot" id="dot1"></div>
+        <div class="dot" id="dot2"></div>
+    </div>
+
+    <!-- Прогресс-бар -->
+    <div class="bar-wrap"><div class="bar-fill" id="barFill"></div></div>
+
+    <!-- Кнопки -->
+    <div class="btn-row">
+        <button id="startBtn" onclick="startCamera()">Включить камеру</button>
+        <button id="scanBtn"  onclick="startScan()" disabled class="btn-primary">Начать сканирование</button>
+    </div>
+
+    <!-- Результат -->
+    <div class="result-block" id="resultBlock">
+        <div class="result-shape" id="resShape">—</div>
+        <div class="result-conf"  id="resConf">—</div>
+        <div class="conf-bar"><div class="conf-fill" id="confFill"></div></div>
+        <div class="rec-label">ГОЛОСА ПО РАКУРСАМ</div>
+        <div class="votes" id="votesRow"></div>
+        <div class="rec-label">ЗАХВАЧЕННЫЕ КАДРЫ</div>
+        <div class="frames-row" id="framesRow"></div>
+        <div class="rec-label" style="margin-top:14px">РЕКОМЕНДУЕМЫЕ ОПРАВЫ</div>
+        <div class="glasses-grid" id="glassesGrid"></div>
+    </div>
+</div>
+
+<script>
+const STAGES = [
+    {
+        step:   "ШАГ 1 / 3",
+        text:   "Смотрите прямо в камеру",
+       
+
+        arrow:  "arrowFront",
+        hold:   3500,
+        name:   "front"
+    },
+    {
+        step:   "ШАГ 2 / 3",
+        text:   "Медленно поверните голову влево",
+       
+        arrow:  "arrowLeft",
+        hold:   4000,
+        name:   "left"
+    },
+    {
+        step:   "ШАГ 3 / 3",
+        text:   "Медленно поверните голову вправо",
+        
+        arrow:  "arrowRight",
+        hold:   4000,
+        name:   "right"
+    }
+];
+
+let captures  = [];
+let scanning  = false;
+let videoEl   = document.getElementById("webcam");
+let stream    = null;
+
+function speak(text) {
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = "ru-RU";
+    u.rate = 0.9;
+    window.speechSynthesis.speak(u);
+}
+
+function setDot(idx, state) {
+    for (let i = 0; i < 3; i++) {
+        const d = document.getElementById("dot" + i);
+        d.className = "dot" + (i < idx ? " done" : i === idx ? " current" : "");
+    }
+}
+
+function showArrow(id) {
+    ["arrowFront","arrowLeft","arrowRight"].forEach(a => {
+        document.getElementById(a).classList.remove("visible");
+    });
+    if (id) document.getElementById(id).classList.add("visible");
+}
+
+function setOval(state) {
+    const o = document.getElementById("faceOval");
+    o.className = "face-oval" + (state ? " " + state : "");
+}
+
+function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+async function flashCapture() {
+    const f = document.getElementById("flash");
+    f.classList.add("go");
+    await wait(120);
+    f.classList.remove("go");
+}
+
+async function startCamera() {
+    try {
+        stream = await navigator.mediaDevices.getUserMedia({
+            video: { width: 640, height: 480, facingMode: "user" },
+            audio: false
+        });
+        videoEl.srcObject = stream;
+        await new Promise(r => { videoEl.onloadedmetadata = r; });
+        videoEl.play();
+
+        document.getElementById("startBtn").disabled = true;
+        document.getElementById("scanBtn").disabled  = false;
+        document.getElementById("instrText").textContent = "Камера готова. Нажмите «Начать»";
+        setOval("ready");
+        
+    } catch(e) {
+        alert("Не удалось получить доступ к камере: " + e.message);
+    }
+}
+
+async function startScan() {
+    if (scanning) return;
+    scanning = true;
+    captures = [];
+
+    document.getElementById("scanBtn").disabled  = true;
+    document.getElementById("resultBlock").style.display = "none";
+    document.getElementById("barFill").style.width = "0%";
+    document.getElementById("framesRow").innerHTML = "";
+
+    for (let i = 0; i < STAGES.length; i++) {
+        const stage = STAGES[i];
+
+        document.getElementById("instrStep").textContent = stage.step;
+        document.getElementById("instrText").textContent = stage.text;
+        setDot(i, "current");
+        showArrow(stage.arrow);
+        setOval("ready");
+        
+
+        // Даём человеку время повернуть голову
+        // Разбиваем на 2 части: сначала ждём половину, потом подсвечиваем овал
+        await wait(stage.hold * 0.6);
+
+        // Сигнал "держи так"
+        setOval("capture");
+        document.getElementById("instrText").textContent = "Держите так...";
+        await wait(stage.hold * 0.4);
+
+        // Захват кадра
+        await flashCapture();
+
+        const canvas = document.createElement("canvas");
+        canvas.width  = videoEl.videoWidth  || 640;
+        canvas.height = videoEl.videoHeight || 480;
+        canvas.getContext("2d").drawImage(videoEl, 0, 0);
+
+        const blob    = await new Promise(r => canvas.toBlob(r, "image/jpeg", 0.95));
+        const dataUrl = canvas.toDataURL("image/jpeg", 0.4);
+        captures.push({ blob, dataUrl, name: stage.name });
+
+        // Показываем превью кадра
+        const img = document.createElement("img");
+        img.src = dataUrl;
+        img.title = stage.name;
+        document.getElementById("framesRow").appendChild(img);
+
+        // Прогресс-бар
+        document.getElementById("barFill").style.width = ((i + 1) / STAGES.length * 100) + "%";
+        setDot(i + 1, "done");
+        setOval("");
+        showArrow(null);
+
+        if (i < STAGES.length - 1) await wait(600);
+    }
+
+    // Отправляем
+    document.getElementById("instrStep").textContent = "";
+    document.getElementById("instrText").textContent = "Анализируем...";
+    speak("Отлично. Анализируем данные.");
+
+    await sendFrames();
+    scanning = false;
+}
+
+async function sendFrames() {
+    const fd = new FormData();
+    fd.append("frame_front", captures[0].blob, "front.jpg");
+    if (captures[1]) fd.append("frame_left",  captures[1].blob, "left.jpg");
+    if (captures[2]) fd.append("frame_right", captures[2].blob, "right.jpg");
+
+    try {
+        const resp = await fetch("/ai/analyze-video", { method: "POST", body: fd });
+        if (!resp.ok) throw new Error(await resp.text());
+        const data = await resp.json();
+        showResult(data);
+    } catch(e) {
+        document.getElementById("instrText").textContent = "Ошибка: " + e.message;
+        speak("Произошла ошибка. Попробуйте снова.");
+    } finally {
+        stopCamera();
+        document.getElementById("startBtn").disabled = false;
+        document.getElementById("scanBtn").disabled  = false;
+        document.getElementById("startBtn").textContent = "Включить снова";
+    }
+}
+
+function showResult(data) {
+    const block = document.getElementById("resultBlock");
+    block.style.display = "block";
+
+    const shapeNames = {
+        oval: "Овальное", round: "Круглое", square: "Квадратное",
+        rect: "Прямоугольное", heart: "Сердце", triangle: "Треугольное",
+        diamond: "Ромб"
+    };
+    const raw   = data.face_shape || "—";
+    const parts = raw.split("-");
+    const label = parts.map(p => shapeNames[p] || p).join(" / ");
+
+    document.getElementById("resShape").textContent = label;
+    const pct = Math.round((data.confidence || 0) * 100);
+    document.getElementById("resConf").textContent  = "Уверенность: " + pct + "%";
+    setTimeout(() => {
+        document.getElementById("confFill").style.width = pct + "%";
+    }, 100);
+
+    // Голоса по ракурсам
+    const vRow = document.getElementById("votesRow");
+    vRow.innerHTML = "";
+    if (data.angle_votes) {
+        const labels = { front: "прямо", left: "влево", right: "вправо" };
+        Object.entries(data.angle_votes).forEach(([k, v]) => {
+            const b = document.createElement("span");
+            b.className = "vote-badge" + (v === (data.face_shape_primary || data.face_shape) ? " win" : "");
+            b.textContent = (labels[k] || k) + ": " + (shapeNames[v] || v);
+            vRow.appendChild(b);
+        });
+    }
+
+    // Оправы
+    const gGrid = document.getElementById("glassesGrid");
+    gGrid.innerHTML = "";
+    if (data.frames && data.frames.length) {
+        data.frames.forEach(f => {
+            const c = document.createElement("div");
+            c.className = "glass-card";
+            c.innerHTML = f.image_url
+                ? `<img src="${f.image_url}" style="width:100%;border-radius:4px;margin-bottom:6px">`
+                : `<div style="height:70px;background:#1a1a1a;border-radius:4px;display:flex;align-items:center;justify-content:center;color:#333;margin-bottom:6px;font-size:0.7rem">${f.type||"оправа"}</div>`;
+            c.innerHTML += `<div style="color:#fff">${f.name || "—"}</div>`;
+            if (f.price) c.innerHTML += `<div style="color:#c9a96e;margin-top:2px">${f.price} ₽</div>`;
+            gGrid.appendChild(c);
+        });
+    } else if (data.recommended_shapes && data.recommended_shapes.length) {
+        data.recommended_shapes.forEach(s => {
+            const c = document.createElement("div");
+            c.className = "glass-card";
+            c.innerHTML = `<div style="height:50px;background:#1a1a1a;border-radius:4px;display:flex;align-items:center;justify-content:center;color:#555;font-size:0.7rem;margin-bottom:8px">оправа</div><div style="color:#fff">${s}</div>`;
+            gGrid.appendChild(c);
+        });
+    }
+
+    document.getElementById("instrText").textContent = "Готово!";
+    speak("Анализ завершён. Ваша форма лица: " + label);
+}
+
+function stopCamera() {
+    if (stream) {
+        stream.getTracks().forEach(t => t.stop());
+        stream = null;
+    }
+}
+
+window.onbeforeunload = stopCamera;
+</script>
+</body>
+</html>
