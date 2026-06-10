@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NOIR VISION — Doctor Panel</title>
+<style>
+  :root {
+    --bg: #050505;
+    --bg-elevated: #111111;
+    --bg-soft: #181818;
+    --border: #2a2a2a;
+    --accent: #ffffff;
+    --text: #f5f5f5;
+    --text-muted: #9b9b9b;
+    --muted: #9b9b9b;
+    --error: #ff5555;
+    --success: #55cc88;
+    --red: #ff5555;
+    --green: #55cc88;
+    --blue: #2980b9;
+    --radius: 14px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+    font-size: 13px;
+    min-height: 100vh;
+    display: flex;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .sidebar {
+    width: 220px;
+    min-height: 100vh;
+    background: rgba(17,17,17,.95);
+    backdrop-filter: blur(12px);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    padding: 32px 0;
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+  }
+
+  .logo {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    text-align: center;
+    padding: 0 24px 28px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 20px;
+  }
+  .logo span { display: block; font-size: 9px; letter-spacing: .3em; color: var(--text-muted); margin-top: 4px; font-weight: 400; }
+
+  .nav-item {
+    padding: 12px 24px;
+    cursor: pointer;
+    color: var(--text-muted);
+    font-size: 11px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    border-left: 2px solid transparent;
+    transition: all 0.2s;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .nav-item:hover { color: var(--text); background: rgba(255,255,255,0.04); }
+  .nav-item.active { color: var(--accent); border-left-color: var(--accent); background: rgba(255,255,255,0.06); }
+  .nav-icon { font-size: 14px; opacity: 0.5; }
+
+  .sidebar-bottom {
+    margin-top: auto;
+    padding: 16px 24px;
+    border-top: 1px solid var(--border);
+    font-size: 10px;
+    color: var(--text-muted);
+  }
+
+  .main {
+    margin-left: 220px;
+    flex: 1;
+    padding: 40px;
+    min-height: 100vh;
+  }
+
+  .page { display: none; }
+  .page.active { display: block; animation: fadeIn 0.3s ease; }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  .page-header {
+    display: flex; align-items: baseline; justify-content: space-between;
+    margin-bottom: 28px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .page-title {
+    font-size: 24px;
+    font-weight: 300;
+    color: var(--accent);
+    letter-spacing: .02em;
+  }
+  .page-sub { font-size: 10px; color: var(--text-muted); letter-spacing: .2em; text-transform: uppercase; margin-top: 4px; }
+
+  .login-wrap {
+    max-width: 380px; margin: 80px auto;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 28px;
+    padding: 36px 36px 40px;
+  }
+  .login-title {
+    font-size: 22px;
+    font-weight: 300;
+    color: var(--accent);
+    text-align: center;
+    letter-spacing: .06em;
+    margin-bottom: 6px;
+  }
+  .login-sub { text-align: center; color: var(--text-muted); font-size: 10px; letter-spacing: .3em; text-transform: uppercase; margin-bottom: 28px; }
+
+  .field { margin-bottom: 16px; }
+  .field label { display: block; font-size: 10px; letter-spacing: .18em; color: var(--text-muted); text-transform: uppercase; margin-bottom: 7px; }
+  .field input {
+    width: 100%; background: var(--bg-soft); border: 1px solid var(--border);
+    color: var(--text); padding: 12px 18px; font-size: 13px;
+    border-radius: var(--radius);
+    outline: none; transition: border-color 0.2s; font-family: inherit;
+  }
+  .field input:focus { border-color: rgba(255,255,255,0.3); }
+
+  .btn {
+    width: 100%; padding: 12px 22px;
+    background: var(--accent); color: #000;
+    font-size: 11px; letter-spacing: .2em; text-transform: uppercase;
+    border: none; border-radius: 999px; cursor: pointer;
+    transition: background .2s, transform .1s; font-weight: 500; font-family: inherit;
+  }
+  .btn:hover { background: #ddd; }
+  .btn:active { transform: scale(0.97); }
+  .btn-sm {
+    padding: 8px 18px; font-size: 10px; letter-spacing: .18em;
+    background: transparent; border: 1px solid var(--border);
+    color: var(--text-muted); cursor: pointer; transition: all 0.2s;
+    border-radius: 999px; font-family: inherit; text-transform: uppercase;
+  }
+  .btn-sm:hover { border-color: rgba(255,255,255,0.3); color: var(--text); }
+  .btn-approve { border-color: var(--success); color: var(--success); }
+  .btn-approve:hover { background: var(--success); color: #000; }
+  .btn-reject { border-color: var(--error); color: var(--error); }
+  .btn-reject:hover { background: var(--error); color: #fff; }
+
+  .error-msg { color: var(--error); font-size: 11px; margin-top: 12px; text-align: center; }
+  .to-site {
+    display: block; text-align: center; margin-top: 16px;
+    color: var(--text-muted); font-size: 10px; letter-spacing: .2em;
+    text-decoration: none;
+  }
+  .to-site:hover { color: var(--accent); }
+
+  .day-group { margin-bottom: 32px; }
+  .day-header {
+    font-size: 20px;
+    font-weight: 300;
+    color: var(--accent);
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 12px;
+    letter-spacing: .02em;
+  }
+  .day-header span { font-size: 10px; color: var(--text-muted); letter-spacing: .2em; margin-left: 12px; font-weight: 400; }
+
+  .table-wrap {
+    background: var(--bg-elevated); border: 1px solid var(--border);
+    border-radius: 20px; overflow: auto;
+  }
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    text-align: left; padding: 14px 16px;
+    font-size: 9px; letter-spacing: .2em; text-transform: uppercase;
+    color: var(--text-muted); border-bottom: 1px solid var(--border);
+    font-weight: 500;
+  }
+  td { padding: 12px 16px; border-bottom: 1px solid var(--border); color: var(--text); font-size: 12px; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  .badge {
+    display: inline-block; padding: 4px 10px;
+    font-size: 9px; letter-spacing: .12em; text-transform: uppercase;
+    border-radius: 8px; font-weight: 500;
+  }
+  .badge-pending { background: rgba(243,156,18,0.1); color: #f39c12; }
+  .badge-approved { background: rgba(85,204,136,0.1); color: var(--success); }
+  .badge-rejected { background: rgba(255,85,85,0.1); color: var(--error); }
+
+  .loading { color: var(--text-muted); text-align: center; padding: 40px; letter-spacing: .2em; font-size: 11px; }
+  .empty { color: var(--text-muted); text-align: center; padding: 40px; font-size: 11px; }
+  .toast {
+    position: fixed; bottom: 24px; right: 24px;
+    background: var(--bg-elevated); border: 1px solid var(--border);
+    color: var(--text); padding: 12px 20px; font-size: 12px;
+    z-index: 999; border-radius: 14px; max-width: 360px;
+    animation: toastIn .3s ease;
+  }
+  @keyframes toastIn { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+
+  .phone { color: var(--blue); }
+
+  .filter-bar { display: flex; gap: 12px; margin-bottom: 20px; align-items: center; flex-wrap: wrap; }
+  .filter-bar input, .filter-bar select {
+    background: var(--bg-soft); border: 1px solid var(--border);
+    color: var(--text); padding: 9px 14px; font-size: 12px;
+    border-radius: var(--radius); outline: none; font-family: inherit;
+  }
+  .filter-bar input:focus, .filter-bar select:focus { border-color: rgba(255,255,255,0.3); }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen" style="width:100%;min-height:100vh;display:flex;align-items:center;background:var(--bg);">
+  <div class="login-wrap">
+    <div class="login-title">NOIR VISION</div>
+    <div class="login-sub">Doctor Panel</div>
+    <div class="field"><label>Телефон</label><input id="loginPhone" type="text" placeholder="+7..."></div>
+    <div class="field"><label>Пароль</label><input id="loginPass" type="password"></div>
+    <button class="btn" onclick="doLogin()">Войти</button>
+    <a href="/" class="to-site">→ На сайт</a>
+    <div class="error-msg" id="loginErr"></div>
+  </div>
+</div>
+
+<!-- DOCTOR APP -->
+<div id="doctorApp" style="display:none;width:100%;">
+  <div class="sidebar">
+    <div class="logo">NOIR<span>doctor panel</span></div>
+    <div class="nav-item active" onclick="showPage('appointments')" id="nav-appointments"><span class="nav-icon">◷</span> Записи</div>
+    <div class="sidebar-bottom" id="sidebarUser"></div>
+  </div>
+
+  <div class="main">
+    <div class="page active" id="page-appointments">
+      <div class="page-header">
+        <div><div class="page-title">Записи к врачу</div><div class="page-sub">Управление записями пациентов</div></div>
+        <button class="btn-sm" onclick="loadAppointments()">↻ Обновить</button>
+      </div>
+      <div class="filter-bar">
+        <input id="dateFilter" type="date" onchange="renderAppointments()">
+        <input id="searchFilter" placeholder="Поиск по имени или телефону..." oninput="renderAppointments()" style="flex:1;">
+      </div>
+      <div id="appointmentsContainer"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = window.location.origin;
+let TOKEN = localStorage.getItem('nv_token') || '';
+let allAppointments = [];
+
+(async function init() {
+  if (!TOKEN) return;
+  try {
+    const r = await fetch(`${API}/api/auth/me`, {
+      headers: {'Authorization': `Bearer ${TOKEN}`}
+    });
+    const user = await r.json();
+    if (!r.ok || (user.role !== 'doctor' && user.role !== 'admin')) throw new Error('not doctor');
+    document.getElementById('sidebarUser').innerHTML = `<div style="color:var(--accent);margin-bottom:4px">${user.phone || user.email}</div><div style="font-size:9px;letter-spacing:2px;color:var(--muted)">DOCTOR</div>`;
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('doctorApp').style.display = 'flex';
+    loadAppointments();
+  } catch(e) {
+    TOKEN = '';
+    localStorage.removeItem('nv_token');
+  }
+})();
+
+async function doLogin() {
+  const phone = document.getElementById('loginPhone').value;
+  const password = document.getElementById('loginPass').value;
+  try {
+    const fd = new FormData();
+    fd.append('username', phone);
+    fd.append('password', password);
+    const r = await fetch(`${API}/api/auth/token`, { method: 'POST', body: fd });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.detail || 'Ошибка');
+    if (d.user.role !== 'doctor' && d.user.role !== 'admin') throw new Error('Доступ только для врача');
+    TOKEN = d.access_token;
+    localStorage.setItem('nv_token', TOKEN);
+    document.getElementById('sidebarUser').innerHTML = `<div style="color:var(--accent);margin-bottom:4px">${d.user.phone}</div><div style="font-size:9px;letter-spacing:2px;color:var(--muted)">DOCTOR</div>`;
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('doctorApp').style.display = 'flex';
+    loadAppointments();
+  } catch(e) {
+    document.getElementById('loginErr').textContent = e.message;
+  }
+}
+
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  document.getElementById('nav-' + name).classList.add('active');
+}
+
+async function apiFetch(url, opts={}) {
+  opts.headers = {'Authorization': `Bearer ${TOKEN}`, 'Content-Type':'application/json', ...(opts.headers||{})};
+  const r = await fetch(API + url, opts);
+  return r.json();
+}
+
+function badge(status) {
+  const cls = `badge badge-${status}`;
+  return `<span class="${cls}">${status}</span>`;
+}
+
+async function loadAppointments() {
+  const data = await apiFetch('/doctor/appointments');
+  allAppointments = data;
+  renderAppointments();
+}
+
+function renderAppointments() {
+  const dateFilter = document.getElementById('dateFilter').value;
+  const searchQ = document.getElementById('searchFilter').value.toLowerCase();
+
+  let filtered = allAppointments;
+  if (dateFilter) {
+    filtered = filtered.filter(a => a.date === dateFilter);
+  }
+  if (searchQ) {
+    filtered = filtered.filter(a =>
+      (a.user_phone && a.user_phone.toLowerCase().includes(searchQ)) ||
+      (a.user_name && a.user_name.toLowerCase().includes(searchQ)) ||
+      (a.user_email && a.user_email.toLowerCase().includes(searchQ))
+    );
+  }
+
+  const container = document.getElementById('appointmentsContainer');
+  if (!filtered.length) {
+    container.innerHTML = '<div class="empty">Нет записей</div>';
+    return;
+  }
+
+  const grouped = {};
+  filtered.forEach(a => {
+    if (!grouped[a.date]) grouped[a.date] = [];
+    grouped[a.date].push(a);
+  });
+
+  const sortedDates = Object.keys(grouped).sort();
+  container.innerHTML = sortedDates.map(date => `
+    <div class="day-group">
+      <div class="day-header">${date} <span>${grouped[date].length} записей</span></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Время</th><th>Пациент</th><th>Телефон</th><th>Email</th><th>Статус</th><th>Действие</th></tr></thead>
+          <tbody>
+            ${grouped[date].map(a => `
+              <tr>
+                <td style="font-weight:bold">${a.time}</td>
+                <td>${a.user_name || '—'}</td>
+                <td class="phone">${a.user_phone || '—'}</td>
+                <td style="color:var(--muted)">${a.user_email || '—'}</td>
+                <td>${badge(a.status)}</td>
+                <td>
+                  ${a.status === 'pending' ? `
+                    <button class="btn-sm btn-approve" onclick="updateAppt(${a.id},'approved')">Подтвердить</button>
+                    <button class="btn-sm btn-reject" onclick="updateAppt(${a.id},'rejected')">Отменить</button>
+                  ` : a.status === 'approved' ? `
+                    <button class="btn-sm btn-reject" onclick="updateAppt(${a.id},'rejected')">Отменить</button>
+                  ` : ''}
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function updateAppt(id, status) {
+  await apiFetch(`/doctor/appointments/${id}?status=${status}`, {method:'PATCH'});
+  toast(status === 'approved' ? '✅ Запись подтверждена' : '❌ Запись отменена');
+  loadAppointments();
+}
+
+document.getElementById('loginPass').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+
+function toast(msg) {
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(() => { el.style.opacity = '0'; setTimeout(() => el.remove(), 300); }, 2500);
+}
+</script>
+</body>
+</html>

@@ -226,7 +226,7 @@ nav a:hover {
 
 .page {
   display: none;
-  min-height: calc(100vh - 72px);
+  min-height: auto;
   animation: fadeIn .35s ease;
 }
 
@@ -235,12 +235,10 @@ nav a:hover {
 }
 
 #page-home {
-  min-height: auto;
   display: block !important;
 }
 
 #page-catalog {
-  min-height: auto;
   display: block !important;
 }
 

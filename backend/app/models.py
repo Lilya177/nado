@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Float, Text, DateTime
 from sqlalchemy.orm import declarative_base, relationship
-from datetime import datetime
+from datetime import datetime, timezone
 import enum
 
 Base = declarative_base()
@@ -8,12 +8,14 @@ Base = declarative_base()
 
 class UserRole(str, enum.Enum):
     client = "client"
+    doctor = "doctor"
     admin = "admin"
 
 
 class ProductType(str, enum.Enum):
     frame = "frame"
     lens = "lens"
+    contact_lens = "contact_lens"
     liquid = "liquid"
     case = "case"
     accessory = "accessory"
@@ -59,7 +61,7 @@ class Product(Base):
     stock = Column(Integer, default=0)
     in_stock = Column(Boolean, default=True)
     image_url = Column(String, nullable=True)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     attributes = relationship("Attribute", back_populates="product", cascade="all,delete")
     images = relationship("Image", back_populates="product", cascade="all,delete")
@@ -91,7 +93,7 @@ class Order(Base):
     user_id = Column(Integer, ForeignKey("users.id"))
     total_price = Column(Float, default=0)
     status = Column(String, default=OrderStatus.pending)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     user = relationship("User", back_populates="orders", foreign_keys=[user_id])
     items = relationship("OrderItem", back_populates="order", cascade="all,delete")
 
@@ -115,8 +117,18 @@ class Appointment(Base):
     date = Column(String)
     time = Column(String)
     status = Column(String, default=AppointmentStatus.pending)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     user = relationship("User", back_populates="appointments", foreign_keys=[user_id])
+
+
+class CartItem(Base):
+    __tablename__ = "cart_items"
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    product_id = Column(Integer, ForeignKey("products.id"), nullable=False)
+    quantity = Column(Integer, default=1)
+    user = relationship("User")
+    product = relationship("Product")
 
 
 class JournalEntry(Base):
@@ -128,5 +140,5 @@ class JournalEntry(Base):
     entity_id = Column(Integer, nullable=True)
     detail = Column(Text, nullable=True)
     ip_address = Column(String, nullable=True)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     user = relationship("User", back_populates="journal_entries")

@@ -34,10 +34,10 @@
 }
 
 .hero-card {
-  background: radial-gradient(135deg, #fff 0, #e8e8e8 100%);
+  background: var(--bg-elevated);
   border-radius: 28px;
   padding: 24px;
-  color: #111;
+  color: var(--text);
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -51,7 +51,7 @@
 }
 
 .hero-card-img {
-  background: #fff;
+  background: var(--bg-soft);
   border-radius: 18px;
   height: 190px;
   display: flex;
@@ -74,7 +74,7 @@
 
 .category-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: var(--gap);
   margin-top: 12px;
 }
@@ -245,8 +245,6 @@
   font-size: 12px;
   cursor: pointer;
   transition: transform .28s ease, box-shadow .28s ease, border-color .28s ease;
-  content-visibility: auto;
-  contain-intrinsic-size: 300px;
 }
 
 .product-card:hover {
@@ -256,15 +254,21 @@
 }
 
 .product-img-wrap {
-  background: #fff;
+  background: var(--bg-soft);
   border-radius: 16px;
-  height: 148px;
+  width: 100%;
+  aspect-ratio: 1024 / 559;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 38px;
   overflow: hidden;
   transition: transform .35s ease;
+}
+.product-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .product-card:hover .product-img-wrap {
@@ -328,8 +332,8 @@
   gap: 10px;
   width: 100%;
   padding: 16px 24px;
-  background: linear-gradient(135deg, #ffffff 0%, #d0d0d0 100%);
-  color: #000;
+  background: var(--bg-soft);
+  color: var(--accent);
   border: none;
   border-radius: 14px;
   font-size: 12px;
@@ -338,14 +342,14 @@
   font-family: inherit;
   cursor: pointer;
   font-weight: 600;
-  box-shadow: 0 8px 32px rgba(255,255,255,.12);
+  box-shadow: 0 8px 32px rgba(0,0,0,.4);
   transition: transform .2s, box-shadow .2s, filter .2s;
   margin: 20px 0 8px;
 }
 
 .btn-ai-scan:hover {
   transform: translateY(-2px);
-  box-shadow: 0 14px 40px rgba(255,255,255,.18);
+  box-shadow: 0 14px 40px rgba(0,0,0,.5);
   filter: brightness(1.05);
 }
 
@@ -443,15 +447,62 @@
 }
 
 .modal-img {
-  background: #fff;
+  background: var(--bg-soft);
   border-radius: 18px;
-  height: 200px;
+  width: 100%;
+  height: 450px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 64px;
   margin-bottom: 20px;
   overflow: hidden;
+  position: relative;
+}
+.modal-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.modal-gallery-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 28px;
+  color: #fff;
+  background: rgba(0,0,0,.5);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 2;
+  opacity: 0;
+  transition: opacity .25s;
+  user-select: none;
+}
+.modal-img:hover .modal-gallery-arrow { opacity: 1; }
+.modal-gallery-prev { left: 10px; }
+.modal-gallery-next { right: 10px; }
+.modal-gallery-dots {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 5px;
+  z-index: 2;
+}
+.modal-gallery-dots span {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.4);
+  cursor: pointer;
+}
+.modal-gallery-dots span.active {
+  background: #fff;
 }
 
 .modal-title {
@@ -496,8 +547,8 @@
   position: fixed;
   bottom: 28px;
   right: 28px;
-  background: #fff;
-  color: #000;
+  background: var(--bg-elevated);
+  color: var(--accent);
   padding: 11px 22px;
   border-radius: 999px;
   font-size: 12px;
@@ -522,12 +573,12 @@
   .category-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
   .category-img { height: 110px; font-size: 32px; }
   .catalog-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
-  .product-img-wrap { height: 110px; font-size: 28px; }
+  .product-img-wrap { font-size: 28px; }
   .cat-page-hero { flex-direction: column; text-align: center; gap: 12px; }
   .cat-page-icon { width: 100%; }
   .cat-page-title { font-size: 22px; }
   .modal-box { padding: 20px; border-radius: 20px; }
-  .modal-img { height: 150px; font-size: 48px; }
+  .modal-img { height: 320px; font-size: 48px; }
   #toast { right: 16px; left: 16px; bottom: 20px; text-align: center; }
 }
 

@@ -26,7 +26,7 @@ FACE_SHAPE_MAP = {
 }
 
 # Порог гибрида — создаётся только если два класса реально неразличимы
-HYBRID_THRESHOLD = 0.92
+HYBRID_THRESHOLD = 0.98
 
 # ─────────────────────────────────────────────
 # Допустимые диапазоны замеров для чистого лица
@@ -34,14 +34,14 @@ HYBRID_THRESHOLD = 0.92
 # ─────────────────────────────────────────────
 MEASUREMENT_BOUNDS = {
     # (min, max)
-    "face_ratio":    (0.85, 2.20),   # слишком низкий = лицо обрезано сверху/снизу
-    "jaw_ratio":     (0.50, 1.10),   # слишком высокий = что-то раздувает щёки/уши
-    "jaw_ang_ratio": (0.55, 1.15),
-    "brow_ratio":    (0.55, 1.10),
-    "eye_ratio":     (0.35, 0.85),
-    "temple_ratio":  (0.55, 1.15),
-    "lower_ratio":   (0.25, 0.65),
-    "taper":         (0.50, 1.40),
+    "face_ratio":    (0.70, 2.50),
+    "jaw_ratio":     (0.40, 1.30),
+    "jaw_ang_ratio": (0.40, 1.30),
+    "brow_ratio":    (0.40, 1.30),
+    "eye_ratio":     (0.20, 1.00),
+    "temple_ratio":  (0.40, 1.30),
+    "lower_ratio":   (0.15, 0.75),
+    "taper":         (0.40, 1.60),
 }
 
 # Ключевые точки, видимость которых критична.
@@ -152,60 +152,55 @@ def extract_measurements(lm, w, h) -> Optional[dict]:
 
 
 def classify_face_shape(m: dict) -> dict:
-    """Классифицирует форму лица — фронтальный кадр, все метрики надёжны."""
-    fr  = m["face_ratio"]
-    jr  = m["jaw_ratio"]
-    jar = m["jaw_ang_ratio"]
-    tp  = m["taper"]
-    lr  = m["lower_ratio"]
-    br  = m["brow_ratio"]
-    er  = m["eye_ratio"]
+    """Определяет форму лица по face_ratio с мягким распределением."""
+    fr = m["face_ratio"]
 
-    def g(val, center, sigma):
-        return float(np.exp(-((val - center)**2) / (2 * sigma**2)))
-
-    scores = {
-        "oval":     g(fr,1.38,0.16)*0.35 + g(jr,0.76,0.08)*0.20 + g(tp,0.90,0.09)*0.20 + g(lr,0.44,0.06)*0.10,
-        "round":    g(fr,1.05,0.10)*0.35 + g(jr,0.85,0.07)*0.25 + g(tp,0.98,0.07)*0.25 + g(lr,0.48,0.06)*0.15,
-        "square":   g(fr,1.20,0.13)*0.25 + g(jar,0.90,0.07)*0.30 + g(tp,1.00,0.07)*0.25 + g(jr,0.85,0.07)*0.20,
-        "rect":     g(fr,1.75,0.12)*0.55 + g(jr,0.82,0.08)*0.20 + g(br,0.88,0.08)*0.10,
-        "heart":    g(br,0.95,0.07)*0.30  + g(tp,0.72,0.08)*0.35 + g(jr,0.65,0.08)*0.25,
-        "triangle": g(tp,1.20,0.10)*0.40  + g(jar,0.95,0.07)*0.30 + g(fr,1.20,0.12)*0.10,
-        "diamond":  g(er,0.88,0.06)*0.30  + g(tp,0.82,0.07)*0.25 + g(jr,0.68,0.07)*0.25,
+    centers = {
+        "round": 1.00, "square": 1.15, "oval": 1.45,
+        "rect": 1.90, "heart": 1.10, "triangle": 1.20, "diamond": 1.25,
     }
 
-    total = sum(scores.values()) or 1.0
-    return {k: round(v / total, 4) for k, v in scores.items()}
+    raw = {}
+    for shape, center in centers.items():
+        dist = abs(fr - center)
+        raw[shape] = max(0.0, 1.0 - dist * 2.5)
+
+    sorted_shapes = sorted(raw.items(), key=lambda x: -x[1])
+    winner, win_score = sorted_shapes[0]
+    is_hybrid = False
+
+    if len(sorted_shapes) > 1:
+        second_score = sorted_shapes[1][1]
+        if win_score > 0 and second_score / win_score > 0.40:
+            pair = tuple(sorted([sorted_shapes[0][0], sorted_shapes[1][0]]))
+            hybrid = f"{pair[0]}-{pair[1]}"
+            if hybrid in FACE_SHAPE_MAP:
+                winner = hybrid
+                is_hybrid = True
+
+    scores = {k: 0.0 for k in raw}
+    total_raw = sum(max(0.0, v) for v in raw.values())
+    if total_raw > 0:
+        for k in raw:
+            scores[k] = round(max(0.0, raw[k]) / total_raw, 4)
+    else:
+        scores[winner] = 1.0
+
+    return scores
 
 
 def classify_face_shape_side_only(m: dict) -> dict:
-    """Классифицирует форму лица — боковой кадр, только надёжные метрики."""
-    jr  = m["jaw_ratio"]
-    jar = m["jaw_ang_ratio"]
-    tp  = m["taper"]
-
-    def g(val, center, sigma):
-        return float(np.exp(-((val - center)**2) / (2 * sigma**2)))
-
-    scores = {
-        "oval":     g(tp, 0.90, 0.10) * 0.50 + g(jr, 0.76, 0.09) * 0.50,
-        "round":    g(tp, 0.98, 0.08) * 0.50 + g(jr, 0.85, 0.08) * 0.50,
-        "square":   g(jar, 0.90, 0.07) * 0.60 + g(tp, 1.00, 0.07) * 0.40,
-        "rect":     g(jar, 0.88, 0.07) * 0.60 + g(tp, 0.95, 0.08) * 0.40,
-        "heart":    g(tp, 0.72, 0.08) * 0.70 + g(jr, 0.65, 0.09) * 0.30,
-        "triangle": g(tp, 1.20, 0.10) * 0.70 + g(jar, 0.95, 0.08) * 0.30,
-        "diamond":  g(tp, 0.82, 0.08) * 0.60 + g(jr, 0.68, 0.08) * 0.40,
-    }
-
-    total = sum(scores.values()) or 1.0
-    return {k: round(v / total, 4) for k, v in scores.items()}
+    """Боковой кадр — всегда возвращает равномерное распределение."""
+    # Боковые кадры неточны, не влияем ими на итог
+    n = 7
+    return {s: round(1.0/n, 4) for s in ["oval","round","square","rect","heart","triangle","diamond"]}
 
 
 def _ensemble(cnn_scores: dict, geo_scores: dict):
-    """Смешивает результаты CNN (70%) и геометрии (30%)."""
+    """Смешивает результаты геометрии (70%) и CNN (30%). CNN часто ошибается."""
     all_keys = set(list(cnn_scores.keys()) + list(geo_scores.keys()))
     combined = {
-        k: cnn_scores.get(k, 0.0) * 0.7 + geo_scores.get(k, 0.0) * 0.3
+        k: cnn_scores.get(k, 0.0) * 0.3 + geo_scores.get(k, 0.0) * 0.7
         for k in all_keys
     }
 
@@ -321,46 +316,16 @@ def analyze_face_image(image_bytes: bytes, is_side: bool = False) -> dict:
         }
 
     # Всё чисто — классифицируем
+    print(f"[MEASURE] {measurements}")
     if is_side:
         geo_scores = classify_face_shape_side_only(measurements)
     else:
         geo_scores = classify_face_shape(measurements)
 
-    try:
-        from cnn_classifier import classify_with_cnn
-
-        def _preprocess(img, landmarks, iw, ih) -> bytes:
-            eye_l = (landmarks[33].x * iw,  landmarks[33].y * ih)
-            eye_r = (landmarks[263].x * iw, landmarks[263].y * ih)
-            angle = np.degrees(np.arctan2(eye_r[1] - eye_l[1], eye_r[0] - eye_l[0]))
-            cx    = int((eye_l[0] + eye_r[0]) / 2)
-            cy    = int((eye_l[1] + eye_r[1]) / 2)
-            M     = cv2.getRotationMatrix2D((cx, cy), angle, 1.0)
-            rot   = cv2.warpAffine(img, M, (iw, ih))
-
-            def tr(idx):
-                p = np.array([[[landmarks[idx].x * iw, landmarks[idx].y * ih]]], dtype=np.float32)
-                return cv2.transform(p, M)[0][0]
-
-            f, c, l, r = tr(10), tr(152), tr(234), tr(454)
-            x1   = max(0, int(l[0] - 20))
-            x2   = min(iw, int(r[0] + 20))
-            y1   = max(0, int(f[1] - 20))
-            y2   = min(ih, int(c[1] + 20))
-            crop = cv2.resize(rot[y1:y2, x1:x2], (380, 380))
-            lab  = cv2.cvtColor(crop, cv2.COLOR_BGR2LAB)
-            lab[:, :, 0] = cv2.createCLAHE(clipLimit=2.0).apply(lab[:, :, 0])
-            _, buf = cv2.imencode(".jpg", cv2.cvtColor(lab, cv2.COLOR_LAB2BGR))
-            return buf.tobytes()
-
-        cnn_res                 = classify_with_cnn(_preprocess(img_bgr, lm, w, h))
-        shape, conf, all_scores = _ensemble(cnn_res.get("all_scores", {}), geo_scores)
-
-    except Exception as e:
-        print(f"[CNN] недоступна, используем геометрию: {e}")
-        all_scores = geo_scores
-        shape      = max(geo_scores, key=geo_scores.get)
-        conf       = geo_scores[shape]
+    # Только геометрия — CNN ненадёжен (обучен только на анфас)
+    all_scores = geo_scores
+    shape      = max(geo_scores, key=geo_scores.get)
+    conf       = geo_scores[shape]
 
     return {
         "face_shape":   shape,
@@ -407,7 +372,7 @@ def analyze_multi_frames(frames: list[bytes]) -> dict:
     if not frames:
         return {"error": "Нет кадров для анализа", "face_shape": None}
 
-    weights     = [1.0, 0.35, 0.35]
+    weights     = [1.0, 0.15, 0.15]
     side_flags  = [False, True, True]
     angle_names = ["front", "left", "right"]
     angle_labels = {
@@ -467,49 +432,14 @@ def analyze_multi_frames(frames: list[bytes]) -> dict:
             "frames_analyzed": 0,
         }
 
-    # Взвешенное суммирование
-    final_scores: dict[str, float] = {}
-    total_weight = sum(r["weight"] for r in results)
-
-    for res in results:
-        for shape, score in res["all_scores"].items():
-            final_scores[shape] = final_scores.get(shape, 0.0) + score * res["weight"]
-
-    for k in final_scores:
-        final_scores[k] = final_scores[k] / total_weight
-
-    # Temperature scaling
-    temperature = 0.5
-    sharpened   = {k: v ** (1.0 / temperature) for k, v in final_scores.items()}
-    total_sharp = sum(sharpened.values()) or 1.0
-    final_scores = {k: round(v / total_sharp, 4) for k, v in sharpened.items()}
-
+    # Берём результат только с фронтального кадра (он самый точный)
+    front_result = results[0] if results else {"all_scores": {"oval": 0.8, "round": 0.2}}
+    final_scores = front_result["all_scores"]
     sorted_shapes = sorted(final_scores.items(), key=lambda x: -x[1])
     best_shape    = sorted_shapes[0][0]
     best_conf     = sorted_shapes[0][1]
 
-    # Голосование как tiebreaker при близких scores
-    if len(sorted_shapes) > 1:
-        second_conf = sorted_shapes[1][1]
-        if second_conf / (best_conf + 1e-9) > 0.75:
-            majority = _majority_vote([r["face_shape"] for r in results])
-            if majority and majority in final_scores:
-                print(f"[Голосование] tiebreaker: {majority}")
-                best_shape = majority
-                best_conf  = final_scores[majority]
-
-    # Проверка гибрида
-    sorted_shapes = sorted(final_scores.items(), key=lambda x: -x[1])
-    if len(sorted_shapes) > 1:
-        top_shape    = sorted_shapes[0][0]
-        top_conf     = sorted_shapes[0][1]
-        second_shape = sorted_shapes[1][0]
-        second_conf  = sorted_shapes[1][1]
-        if second_conf / (top_conf + 1e-9) > HYBRID_THRESHOLD:
-            pair   = tuple(sorted([top_shape, second_shape]))
-            hybrid = f"{pair[0]}-{pair[1]}"
-            if hybrid in FACE_SHAPE_MAP:
-                best_shape = hybrid
+    print(f"[AI] Итог: {best_shape}={best_conf:.3f}, оценки: {dict(sorted_shapes)}")
 
     info = FACE_SHAPE_MAP.get(best_shape, FACE_SHAPE_MAP.get(best_shape.split("-")[0], {}))
 

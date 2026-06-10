@@ -145,6 +145,7 @@ class OrderCreate(BaseModel):
 
 class OrderRead(BaseModel):
     id: int
+    user_id: int
     total_price: float
     status: str
     created_at: Optional[datetime] = None
@@ -161,10 +162,37 @@ class AppointmentCreate(BaseModel):
 
 class AppointmentRead(BaseModel):
     id: int
+    user_id: int
     date: str
     time: str
     status: str
     created_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
+
+
+class AppointmentWithUser(AppointmentRead):
+    user_phone: Optional[str] = None
+    user_name: Optional[str] = None
+    user_email: Optional[str] = None
+
+
+class CartItemSync(BaseModel):
+    product_id: int
+    quantity: int
+
+
+class CartSyncIn(BaseModel):
+    items: List[CartItemSync]
+
+
+class CartItemOut(BaseModel):
+    product_id: int
+    quantity: int
+    title: str = ""
+    price: float = 0
+    icon: str = ""
 
     class Config:
         from_attributes = True
@@ -196,4 +224,5 @@ class FaceAnalysisResult(BaseModel):
     measurements: Optional[FaceMeasurements]
     recommended_shapes: List[str]
     recommended_products: List[ProductOut]
+    all_scores: Optional[dict] = None
     error: Optional[str] = None

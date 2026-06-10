@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
@@ -72,15 +72,15 @@
       <div>
         <div class="catalog-tabs" style="margin-bottom: 20px;">
           <button class="tab-btn active" id="tab-btn-appointments" onclick="switchProfileTab('appointments')">Мои записи к врачу</button>
-          <button class="tab-btn" id="tab-btn-history" onclick="switchProfileTab('history')">История просмотров</button>
+          <button class="tab-btn" id="tab-btn-orders" onclick="switchProfileTab('orders')">История заказов</button>
         </div>
         
         <div id="profile-tab-appointments">
           <div id="profile-appointments-list"></div>
         </div>
         
-        <div id="profile-tab-history" style="display: none;">
-          <div class="catalog-grid" id="profile-history-grid" style="grid-template-columns: repeat(2, 1fr); gap: 14px;"></div>
+        <div id="profile-tab-orders" style="display: none;">
+          <div id="profile-orders-list"></div>
         </div>
       </div>
     </div>
@@ -122,6 +122,7 @@
     <div class="mobile-nav-cat-links">
       <div class="mobile-nav-cat-link" onclick="mobileNav('cat-frames')">🕶️ Оправы</div>
       <div class="mobile-nav-cat-link" onclick="mobileNav('cat-lenses')">🔬 Линзы</div>
+      <div class="mobile-nav-cat-link" onclick="mobileNav('cat-contacts')">💠 Конт. линзы</div>
       <div class="mobile-nav-cat-link" onclick="mobileNav('cat-liquids')">🧴 Жидкости</div>
       <div class="mobile-nav-cat-link" onclick="mobileNav('cat-cases')">🗃️ Футляры</div>
     </div>
@@ -171,6 +172,26 @@
           <button class="btn" style="padding:6px 14px;" onclick="event.stopPropagation();showPage('cat-frames')">Смотреть</button>
         </div>
       </article>
+      <article class="category-card" onclick="showPage('cat-lenses')">
+        <div class="category-img">🔬</div>
+        <div class="category-meta">
+          <div>
+            <div class="product-brand">NOIR OPTICS</div>
+            <div>Линзы</div>
+          </div>
+          <button class="btn" style="padding:6px 14px;" onclick="event.stopPropagation();showPage('cat-lenses')">Смотреть</button>
+        </div>
+      </article>
+      <article class="category-card" onclick="showPage('cat-contacts')">
+        <div class="category-img">💠</div>
+        <div class="category-meta">
+          <div>
+            <div class="product-brand">NOIR CARE</div>
+            <div>Конт. линзы</div>
+          </div>
+          <button class="btn" style="padding:6px 14px;" onclick="event.stopPropagation();showPage('cat-contacts')">Смотреть</button>
+        </div>
+      </article>
       <article class="category-card" onclick="showPage('cat-liquids')">
         <div class="category-img">🧴</div>
         <div class="category-meta">
@@ -191,16 +212,6 @@
           <button class="btn" style="padding:6px 14px;" onclick="event.stopPropagation();showPage('cat-cases')">Смотреть</button>
         </div>
       </article>
-      <article class="category-card" onclick="showPage('cat-lenses')">
-        <div class="category-img">🔬</div>
-        <div class="category-meta">
-          <div>
-            <div class="product-brand">NOIR OPTICS</div>
-            <div>Линзы</div>
-          </div>
-          <button class="btn" style="padding:6px 14px;" onclick="event.stopPropagation();showPage('cat-lenses')">Смотреть</button>
-        </div>
-      </article>
     </div>
   </div>
 </div>
@@ -214,6 +225,7 @@
     <div class="catalog-tabs">
       <button class="tab-btn active" data-tab="frames"  onclick="setCatalogTab('frames')">Оправы</button>
       <button class="tab-btn"        data-tab="lenses"  onclick="setCatalogTab('lenses')">Линзы</button>
+      <button class="tab-btn"        data-tab="contacts" onclick="setCatalogTab('contacts')">Конт. линзы</button>
       <button class="tab-btn"        data-tab="liquids" onclick="setCatalogTab('liquids')">Жидкости</button>
       <button class="tab-btn"        data-tab="cases"   onclick="setCatalogTab('cases')">Футляры</button>
     </div>
@@ -243,6 +255,18 @@
         <div class="shape-chip" data-lens="sun">Солнцезащитные</div>
         <div class="shape-chip" data-lens="polar">Поляризационные</div>
         <div class="shape-chip" data-lens="blue">Синий свет</div>
+      </div>
+    </div>
+    <div id="contacts-filters" style="display:none;margin-bottom:20px;">
+      <div class="filter-label">Тип контактных линз</div>
+      <div class="shape-row" id="contacts-filter">
+        <div class="shape-chip active" data-lens="all">Все</div>
+        <div class="shape-chip" data-lens="daily">Ежедневные</div>
+        <div class="shape-chip" data-lens="weekly">2-недельные</div>
+        <div class="shape-chip" data-lens="monthly">Месячные</div>
+        <div class="shape-chip" data-lens="toric">Торические</div>
+        <div class="shape-chip" data-lens="multi">Мультифокальные</div>
+        <div class="shape-chip" data-lens="color">Цветные</div>
       </div>
     </div>
     <div style="margin-bottom:28px;">
@@ -320,6 +344,32 @@
       </div>
     </div>
     <div class="catalog-grid" id="cat-lenses-grid"></div>
+  </div>
+</div>
+
+<div class="page" id="page-cat-contacts">
+  <div class="container">
+    <div class="cat-page-back" onclick="showPage('home')">← Назад на главную</div>
+    <div class="cat-page-hero">
+      <div class="cat-page-icon">💠</div>
+      <div>
+        <div class="cat-page-title">Контактные линзы</div>
+        <div class="cat-page-sub">Ежедневные, двухнедельные и месячные контактные линзы. Цветные, торические и мультифокальные.</div>
+      </div>
+    </div>
+    <div style="margin-bottom:20px;">
+      <div class="filter-label">Тип контактных линз</div>
+      <div class="shape-row" id="cat-contacts-type-filter">
+        <div class="shape-chip active" data-lens="all">Все</div>
+      <div class="shape-chip" data-lens="daily">Ежедневные</div>
+      <div class="shape-chip" data-lens="weekly">2-недельные</div>
+      <div class="shape-chip" data-lens="monthly">Месячные</div>
+      <div class="shape-chip" data-lens="toric">Торические</div>
+      <div class="shape-chip" data-lens="multi">Мультифокальные</div>
+      <div class="shape-chip" data-lens="color">Цветные</div>
+      </div>
+    </div>
+    <div class="catalog-grid" id="cat-contacts-grid"></div>
   </div>
 </div>
 
@@ -674,7 +724,11 @@
 <div class="modal-overlay" id="product-modal" onclick="closeModal(event)">
   <div class="modal-box">
     <button class="modal-close" onclick="closeModal(null,true)">✕</button>
-    <div class="modal-img" id="modal-img">🕶️</div>
+    <div class="modal-img" id="modal-img">
+      <div class="modal-gallery-arrow modal-gallery-prev" id="modal-gallery-prev" onclick="galleryPrev()">‹</div>
+      <div class="modal-gallery-arrow modal-gallery-next" id="modal-gallery-next" onclick="galleryNext()">›</div>
+      <div class="modal-gallery-dots" id="modal-gallery-dots"></div>
+    </div>
     <div class="modal-brand" id="modal-brand"></div>
     <div class="modal-title" id="modal-title"></div>
     <div class="modal-price" id="modal-price"></div>
@@ -698,9 +752,10 @@
 // Переключение вкладок в профиле
 function switchProfileTab(tab) {
   document.getElementById('tab-btn-appointments').classList.toggle('active', tab === 'appointments');
-  document.getElementById('tab-btn-history').classList.toggle('active', tab === 'history');
+  document.getElementById('tab-btn-orders').classList.toggle('active', tab === 'orders');
   document.getElementById('profile-tab-appointments').style.display = tab === 'appointments' ? 'block' : 'none';
-  document.getElementById('profile-tab-history').style.display = tab === 'history' ? 'block' : 'none';
+  document.getElementById('profile-tab-orders').style.display = tab === 'orders' ? 'block' : 'none';
+  if (tab === 'orders') renderProfileOrders();
 }
 
 // Загрузка данных в инпуты
@@ -741,29 +796,58 @@ function saveProfile() {
   toast('✅ Данные профиля успешно сохранены');
 }
 // Отрисовка записей к врачу
-function renderProfileAppointments() {
+async function renderProfileAppointments() {
   const container = document.getElementById('profile-appointments-list');
-  if (state.appointments.length === 0) {
-    container.innerHTML = '<div style="color:var(--text-muted);font-size:13px;padding:20px 0;">У вас пока нет активных записей.</div>';
-    return;
+  try {
+    const data = await apiGet('/appointments');
+    const list = Array.isArray(data) ? data : (data.items || []);
+    if (list.length === 0) {
+      container.innerHTML = '<div style="color:var(--text-muted);font-size:13px;padding:20px 0;">У вас нет ни одной записи.</div>';
+      return;
+    }
+    const aptStatusNames = { pending: 'Ожидает', approved: 'Подтверждено', rejected: 'Отклонено' };
+    container.innerHTML = list.map(a => `
+      <div style="background:var(--bg-elevated); border:1px solid var(--border); border-radius:20px; padding:20px; margin-bottom:14px; display:flex; justify-content:space-between; align-items:center; flex-wrap: wrap; gap: 14px;">
+        <div>
+          <div style="font-size:10px; color:var(--text-muted); letter-spacing:.18em; text-transform:uppercase; margin-bottom:10px;">Запись №${a.id || Math.floor(Math.random()*9000)+1000}</div>
+          <div style="font-size:16px; font-weight:500; margin-bottom: 4px;">📅 ${a.date || a.day} в ${a.time}</div>
+          <div style="font-size:12px; color:var(--text-muted);">📍 Консультация с врачом по адресу ул. Оптиков, 12</div>
+        </div>
+        <div style="text-align: right;">
+          <div style="display:inline-block; padding: 6px 12px; background: ${a.status === 'approved' ? 'rgba(85,204,136,0.1)' : a.status === 'rejected' ? 'rgba(255,85,85,0.1)' : 'rgba(243,156,18,0.1)'}; color: ${a.status === 'approved' ? 'var(--success)' : a.status === 'rejected' ? 'var(--error)' : '#f39c12'}; border-radius: 8px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px;">${aptStatusNames[a.status] || a.status || 'Подтверждено'}</div>
+        </div>
+      </div>
+    `).join('');
+  } catch(e) {
+    container.innerHTML = '<div style="color:var(--error);font-size:13px;padding:20px 0;">Ошибка загрузки записей.</div>';
   }
-  
-  container.innerHTML = state.appointments.map((a, i) => `
-    <div style="background:var(--bg-elevated); border:1px solid var(--border); border-radius:20px; padding:20px; margin-bottom:14px; display:flex; justify-content:space-between; align-items:center; flex-wrap: wrap; gap: 14px;">
-      <div>
-        <div style="font-size:10px; color:var(--text-muted); letter-spacing:.18em; text-transform:uppercase; margin-bottom:10px;">Запись №${Math.floor(Math.random()*9000)+1000}</div>
-        <div style="font-size:16px; font-weight:500; margin-bottom: 4px;">🗓 ${a.day} ${a.month} в ${a.time}</div>
-        <div style="font-size:12px; color:var(--text-muted);">🩺 Оптометрист · Салон на ул. Оптическая, 12</div>
-      </div>
-      <div style="text-align: right;">
-        <div style="display:inline-block; padding: 6px 12px; background: rgba(85, 204, 136, 0.1); color: var(--success); border-radius: 8px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px;">Ожидается</div>
-        <div><span style="font-size:11px; color:var(--text-muted); cursor:pointer; text-decoration:underline;" onclick="toast('Для отмены позвоните в салон')">Отменить</span></div>
-      </div>
-    </div>
-  `).reverse().join('');
 }
 
-// Отрисовка истории товаров
+async function renderProfileOrders() {
+  const container = document.getElementById('profile-orders-list');
+  if (!container) return;
+  try {
+    const data = await apiGet('/orders');
+    const list = Array.isArray(data) ? data : (data.items || []);
+    if (list.length === 0) {
+      container.innerHTML = '<div style="color:var(--text-muted);font-size:13px;padding:20px 0;">У вас нет заказов.</div>';
+      return;
+    }
+    const statusNames = { pending: 'Ожидает подтверждения', approved: 'Подтверждён', rejected: 'Отклонён' };
+    container.innerHTML = list.map(o => `
+      <div style="background:var(--bg-elevated); border:1px solid var(--border); border-radius:20px; padding:20px; margin-bottom:14px;">
+        <div style="font-size:10px; color:var(--text-muted); letter-spacing:.18em; text-transform:uppercase; margin-bottom:10px;">Заказ №${o.id}</div>
+        <div style="font-size:14px; font-weight:500; margin-bottom:4px;">${new Date(o.created_at).toLocaleDateString('ru-RU')}</div>
+        <div style="font-size:12px; color:var(--text-muted);">Статус: ${statusNames[o.status] || o.status || 'Оформлен'}</div>
+        <div style="font-size:13px; font-weight:600; margin-top:8px;">${(o.total_price || 0).toLocaleString('ru-RU')} ₽</div>
+      </div>
+    `).join('');
+  } catch(e) {
+    container.innerHTML = '<div style="color:var(--error);font-size:13px;padding:20px 0;">Ошибка загрузки заказов.</div>';
+  }
+}
+
+// Просмотренные товары
 async function renderProfileHistory() {
   const grid = document.getElementById('profile-history-grid');
   if (state.viewHistory.length === 0) {
@@ -783,7 +867,7 @@ async function renderProfileHistory() {
 
   const itemsHTML = products.map(p => `
     <article class="product-card" onclick="openModal('${p.id}')">
-      <div class="product-img-wrap" style="height:110px; font-size:32px;">${p.icon}</div>
+      <div class="product-img-wrap" style="height:110px; font-size:32px;">${imgHtml(p.icon, p.images)}</div>
       <div class="product-brand">${p.brand}</div>
       <div class="product-name">${p.name}</div>
       <div class="product-footer">
@@ -838,30 +922,49 @@ function mapProduct(apiItem) {
     id: String(apiItem.id),
     name: apiItem.title,
     brand: apiItem.brand,
+    type: apiItem.type,
     price: apiItem.price,
     icon: apiItem.image_url || '',
     desc: apiItem.description,
     specs: (apiItem.attributes || []).map(a => a.key + ': ' + a.value).join(' · '),
     shape: apiItem.shape,
     lens: apiItem.shape,
+    images: apiItem.images || [],
   };
 }
 
-const productsCache = {};
+let allProducts = [];
+
+async function preloadProducts() {
+  try {
+    const data = await apiGet('/products', { limit: 200 });
+    allProducts = (data.items || []).map(mapProduct);
+  } catch(e) {
+    allProducts = [];
+  }
+}
+
+function filterProducts(tab, extraParams = {}) {
+  const typeMap = { frames:'frame', lenses:'lens', liquids:'liquid', cases:'case', contacts:'contact_lens' };
+  const targetType = typeMap[tab];
+  let items = allProducts.filter(p => p.type === targetType);
+  if (extraParams.shape) items = items.filter(p => p.shape === extraParams.shape);
+  if (extraParams.lens_type) items = items.filter(p => (p.lens || p.shape) === extraParams.lens_type);
+  if (extraParams.search) {
+    const q = extraParams.search.toLowerCase();
+    items = items.filter(p => p.name.toLowerCase().includes(q) || p.brand.toLowerCase().includes(q));
+  }
+  return items;
+}
 
 async function apiLoadProducts(tab, extraParams = {}) {
-  const cacheKey = tab + ':' + JSON.stringify(extraParams);
-  if (productsCache[cacheKey]) return productsCache[cacheKey];
-  const params = { type: tab, page: 1, limit: 100, ...extraParams };
-  try {
-    const data = await apiGet('/products', params);
-    const items = (data.items || []).map(mapProduct);
-    productsCache[cacheKey] = items;
-    return items;
-  } catch(e) {
-    toast('Ошибка загрузки каталога');
-    return [];
+  if (allProducts.length === 0) {
+    try {
+      const data = await apiGet('/products', { type: tab, limit: 100, ...extraParams });
+      return (data.items || []).map(mapProduct);
+    } catch(e) { return []; }
   }
+  return filterProducts(tab, extraParams);
 }
 
 // ═══════════════════════════════
@@ -870,7 +973,7 @@ async function apiLoadProducts(tab, extraParams = {}) {
 const state = {
   cart: JSON.parse(localStorage.getItem('nv_cart') || '[]'),
   profile: JSON.parse(localStorage.getItem('nv_profile') || '{"firstName":"","lastName":"","phone":"","email":"","dobD":"","dobM":"","dobY":""}'),
-  appointments: JSON.parse(localStorage.getItem('nv_appointments') || '[]'),
+  orders: [],
   viewHistory: JSON.parse(localStorage.getItem('nv_history') || '[]'),
   currentPage: 'home',
   catalogTab: 'frames',
@@ -880,6 +983,7 @@ const state = {
   catLensesType: 'all',
   isLoggedIn: localStorage.getItem('nv_logged_in') === 'true',
   userName: localStorage.getItem('nv_username') || '',
+  modalScrollY: 0,
 };
 // ═══════════════════════════════
 // VALIDATION RULES
@@ -995,18 +1099,34 @@ function wireValidation() {
     const err = document.getElementById(errorId);
     if (!inp) return;
     inp.addEventListener('input', () => {
+      const v = inp.value;
+      if (!value_has_content(v)) {
+        if (stat) stat.textContent = '';
+        inp.classList.remove('valid', 'invalid');
+        if (err) { err.textContent = ''; err.classList.remove('show'); }
+        if (extra) extra(v);
+        return;
+      }
       const rule = RULES[ruleName];
-      const ok = validateField(inp.value, rule);
+      const ok = validateField(v, rule);
       setFieldState(inp, stat, err, ok, rule.msg);
-      if (extra) extra(inp.value);
+      if (extra) extra(v);
     });
     inp.addEventListener('blur', () => {
-      if (!value_has_content(inp.value)) return;
+      const v = inp.value;
+      if (!value_has_content(v)) {
+        inp.classList.add('invalid'); inp.classList.remove('valid');
+        if (stat) { stat.textContent = '✕'; stat.style.color = 'var(--error)'; }
+        if (err) { err.textContent = 'Обязательное поле'; err.classList.add('show'); }
+        return;
+      }
       const rule = RULES[ruleName];
-      const ok = validateField(inp.value, rule);
+      const ok = validateField(v, rule);
       setFieldState(inp, stat, err, ok, rule.msg);
     });
-    // Валидация профиля
+  };
+
+  // Валидация профиля
   liveValidate('prof-fname', 'prof-fname-status', 'prof-fname-error', 'name');
   liveValidate('prof-lname', 'prof-lname-status', 'prof-lname-error', 'name');
   liveValidate('prof-email', 'prof-email-status', 'prof-email-error', 'email');
@@ -1019,25 +1139,35 @@ function wireValidation() {
       setFieldState(profPhone, document.getElementById('prof-phone-status'), document.getElementById('prof-phone-error'), ok, RULES.phone.msg);
     });
   }
-  };
 
   // Phone inputs — auto format
   ['order-phone', 'reg-phone', 'login-phone'].forEach(id => {
     const inp = document.getElementById(id);
     if (!inp) return;
+    const statEl = document.getElementById(id + '-status');
+    const errEl = document.getElementById(id + '-error');
     
-    // ДОБАВЛЕНО: принимаем (e) и передаем в formatPhone(inp, e)
     inp.addEventListener('input', (e) => {
-      formatPhone(inp, e); 
+      formatPhone(inp, e);
+      if (!value_has_content(inp.value)) {
+        if (statEl) statEl.textContent = '';
+        inp.classList.remove('valid', 'invalid');
+        if (errEl) { errEl.textContent = ''; errEl.classList.remove('show'); }
+        return;
+      }
       const ok = validateField(inp.value, RULES.phone);
-      const statId = id + '-status', errId = id + '-error';
-      setFieldState(inp, document.getElementById(statId), document.getElementById(errId), ok, RULES.phone.msg);
+      setFieldState(inp, statEl, errEl, ok, RULES.phone.msg);
     });
 
     inp.addEventListener('blur', () => {
-      if (!value_has_content(inp.value)) return;
+      if (!value_has_content(inp.value)) {
+        inp.classList.add('invalid'); inp.classList.remove('valid');
+        if (statEl) { statEl.textContent = '✕'; statEl.style.color = 'var(--error)'; }
+        if (errEl) { errEl.textContent = 'Обязательное поле'; errEl.classList.add('show'); }
+        return;
+      }
       const ok = validateField(inp.value, RULES.phone);
-      setFieldState(inp, document.getElementById(id + '-status'), document.getElementById(id + '-error'), ok, RULES.phone.msg);
+      setFieldState(inp, statEl, errEl, ok, RULES.phone.msg);
     });
   });
 
@@ -1046,6 +1176,52 @@ function wireValidation() {
   liveValidate('reg-email',    'reg-email-status',    'reg-email-error',    'email');
   liveValidate('login-phone',  'login-phone-status',  'login-phone-error',  'phone');
   liveValidate('login-email',  'login-email-status',  'login-email-error',  'email');
+
+  // Async uniqueness check for registration fields
+  const uniqTimers = {};
+  ['reg-nickname', 'reg-phone', 'reg-email'].forEach(id => {
+    const inp = document.getElementById(id);
+    if (!inp) return;
+    const stat = document.getElementById(id + '-status');
+    const err = document.getElementById(id + '-error');
+    const check = async () => {
+      const v = inp.value.trim();
+      if (!v) return;
+      const field = id === 'reg-nickname' ? 'nickname' : id === 'reg-phone' ? 'phone' : 'email';
+      if (!validateField(v, RULES[field])) return;
+      try {
+        const r = await fetch(`/api/auth/check-field?field=${field}&value=${encodeURIComponent(v)}`);
+        const d = await r.json();
+        if (d.available) {
+          inp.classList.add('valid'); inp.classList.remove('invalid');
+          if (stat) { stat.textContent = '✓'; stat.style.color = 'var(--success)'; }
+          if (err) { err.textContent = ''; err.classList.remove('show'); err.classList.remove('success'); }
+        } else {
+          const msg = field === 'nickname' ? 'Этот никнейм уже занят' : field === 'phone' ? 'Этот номер уже зарегистрирован' : 'Этот email уже используется';
+          inp.classList.add('invalid'); inp.classList.remove('valid');
+          if (stat) { stat.textContent = '✕'; stat.style.color = 'var(--error)'; }
+          if (err) { err.textContent = msg; err.classList.add('show'); err.classList.remove('success'); }
+        }
+      } catch(e) {}
+    };
+    inp.addEventListener('input', () => {
+      clearTimeout(uniqTimers[id]);
+      const v = inp.value.trim();
+      if (!v) {
+        if (err) { err.textContent = ''; err.classList.remove('show'); err.classList.remove('success'); }
+        return;
+      }
+      if (!validateField(v, RULES[id === 'reg-nickname' ? 'nickname' : id === 'reg-phone' ? 'phone' : 'email'])) return;
+      if (stat) { stat.textContent = '⋯'; stat.style.color = 'var(--text-muted)'; }
+      uniqTimers[id] = setTimeout(check, 400);
+    });
+    inp.addEventListener('blur', () => {
+      clearTimeout(uniqTimers[id]);
+      const v = inp.value.trim();
+      if (!v || !validateField(v, RULES[id === 'reg-nickname' ? 'nickname' : id === 'reg-phone' ? 'phone' : 'email'])) return;
+      check();
+    });
+  });
   liveValidate('reg-pass',     null,                  'reg-pass-error',     'password', (v) => {
     const bar = document.getElementById('pass-strength-bar');
     const lbl = document.getElementById('pass-strength-label');
@@ -1060,11 +1236,26 @@ function wireValidation() {
 
   // pass2 confirm
   const pass2 = document.getElementById('reg-pass2');
+  const pass2stat = document.getElementById('reg-pass2-status');
+  const pass2err = document.getElementById('reg-pass2-error');
   if (pass2) {
     pass2.addEventListener('input', () => {
+      if (!value_has_content(pass2.value)) {
+        if (pass2stat) pass2stat.textContent = '';
+        pass2.classList.remove('valid', 'invalid');
+        if (pass2err) { pass2err.textContent = ''; pass2err.classList.remove('show'); }
+        return;
+      }
       const p1 = document.getElementById('reg-pass').value;
-      const ok = pass2.value === p1 && pass2.value.length > 0;
-      setFieldState(pass2, document.getElementById('reg-pass2-status'), document.getElementById('reg-pass2-error'), ok, 'Пароли не совпадают');
+      const ok = pass2.value === p1;
+      setFieldState(pass2, pass2stat, pass2err, ok, 'Пароли не совпадают');
+    });
+    pass2.addEventListener('blur', () => {
+      if (!value_has_content(pass2.value)) {
+        pass2.classList.add('invalid'); pass2.classList.remove('valid');
+        if (pass2stat) { pass2stat.textContent = '✕'; pass2stat.style.color = 'var(--error)'; }
+        if (pass2err) { pass2err.textContent = 'Повторите пароль'; pass2err.classList.add('show'); }
+      }
     });
   }
 
@@ -1130,6 +1321,7 @@ async function showPage(name) {
   if (name === 'cat-lenses') await renderCatGrid('lenses', 'cat-lenses-grid', state.catLensesType, 'lens');
   if (name === 'cat-liquids') await renderCatGrid('liquids', 'cat-liquids-grid', null, null);
   if (name === 'cat-cases')  await renderCatGrid('cases',  'cat-cases-grid',  null, null);
+  if (name === 'cat-contacts') await renderCatGrid('contacts', 'cat-contacts-grid', state.catLensesType || 'all', 'lens');
 
   const navName = (name === 'catalog') ? 'catalog' : name === 'home' ? 'home' : name;
   document.querySelectorAll('nav a, .mobile-nav a').forEach(a => {
@@ -1140,8 +1332,9 @@ async function showPage(name) {
    if (name === 'profile') {
     loadProfileData();
     renderProfileAppointments();
-    await renderProfileHistory();
+    renderProfileOrders();
   }
+  if (name === 'cart') renderCart();
 }
 
   
@@ -1149,18 +1342,31 @@ document.querySelectorAll('nav a').forEach(a => {
   a.addEventListener('click', e => { e.preventDefault(); showPage(a.dataset.page); });
 });
 
-// ── hide header on scroll down ──
+// ── hide header on scroll down + scroll spy ──
 let lastY = 0;
+let lastNavPage = 'home';
 window.addEventListener('scroll', () => {
   const h = document.getElementById('site-header');
   const y = window.scrollY;
   if (y > lastY && y > 80) h.classList.add('hidden');
   else h.classList.remove('hidden');
-  lastY = y;
   // close mobile menu on scroll
   if (Math.abs(y - lastY) > 5) {
     document.getElementById('mobile-nav').classList.remove('open');
     document.getElementById('menu-toggle').classList.remove('open');
+  }
+  lastY = y;
+
+  const catalogPage = document.getElementById('page-catalog');
+  if (catalogPage && state.currentPage === 'home') {
+    const rect = catalogPage.getBoundingClientRect();
+    const page = rect.top < 200 ? 'catalog' : 'home';
+    if (page !== lastNavPage) {
+      lastNavPage = page;
+      document.querySelectorAll('nav a, .mobile-nav a').forEach(a => {
+        a.classList.toggle('active', a.dataset.page === page);
+      });
+    }
   }
 });
 
@@ -1174,20 +1380,26 @@ async function setCatalogTab(tab) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
   document.getElementById('frame-filters').style.display = tab === 'frames' ? '' : 'none';
   document.getElementById('lens-filters').style.display  = tab === 'lenses' ? '' : 'none';
+  document.getElementById('contacts-filters').style.display = tab === 'contacts' ? '' : 'none';
   document.querySelectorAll('#shape-filter .shape-chip').forEach(c => c.classList.toggle('active', c.dataset.shape === 'all'));
   document.querySelectorAll('#lens-filter .shape-chip').forEach(c => c.classList.toggle('active', c.dataset.lens === 'all'));
-  const heads = { frames:'Каталог – оправы', lenses:'Каталог – линзы', liquids:'Каталог – жидкости', cases:'Каталог – футляры' };
+  document.querySelectorAll('#contacts-filter .shape-chip').forEach(c => c.classList.toggle('active', c.dataset.lens === 'all'));
+  const heads = { frames:'Каталог – оправы', lenses:'Каталог – линзы', liquids:'Каталог – жидкости', cases:'Каталог – футляры', contacts:'Каталог – контактные линзы' };
   document.getElementById('catalog-heading').textContent = heads[tab] || 'Каталог';
   await renderCatalog();
 }
 
 async function renderCatalog() {
   const grid = document.getElementById('catalog-grid');
+  if (!grid) return;
   const tab = state.catalogTab;
   const params = {};
   if (tab === 'frames' && state.shapeFilter !== 'all') params.shape = state.shapeFilter;
-  if (tab === 'lenses' && state.lensFilter !== 'all')  params.lens_type = state.lensFilter;
-  const items = await apiLoadProducts(tab, params);
+  if ((tab === 'lenses' || tab === 'contacts') && state.lensFilter !== 'all')  params.lens_type = state.lensFilter;
+  let items = allProducts.length > 0 ? filterProducts(tab, params) : null;
+  if (!items) {
+    items = await apiLoadProducts(tab, params);
+  }
   grid.innerHTML = buildCards(items, tab);
 }
 
@@ -1198,15 +1410,30 @@ async function renderCatGrid(tab, gridId, filterVal, filterKey) {
   if (filterVal && filterVal !== 'all') {
     params[tab === 'lenses' ? 'lens_type' : filterKey] = filterVal;
   }
-  const items = await apiLoadProducts(tab, params);
+  let items = allProducts.length > 0 ? filterProducts(tab, params) : null;
+  if (!items) {
+    items = await apiLoadProducts(tab, params);
+  }
   grid.innerHTML = buildCards(items, tab);
+}
+
+function imgHtml(icon, images) {
+  let src = icon || '';
+  if (images && images.length) {
+    const primary = images.find(i => i.is_primary) || images[0];
+    src = primary.url;
+  }
+  if (!src) return '';
+  if (src.startsWith('/uploads/') || src.startsWith('http://') || src.startsWith('https://'))
+    return `<img src="${src}" alt="" style="width:100%;height:100%;object-fit:cover;">`;
+  return src;
 }
 
 function buildCards(items, tab) {
   if (!items.length) return '<div style="color:var(--text-muted);font-size:13px;grid-column:1/-1;text-align:center;padding:40px 0;">Ничего не найдено</div>';
   return items.map(p => `
     <article class="product-card" onclick="openModal('${p.id}','${tab}')">
-      <div class="product-img-wrap">${p.icon}</div>
+      <div class="product-img-wrap">${imgHtml(p.icon, p.images)}</div>
       <div class="product-brand">${p.brand}</div>
       <div class="product-name">${p.name}</div>
       <div class="product-desc">${p.desc}</div>
@@ -1227,13 +1454,22 @@ document.getElementById('shape-filter').addEventListener('click', async e => {
   await renderCatalog();
 });
 document.getElementById('lens-filter').addEventListener('click', async e => {
-  const chip = e.target.closest('.shape-chip'); if (!chip) return;
+  const chip = e.target.closest('.shape-chip');
+  if (!chip) return;
   document.querySelectorAll('#lens-filter .shape-chip').forEach(c => c.classList.remove('active'));
   chip.classList.add('active');
   state.lensFilter = chip.dataset.lens;
   await renderCatalog();
 });
 
+document.getElementById('contacts-filter').addEventListener('click', async e => {
+  const chip = e.target.closest('.shape-chip');
+  if (!chip) return;
+  document.querySelectorAll('#contacts-filter .shape-chip').forEach(c => c.classList.remove('active'));
+  chip.classList.add('active');
+  state.lensFilter = chip.dataset.lens;
+  await renderCatalog();
+});
 // Filters on category pages
 document.getElementById('cat-frames-shape-filter').addEventListener('click', async e => {
   const chip = e.target.closest('.shape-chip'); if (!chip) return;
@@ -1249,6 +1485,13 @@ document.getElementById('cat-lenses-lens-filter').addEventListener('click', asyn
   state.catLensesType = chip.dataset.lens;
   await renderCatGrid('lenses', 'cat-lenses-grid', state.catLensesType, 'lens');
 });
+document.getElementById('cat-contacts-type-filter').addEventListener('click', async e => {
+  const chip = e.target.closest('.shape-chip'); if (!chip) return;
+  document.querySelectorAll('#cat-contacts-type-filter .shape-chip').forEach(c => c.classList.remove('active'));
+  chip.classList.add('active');
+  state.catLensesType = chip.dataset.lens;
+  await renderCatGrid('contacts', 'cat-contacts-grid', state.catLensesType, 'lens');
+});
 // renderCatalog() вызывается внутри restoreSession() при загрузке
 
 // ═══════════════════════════════
@@ -1262,6 +1505,38 @@ async function findProduct(id) {
     return null;
   }
 }
+let _modalImages = [];
+let _modalImageIndex = 0;
+
+function renderGalleryImage() {
+  const imgEl = document.getElementById('modal-img');
+  if (_modalImages.length > 0) {
+    const url = _modalImages[_modalImageIndex];
+    imgEl.style.fontSize = '';
+    imgEl.innerHTML = `<img src="${url}" alt="" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;">
+      <div class="modal-gallery-arrow modal-gallery-prev" onclick="galleryPrev()">‹</div>
+      <div class="modal-gallery-arrow modal-gallery-next" onclick="galleryNext()">›</div>
+      <div class="modal-gallery-dots">${_modalImages.map((_, i) => `<span class="${i === _modalImageIndex ? 'active' : ''}" onclick="galleryDot(${i})"></span>`).join('')}</div>`;
+  }
+  document.getElementById('modal-gallery-prev').style.display = _modalImages.length > 1 ? '' : 'none';
+  document.getElementById('modal-gallery-next').style.display = _modalImages.length > 1 ? '' : 'none';
+}
+
+function galleryPrev() {
+  if (_modalImages.length < 2) return;
+  _modalImageIndex = (_modalImageIndex - 1 + _modalImages.length) % _modalImages.length;
+  renderGalleryImage();
+}
+function galleryNext() {
+  if (_modalImages.length < 2) return;
+  _modalImageIndex = (_modalImageIndex + 1) % _modalImages.length;
+  renderGalleryImage();
+}
+function galleryDot(i) {
+  _modalImageIndex = i;
+  renderGalleryImage();
+}
+
 async function openModal(id, tab) {
   const p = await findProduct(id); if (!p) return;
   
@@ -1272,7 +1547,20 @@ async function openModal(id, tab) {
   localStorage.setItem('nv_history', JSON.stringify(state.viewHistory));
   // ---------------------------
 
-  document.getElementById('modal-img').textContent   = p.icon;
+  _modalImages = (p.images && p.images.length) ? p.images.map(i => i.url) : (p.icon && (p.icon.startsWith('/uploads/') || p.icon.startsWith('http')) ? [p.icon] : []);
+  _modalImageIndex = _modalImages.length ? _modalImages.findIndex((_, i) => p.images && p.images[i] && p.images[i].is_primary) : 0;
+  if (_modalImageIndex < 0) _modalImageIndex = 0;
+
+  if (_modalImages.length) {
+    document.getElementById('modal-img').innerHTML = `<img src="${_modalImages[_modalImageIndex]}" alt="" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;">
+      <div class="modal-gallery-arrow modal-gallery-prev" onclick="galleryPrev()">‹</div>
+      <div class="modal-gallery-arrow modal-gallery-next" onclick="galleryNext()">›</div>
+      <div class="modal-gallery-dots">${_modalImages.map((_, i) => `<span class="${i === _modalImageIndex ? 'active' : ''}" onclick="galleryDot(${i})"></span>`).join('')}</div>`;
+    document.getElementById('modal-img').style.fontSize = '';
+  } else {
+    document.getElementById('modal-img').innerHTML = p.icon || '';
+    document.getElementById('modal-img').style.fontSize = '64px';
+  }
   document.getElementById('modal-brand').textContent = p.brand;
   document.getElementById('modal-title').textContent = p.name;
   document.getElementById('modal-price').textContent = p.price.toLocaleString('ru-RU') + ' ₽';
@@ -1280,12 +1568,14 @@ async function openModal(id, tab) {
   document.getElementById('modal-specs').textContent = p.specs;
   document.getElementById('modal-add-btn').onclick = async () => { await addToCart(id, tab); closeModal(null, true); };
   document.getElementById('product-modal').classList.add('open');
+  state.modalScrollY = window.scrollY;
   document.body.style.overflow = 'hidden';
 } 
 function closeModal(e, force) {
   if (force || e?.target === document.getElementById('product-modal')) {
     document.getElementById('product-modal').classList.remove('open');
     document.body.style.overflow = '';
+    if (state.modalScrollY != null) window.scrollTo(0, state.modalScrollY);
   }
 }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(null, true); });
@@ -1294,22 +1584,42 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(n
 // CART
 // ═══════════════════════════════
 function cartSave() { localStorage.setItem('nv_cart', JSON.stringify(state.cart)); }
+async function cartSync() {
+  if (!state.isLoggedIn) return;
+  const items = state.cart.map(i => ({ product_id: parseInt(i.id), quantity: i.qty }));
+  try { await apiPost('/cart/sync', { items }); } catch(e) {}
+}
+async function cartLoad() {
+  if (!state.isLoggedIn) return;
+  try {
+    const serverItems = await apiGet('/cart');
+    if (serverItems && serverItems.length) {
+      state.cart = serverItems.map(i => ({
+        id: String(i.product_id), name: i.title, price: i.price, icon: i.icon, qty: i.quantity, brand: ''
+      }));
+      cartSave(); updateBadge(); renderCart();
+    }
+  } catch(e) {}
+}
 async function addToCart(id, tab) {
   const p = await findProduct(id); if (!p) return;
   const ex = state.cart.find(i => i.id === id);
   if (ex) ex.qty++;
   else state.cart.push({ id: p.id, name: p.name, brand: p.brand, price: p.price, icon: p.icon, qty: 1 });
   cartSave(); updateBadge(); toast('Добавлено: ' + p.name);
+  await cartSync();
 }
 function changeQty(id, delta) {
   const item = state.cart.find(i => i.id === id); if (!item) return;
   item.qty += delta;
   if (item.qty <= 0) state.cart = state.cart.filter(i => i.id !== id);
   cartSave(); updateBadge(); renderCart();
+  cartSync();
 }
 function removeItem(id) {
   state.cart = state.cart.filter(i => i.id !== id);
   cartSave(); updateBadge(); renderCart();
+  cartSync();
 }
 function updateBadge() {
   const total = state.cart.reduce((s, i) => s + i.qty, 0);
@@ -1333,7 +1643,7 @@ function renderCart() {
   document.getElementById('cart-count-label').textContent = `${count} ${noun(count, 'товар','товара','товаров')}`;
   list.innerHTML = state.cart.map(item => `
     <article class="cart-item">
-      <div class="cart-thumb">${item.icon || '🕶️'}</div>
+      <div class="cart-thumb">${item.icon ? imgHtml(item.icon) : '🕶️'}</div>
       <div>
         <div class="cart-info-brand">${item.brand}</div>
         <div style="font-size:13px;">${item.name}</div>
@@ -1352,8 +1662,14 @@ function renderCart() {
 }
 
 // Cart order validation
-document.getElementById('order-btn').addEventListener('click', () => {
+document.getElementById('order-btn').addEventListener('click', async () => {
   if (!state.cart.length) { toast('Корзина пуста!'); return; }
+  if (!state.isLoggedIn) {
+    toast('Для оформления заказа необходимо войти или зарегистрироваться');
+    showPage('account');
+    switchAuthTab('login');
+    return;
+  }
   const nameEl  = document.getElementById('order-name');
   const phoneEl = document.getElementById('order-phone');
   const name  = nameEl.value.trim();
@@ -1370,6 +1686,13 @@ document.getElementById('order-btn').addEventListener('click', () => {
   }
   if (!ok) { toast('Проверьте заполнение полей'); return; }
 
+  const items = state.cart.map(c => ({ product_id: parseInt(c.id), quantity: c.qty }));
+  try {
+    await apiPost('/orders', { items });
+  } catch(e) {
+    toast('Ошибка при оформлении заказа');
+    return;
+  }
   state.cart = []; cartSave(); updateBadge(); renderCart();
   nameEl.value = ''; phoneEl.value = '';
   [nameEl, phoneEl].forEach(el => { el.classList.remove('valid','invalid'); });
@@ -1433,7 +1756,7 @@ document.querySelectorAll('#time-grid .time-slot').forEach(slot => {
     document.getElementById('b-time').textContent = slot.textContent;
   });
 });
-function confirmBooking() {
+async function confirmBooking() {
   if (!state.isLoggedIn) {
     sessionStorage.setItem('nv_redirect', 'booking');
     showPage('account');
@@ -1447,9 +1770,14 @@ function confirmBooking() {
   const time  = document.getElementById('b-time').textContent;
   if (day === '—' || time === '—') { toast('Выберите дату и время'); return; }
   
-  // --- СОХРАНЯЕМ ЗАПИСЬ ---
-  state.appointments.push({ month, day, time });
-  localStorage.setItem('nv_appointments', JSON.stringify(state.appointments));
+  // --- ОТПРАВЛЯЕМ ЗАПИСЬ НА СЕРВЕР ---
+  const payload = { date: `2026-${String(selectedMonthIdx+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`, time };
+  try {
+    await apiPost('/appointments', payload);
+  } catch(e) {
+    toast('Ошибка при записи');
+    return;
+  }
   // ------------------------
 
   toast(`✅ Запись подтверждена: ${month} ${day}, ${time}`);
@@ -1621,7 +1949,13 @@ document.getElementById('login-btn').addEventListener('click', async () => {
     document.getElementById('page-account').classList.remove('active');
     document.getElementById('page-home-catalog-wrapper').classList.remove('hidden-wrapper');
     toast('✅ Вход выполнен!');
-    showPage('home');
+    state.profile.phone = data.user.phone || '';
+    state.profile.email = data.user.email || '';
+    localStorage.setItem('nv_profile', JSON.stringify(state.profile));
+    if (data.user.role === 'admin') { window.location.href = '/admin'; return; }
+    if (data.user.role === 'doctor') { window.location.href = '/doctor'; return; }
+    await cartLoad();
+    showPage(state.cart.length ? 'cart' : 'home');
   } catch(e) {
     toast('Ошибка: ' + (e.detail || e.message));
   }
@@ -1653,7 +1987,13 @@ document.getElementById('reg-btn').addEventListener('click', async () => {
     document.getElementById('page-account').classList.remove('active');
     document.getElementById('page-home-catalog-wrapper').classList.remove('hidden-wrapper');
     toast('✅ Аккаунт создан!');
-    showPage('home');
+    state.profile.phone = data.user.phone || '';
+    state.profile.email = data.user.email || '';
+    localStorage.setItem('nv_profile', JSON.stringify(state.profile));
+    if (data.user.role === 'admin') { window.location.href = '/admin'; return; }
+    if (data.user.role === 'doctor') { window.location.href = '/doctor'; return; }
+    await cartLoad();
+    showPage(state.cart.length ? 'cart' : 'home');
   } catch(e) {
     const detail = e.detail || e.message;
     const clean = (s) => String(s).replace(/^(Value error,\s*)?/i, '');
@@ -1718,7 +2058,7 @@ const SCAN_STAGES = [
   { step:'ШАГ 3 / 3', text:'Медленно поверните голову вправо', voice:'Отлично. Теперь медленно поверните голову вправо',      arrow:'scan-arrow-right', hold:4000, name:'right' }
 ];
 let scanCaptures = [], scanRunning = false, scanStream = null;
-function scanSpeak(t) { window.speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(t); u.lang='ru-RU'; u.rate=0.9; window.speechSynthesis.speak(u); }
+
 function scanSetDot(idx) {
   for (let i=0;i<3;i++) {
     const d = document.getElementById('scan-dot'+i);
@@ -1744,6 +2084,7 @@ async function scanFlash() {
 }
 async function scanStartCamera() {
   try {
+    if (!navigator.mediaDevices) throw new Error('Камера недоступна — страница открыта по HTTP. Используйте HTTPS или localhost');
     const videoEl = document.getElementById('scan-webcam');
     scanStream = await navigator.mediaDevices.getUserMedia({ video:{width:640,height:480,facingMode:'user'}, audio:false });
     videoEl.srcObject = scanStream;
@@ -1754,7 +2095,7 @@ async function scanStartCamera() {
     document.getElementById('scan-step').textContent = 'КАМЕРА ГОТОВА';
     document.getElementById('scan-text').textContent = 'Нажмите «Начать»';
     scanSetOval('ready');
-    scanSpeak('Камера включена. Нажмите начать сканирование.');
+
   } catch(e) { alert('Не удалось получить доступ к камере: ' + e.message); }
 }
 async function scanStart() {
@@ -1769,7 +2110,7 @@ async function scanStart() {
     const s = SCAN_STAGES[i];
     document.getElementById('scan-step').textContent = s.step;
     document.getElementById('scan-text').textContent = s.text;
-    scanSetDot(i); scanShowArrow(s.arrow); scanSetOval('ready'); scanSpeak(s.voice);
+    scanSetDot(i); scanShowArrow(s.arrow); scanSetOval('ready');
     await scanWait(s.hold*0.6); scanSetOval('capture');
     document.getElementById('scan-text').textContent = 'Держите так...';
     await scanWait(s.hold*0.4);
@@ -1789,7 +2130,7 @@ async function scanStart() {
   }
   document.getElementById('scan-step').textContent = '';
   document.getElementById('scan-text').textContent = 'Анализируем...';
-  scanSpeak('Отлично. Анализируем данные.');
+
   await scanSendFrames(videoEl);
   scanRunning = false;
 }
@@ -1804,7 +2145,7 @@ async function scanSendFrames(videoEl) {
     scanShowResult(await resp.json());
   } catch(e) {
     document.getElementById('scan-text').textContent = 'Ошибка: ' + e.message;
-    scanSpeak('Произошла ошибка. Попробуйте снова.');
+
   } finally {
     scanStopCamera();
     document.getElementById('scan-start-btn').disabled = false;
@@ -1821,6 +2162,21 @@ function scanShowResult(data) {
   const pct = Math.round((data.confidence||0)*100);
   document.getElementById('scan-res-conf').textContent = 'Уверенность: '+pct+'%';
   setTimeout(() => { document.getElementById('scan-conf-fill').style.width = pct+'%'; }, 100);
+  // Show all_scores breakdown
+  let scoresHtml = document.getElementById('scan-scores');
+  if (!scoresHtml) {
+    scoresHtml = document.createElement('div');
+    scoresHtml.id = 'scan-scores';
+    scoresHtml.style.cssText = 'display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;';
+    document.getElementById('scan-res-conf').after(scoresHtml);
+  }
+  if (data.all_scores) {
+    const names = { oval:'Овал', round:'Круг', square:'Квадрат', rect:'Прямоуг', heart:'Сердце', triangle:'Треуг', diamond:'Ромб' };
+    const sorted = Object.entries(data.all_scores).sort((a,b) => b[1]-a[1]);
+    scoresHtml.innerHTML = sorted.map(([k,v]) =>
+      `<span style="background:var(--bg-soft);border:1px solid var(--border);border-radius:999px;padding:4px 12px;font-size:10px;white-space:nowrap;color:${k===data.face_shape ? 'var(--accent)' : 'var(--text-muted)'}">${names[k]||k}: ${Math.round(v*100)}%</span>`
+    ).join('');
+  }
   const gGrid = document.getElementById('scan-glasses');
   gGrid.innerHTML = '';
   const frames = (data.frames&&data.frames.length) ? data.frames : (data.recommended_shapes||[]).map(s=>({name:s}));
@@ -1834,7 +2190,7 @@ function scanShowResult(data) {
     gGrid.appendChild(c);
   });
   document.getElementById('scan-text').textContent = 'Готово!';
-  scanSpeak('Анализ завершён. Ваша форма лица: '+label);
+
 }
 function scanStopCamera() {
   if (scanStream) { scanStream.getTracks().forEach(t => t.stop()); scanStream = null; }
@@ -1850,8 +2206,12 @@ window.showPage = function(name) {
 // Init
 wireValidation();
 
+// ── Preload all products ──
+const preloadPromise = preloadProducts();
+
 // ── Session restore ──────────────────────────────────
 (async function restoreSession() {
+  await preloadPromise;
   const token = getToken();
   if (!token) {
     updateAuthHeader();
@@ -1871,6 +2231,7 @@ wireValidation();
     state.profile.email = me.email || '';
     localStorage.setItem('nv_profile', JSON.stringify(state.profile));
     updateAuthHeader();
+    await cartLoad();
   } catch(e) {
     localStorage.removeItem('nv_token');
     localStorage.removeItem('nv_logged_in');

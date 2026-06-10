@@ -379,10 +379,12 @@
 
 .field-input.invalid {
   border-color: var(--error) !important;
+  border-width: 2px;
 }
 
 .field-input.valid {
   border-color: var(--success) !important;
+  border-width: 2px;
 }
 
 .field-input.with-eye {
@@ -397,15 +399,24 @@
 }
 
 .field-error {
-  font-size: 10px;
+  font-size: 11px;
+  font-weight: 500;
   color: var(--error);
-  margin-top: 5px;
-  padding-left: 14px;
+  margin-top: 6px;
+  padding: 4px 10px 4px 14px;
   display: none;
+  background: rgba(255,85,85,0.08);
+  border-radius: 6px;
+  line-height: 1.4;
 }
 
 .field-error.show {
   display: block;
+}
+
+.field-error.success {
+  color: var(--success);
+  background: rgba(85,204,136,0.08);
 }
 
 .field-status {

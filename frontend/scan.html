@@ -110,12 +110,6 @@ const STAGES = [
 let captures = [], scanning = false, stream = null;
 const videoEl = document.getElementById("webcam");
 
-function speak(t) {
-  window.speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(t);
-  u.lang = "ru-RU"; u.rate = 0.9;
-  window.speechSynthesis.speak(u);
-}
 function setDot(idx) {
   for (let i = 0; i < 3; i++) {
     document.getElementById("dot"+i).className =
@@ -137,6 +131,7 @@ async function flashCapture() {
 }
 async function startCamera() {
   try {
+    if (!navigator.mediaDevices) throw new Error('Камера недоступна — страница открыта по HTTP. Используйте HTTPS или localhost');
     stream = await navigator.mediaDevices.getUserMedia({ video:{width:640,height:480,facingMode:"user"}, audio:false });
     videoEl.srcObject = stream;
     await new Promise(r => { videoEl.onloadedmetadata = r; });
@@ -146,7 +141,6 @@ async function startCamera() {
     document.getElementById("instrStep").textContent = "КАМЕРА ГОТОВА";
     document.getElementById("instrText").textContent = "Нажмите «Начать»";
     setOval("ready");
-    speak("Камера включена. Нажмите начать сканирование.");
   } catch(e) { alert("Не удалось получить доступ к камере: " + e.message); }
 }
 async function startScan() {
@@ -161,7 +155,7 @@ async function startScan() {
     const s = STAGES[i];
     document.getElementById("instrStep").textContent = s.step;
     document.getElementById("instrText").textContent = s.text;
-    setDot(i); showArrow(s.arrow); setOval("ready"); speak(s.voice);
+    setDot(i); showArrow(s.arrow); setOval("ready");
     await wait(s.hold * 0.6);
     setOval("capture");
     document.getElementById("instrText").textContent = "Держите так...";
@@ -185,7 +179,6 @@ async function startScan() {
 
   document.getElementById("instrStep").textContent = "";
   document.getElementById("instrText").textContent = "Анализируем...";
-  speak("Отлично. Анализируем данные.");
   await sendFrames();
   scanning = false;
 }
@@ -200,7 +193,6 @@ async function sendFrames() {
     showResult(await resp.json());
   } catch(e) {
     document.getElementById("instrText").textContent = "Ошибка: " + e.message;
-    speak("Произошла ошибка. Попробуйте снова.");
   } finally {
     stopCamera();
     document.getElementById("startBtn").disabled = false;
@@ -217,6 +209,22 @@ function showResult(data) {
   const pct = Math.round((data.confidence || 0)*100);
   document.getElementById("resConf").textContent  = "Уверенность: " + pct + "%";
   setTimeout(() => { document.getElementById("confFill").style.width = pct+"%"; }, 100);
+
+  // Show all_scores breakdown
+  let scoresEl = document.getElementById("scan-scores");
+  if (!scoresEl) {
+    scoresEl = document.createElement("div");
+    scoresEl.id = "scan-scores";
+    scoresEl.style.cssText = "display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;";
+    document.getElementById("resConf").after(scoresEl);
+  }
+  if (data.all_scores) {
+    const names = { oval:"Овал", round:"Круг", square:"Квадрат", rect:"Прямоуг", heart:"Сердце", triangle:"Треуг", diamond:"Ромб" };
+    const sorted = Object.entries(data.all_scores).sort((a,b) => b[1]-a[1]);
+    scoresEl.innerHTML = sorted.map(([k,v]) =>
+      `<span style="background:var(--bg-soft);border:1px solid var(--border);border-radius:999px;padding:4px 12px;font-size:10px;white-space:nowrap;color:${k===data.face_shape ? 'var(--accent)' : 'var(--text-muted)'}">${names[k]||k}: ${Math.round(v*100)}%</span>`
+    ).join("");
+  }
 
   const vRow = document.getElementById("votesRow");
   vRow.innerHTML = "";
@@ -250,7 +258,6 @@ function showResult(data) {
     });
   }
   document.getElementById("instrText").textContent = "Готово!";
-  speak("Анализ завершён. Ваша форма лица: " + label);
 }
 function stopCamera() {
   if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }

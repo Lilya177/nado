@@ -1,18 +1,20 @@
 import os
+from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from models import Base
 
-DATABASE_URL = os.getenv(
-    "DATABASE_URL",
-    "sqlite:///./noir_vision.db"
-)
+load_dotenv()
 
-connect_args = {}
-if DATABASE_URL.startswith("sqlite"):
-    connect_args["check_same_thread"] = False
+DATABASE_URL = os.getenv("DATABASE_URL")
 
-engine = create_engine(DATABASE_URL, connect_args=connect_args)
+if not DATABASE_URL:
+    raise RuntimeError(
+        "DATABASE_URL не задан. Укажите PostgreSQL-строку подключения.\n"
+        "Пример: postgresql://noir:noir_pass@localhost:5432/noir_vision"
+    )
+
+engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
